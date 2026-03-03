@@ -1,27 +1,28 @@
-/* ===== THEME NUIT - CHALLENGEHUB ===== */
+/* ===== THEME NUIT - VERSION AMÉLIORÉE ===== */
+
 :root {
-    /* Couleurs de fond */
-    --bg-primary: #0a0a0a;
-    --bg-secondary: #121212;
-    --bg-tertiary: #1a1a1a;
-    --bg-card: #1e1e1e;
-    --bg-hover: #2a2a2a;
+    /* Couleurs de fond - plus contrastées */
+    --bg-primary: #0f0f0f;        /* Fond principal plus profond */
+    --bg-secondary: #1a1a1a;       /* Fond secondaire */
+    --bg-tertiary: #242424;        /* Fond tertiaire */
+    --bg-card: #1e1e1e;            /* Fond des cartes */
+    --bg-hover: #2a2a2a;           /* Survol */
     
     /* Bordures */
     --border-color: #333333;
     --border-light: #444444;
     
-    /* Accent - Violet (pour conserver l'identité) */
+    /* Accent - Violet (conserve l'identité) */
     --accent-primary: #8b5cf6;
     --accent-secondary: #7c3aed;
     --accent-light: #a78bfa;
     --accent-glow: rgba(139, 92, 246, 0.3);
     
-    /* Texte */
-    --text-primary: #ffffff;
-    --text-secondary: #e0e0e0;
-    --text-muted: #a0a0a0;
-    --text-dim: #707070;
+    /* Texte - PLUS CLAIR */
+    --text-primary: #ffffff;        /* Blanc pur pour titres */
+    --text-secondary: #e5e5e5;      /* Très clair pour texte normal */
+    --text-muted: #a0a0a0;          /* Gris clair pour secondaire */
+    --text-dim: #808080;            /* Gris pour les moins importants */
     
     /* États */
     --danger: #ef4444;
@@ -41,393 +42,282 @@
 body {
     background: var(--bg-primary) !important;
     color: var(--text-secondary) !important;
+    line-height: 1.6 !important;
 }
 
-/* ===== HEADER ===== */
-.main-header {
+/* ===== NAVBAR - PLUS LISIBLE ===== */
+.navbar {
     background: var(--bg-secondary) !important;
     border-bottom: 2px solid var(--accent-primary) !important;
-    box-shadow: 0 2px 10px var(--accent-glow) !important;
+    box-shadow: 0 2px 15px rgba(0, 0, 0, 0.3) !important;
 }
 
-.logo-icon {
-    background: var(--accent-primary) !important;
-    box-shadow: 0 2px 15px var(--accent-glow) !important;
+.navbar-brand {
+    color: var(--text-primary) !important;
+    font-weight: 700 !important;
 }
 
-.logo span {
+.navbar-brand span {
     color: var(--accent-primary) !important;
 }
 
-.nav-menu a {
-    color: var(--text-muted) !important;
+.nav-link {
+    color: var(--text-secondary) !important;
+    font-weight: 500 !important;
+    transition: all 0.2s !important;
 }
 
-.nav-menu a:hover,
-.nav-menu a.active {
+.nav-link:hover,
+.nav-link.active {
     color: var(--accent-primary) !important;
+    background: rgba(139, 92, 246, 0.1) !important;
+    border-radius: 6px !important;
+}
+
+.navbar-toggler {
     background: var(--bg-tertiary) !important;
+    border: 1px solid var(--border-color) !important;
+}
+
+.navbar-toggler-icon {
+    filter: invert(1) !important;
 }
 
 /* ===== DROPDOWN ===== */
 .dropdown-menu {
     background: var(--bg-card) !important;
     border: 1px solid var(--border-color) !important;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.5) !important;
 }
 
-.dropdown-menu a {
+.dropdown-item {
     color: var(--text-secondary) !important;
+    transition: all 0.2s !important;
 }
 
-.dropdown-menu a:hover {
+.dropdown-item:hover {
     background: var(--bg-hover) !important;
     color: var(--accent-primary) !important;
+}
+
+.dropdown-divider {
+    border-top-color: var(--border-color) !important;
 }
 
 /* ===== CARDS ===== */
+.card,
 .post-card,
 .challenge-card,
 .submission-card,
-.form-container,
-.widget,
-.stat-card,
 .mini-card,
-.user-card,
-.ranking-card,
-.profile-banner,
-.pub-body,
-.auth-card,
-.cs-card,
-.sv-card,
-.xp-root {
+.user-card {
     background: var(--bg-card) !important;
     border: 1px solid var(--border-color) !important;
     box-shadow: var(--card-shadow) !important;
+    color: var(--text-secondary) !important;
 }
 
-.post-card:hover,
-.challenge-card:hover,
-.mini-card:hover {
-    border-color: var(--accent-primary) !important;
-    box-shadow: var(--card-shadow-hover) !important;
+.card-title,
+.post-title a,
+.challenge-title a {
+    color: var(--text-primary) !important;
+    font-weight: 700 !important;
 }
 
-/* ===== SIDEBAR ===== */
-.fb-sidebar-left,
-.sidebar-user-card,
-.sidebar-nav {
-    background: var(--bg-secondary) !important;
+.card-text,
+.post-description,
+.challenge-description {
+    color: var(--text-secondary) !important;
+    line-height: 1.7 !important;
 }
 
-.sidebar-user-card {
-    background: var(--bg-tertiary) !important;
+/* ===== BOUTONS ===== */
+.btn-outline-secondary {
+    color: var(--text-secondary) !important;
+    border-color: var(--border-color) !important;
 }
 
-.snav-item {
-    color: var(--text-muted) !important;
-}
-
-.snav-item:hover,
-.snav-item.active {
-    background: var(--bg-hover) !important;
-    color: var(--accent-primary) !important;
-}
-
-.snav-item i {
-    color: var(--accent-primary) !important;
-}
-
-/* ===== FEED ===== */
-.feed-sort-bar {
-    background: var(--bg-secondary) !important;
-    border: 1px solid var(--border-color) !important;
-}
-
-.sort-btn {
-    background: var(--bg-tertiary) !important;
-    color: var(--text-muted) !important;
-}
-
-.sort-btn.active {
+.btn-outline-secondary:hover {
     background: var(--accent-primary) !important;
+    border-color: var(--accent-primary) !important;
     color: white !important;
 }
 
-/* ===== POSTS ===== */
-.post-header {
-    border-bottom: 1px solid var(--border-color) !important;
-}
-
-.post-author-info strong {
-    color: var(--text-primary) !important;
-}
-
-.post-meta {
-    color: var(--text-dim) !important;
-}
-
-.post-title a {
-    color: var(--text-primary) !important;
-}
-
-.post-title a:hover {
-    color: var(--accent-primary) !important;
-}
-
-.post-description {
-    color: var(--text-secondary) !important;
-}
-
-.post-counts {
-    border-bottom: 1px solid var(--border-color) !important;
-}
-
-.post-counts span {
-    color: var(--text-muted) !important;
-}
-
-.post-counts span i.fa-thumbs-up {
-    color: var(--accent-primary) !important;
-}
-
-/* ===== BOUTONS D'ACTION ===== */
-.post-actions {
-    border-top: 1px solid var(--border-color) !important;
-}
-
-.action-btn {
-    color: var(--text-muted) !important;
-}
-
-.action-btn:hover {
-    background: var(--bg-hover) !important;
-    color: var(--accent-primary) !important;
-}
-
-.vote-btn.liked {
-    color: var(--accent-primary) !important;
-}
-
-.vote-btn.liked i {
-    color: var(--accent-primary) !important;
-}
-
-/* ===== COMMENTAIRES ===== */
-.post-comments {
-    background: var(--bg-secondary) !important;
-}
-
-.comment-bubble {
-    background: var(--bg-tertiary) !important;
-    border: 1px solid var(--border-color) !important;
-}
-
-.comment-bubble strong {
-    color: var(--text-primary) !important;
-}
-
-.comment-bubble p {
-    color: var(--text-secondary) !important;
-}
-
-.comment-input-wrap {
-    background: var(--bg-tertiary) !important;
-    border: 1px solid var(--border-color) !important;
-}
-
-.comment-input-wrap input {
-    color: var(--text-primary) !important;
-}
-
-.comment-input-wrap input::placeholder {
-    color: var(--text-dim) !important;
-}
-
-/* ===== WIDGETS ===== */
-.widget-title {
-    color: var(--text-primary) !important;
-}
-
-.top-challenge-item {
-    color: var(--text-secondary) !important;
-}
-
-.top-challenge-item:hover {
-    color: var(--accent-primary) !important;
-}
-
-.rank-number {
+.btn-primary {
     background: var(--accent-primary) !important;
+    border-color: var(--accent-primary) !important;
+    color: white !important;
 }
 
-.rank-likes {
-    color: var(--accent-primary) !important;
-}
-
-.widget-search,
-.widget-select {
-    background: var(--bg-tertiary) !important;
-    border: 1px solid var(--border-color) !important;
-    color: var(--text-primary) !important;
-}
-
-.widget-btn {
-    background: var(--accent-primary) !important;
+.btn-primary:hover {
+    background: var(--accent-secondary) !important;
+    border-color: var(--accent-secondary) !important;
+    transform: translateY(-2px) !important;
+    box-shadow: 0 5px 15px var(--accent-glow) !important;
 }
 
 /* ===== FORMULAIRES ===== */
-.form-group input,
-.form-group select,
-.form-group textarea,
-.search-box input,
-.filter-group input,
-.filter-group select {
+.form-control,
+.form-select {
     background: var(--bg-tertiary) !important;
     border: 1px solid var(--border-color) !important;
     color: var(--text-primary) !important;
 }
 
-.form-group input:focus,
-.form-group select:focus,
-.form-group textarea:focus {
+.form-control:focus,
+.form-select:focus {
+    background: var(--bg-tertiary) !important;
     border-color: var(--accent-primary) !important;
     box-shadow: 0 0 0 3px var(--accent-glow) !important;
-}
-
-.form-group label i {
-    color: var(--accent-primary) !important;
-}
-
-/* ===== BADGES ===== */
-.category-tag,
-.mini-badge {
-    background: rgba(139, 92, 246, 0.15) !important;
-    color: var(--accent-primary) !important;
-    border: 1px solid var(--accent-primary) !important;
-}
-
-/* ===== AVATARS ===== */
-.avatar-initials {
-    background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary)) !important;
-    color: white !important;
-}
-
-/* ===== STATS ===== */
-.stat-card {
-    background: var(--bg-tertiary) !important;
-}
-
-.stat-val {
     color: var(--text-primary) !important;
 }
 
-.stat-lbl {
+.form-control::placeholder {
+    color: var(--text-dim) !important;
+}
+
+.form-label {
+    color: var(--text-secondary) !important;
+    font-weight: 600 !important;
+}
+
+.form-text {
     color: var(--text-muted) !important;
 }
 
-.stat-icon {
-    background: rgba(139, 92, 246, 0.15) !important;
-    color: var(--accent-primary) !important;
-}
-
-/* ===== CLASSEMENT ===== */
-.ranking-table-header {
-    background: var(--bg-tertiary) !important;
-}
-
-.ranking-row {
-    background: var(--bg-card) !important;
-    border-bottom: 1px solid var(--border-color) !important;
-}
-
-.ranking-row:hover {
-    background: var(--bg-hover) !important;
-}
-
-.score-value {
-    color: var(--accent-primary) !important;
-}
-
-/* ===== PAGES AUTH ===== */
-.auth-container {
-    background: linear-gradient(135deg, #1a1a2e, #16213e) !important;
-}
-
-.auth-card {
-    background: var(--bg-card) !important;
-}
-
-.auth-header .logo {
-    color: var(--text-primary) !important;
-}
-
-/* ===== PROFIL ===== */
-.profile-banner {
-    background: linear-gradient(135deg, #2a1b3d, #1a1a2e) !important;
-}
-
-.pub-banner-bg {
-    background: linear-gradient(135deg, #2a1b3d, #1a1a2e) !important;
-}
-
-/* ===== FOOTER ===== */
-.main-footer {
-    background: var(--bg-secondary) !important;
-    border-top: 1px solid var(--border-color) !important;
-}
-
-.footer-section a {
-    color: var(--text-muted) !important;
-}
-
-.footer-section a:hover {
-    color: var(--accent-primary) !important;
-}
-
-/* ===== ALERTS ===== */
+/* ===== ALERTES ===== */
 .alert-success {
-    background: var(--success-light) !important;
+    background: #0a2f1f !important;
     color: #a7f3d0 !important;
+    border-color: #10b981 !important;
 }
 
 .alert-danger {
-    background: var(--danger-light) !important;
+    background: #3b0c0c !important;
     color: #fecaca !important;
+    border-color: #ef4444 !important;
 }
 
 .alert-warning {
-    background: var(--warning-light) !important;
+    background: #3b2e0c !important;
     color: #fde68a !important;
+    border-color: #f59e0b !important;
 }
 
-/* ===== MODALES ===== */
-.modal-overlay {
-    background: rgba(0, 0, 0, 0.8) !important;
+/* ===== TITRES ===== */
+h1, h2, h3, h4, h5, h6,
+.h1, .h2, .h3, .h4, .h5, .h6 {
+    color: var(--text-primary) !important;
 }
 
-.modal-box {
-    background: var(--bg-card) !important;
+/* ===== TEXTES ===== */
+.text-muted {
+    color: var(--text-muted) !important;
 }
 
-.modal-header {
-    border-bottom: 1px solid var(--border-color) !important;
+small, .small {
+    color: var(--text-dim) !important;
 }
 
-.modal-footer {
-    border-top: 1px solid var(--border-color) !important;
+/* ===== LIENS ===== */
+a {
+    color: var(--accent-primary) !important;
+    transition: all 0.2s !important;
 }
 
-/* ===== PAGINATION ===== */
-.pagination a,
-.pagination span {
+a:hover {
+    color: var(--accent-light) !important;
+    text-decoration: none !important;
+}
+
+/* ===== BADGES ===== */
+.badge {
     background: var(--bg-tertiary) !important;
     color: var(--text-secondary) !important;
     border: 1px solid var(--border-color) !important;
 }
 
-.pagination a:hover {
+.badge.bg-primary {
     background: var(--accent-primary) !important;
     color: white !important;
+}
+
+/* ===== TABLEAUX ===== */
+.table {
+    color: var(--text-secondary) !important;
+}
+
+.table thead th {
+    color: var(--text-primary) !important;
+    border-bottom-color: var(--border-color) !important;
+}
+
+.table td {
+    border-color: var(--border-color) !important;
+}
+
+/* ===== PAGINATION ===== */
+.pagination .page-link {
+    background: var(--bg-tertiary) !important;
+    border-color: var(--border-color) !important;
+    color: var(--text-secondary) !important;
+}
+
+.pagination .page-link:hover {
+    background: var(--accent-primary) !important;
+    color: white !important;
+}
+
+.pagination .active .page-link {
+    background: var(--accent-primary) !important;
+    border-color: var(--accent-primary) !important;
+    color: white !important;
+}
+
+/* ===== COMMENTAIRES ===== */
+.comment-bubble {
+    background: var(--bg-tertiary) !important;
+    border: 1px solid var(--border-color) !important;
+    color: var(--text-secondary) !important;
+}
+
+.comment-author {
+    color: var(--text-primary) !important;
+    font-weight: 700 !important;
+}
+
+.comment-date {
+    color: var(--text-dim) !important;
+}
+
+.comment-text {
+    color: var(--text-secondary) !important;
+}
+
+/* ===== MODALES ===== */
+.modal-content {
+    background: var(--bg-card) !important;
+    border: 1px solid var(--border-color) !important;
+}
+
+.modal-header {
+    border-bottom-color: var(--border-color) !important;
+}
+
+.modal-header .modal-title {
+    color: var(--text-primary) !important;
+}
+
+.modal-footer {
+    border-top-color: var(--border-color) !important;
+}
+
+.modal-close {
+    color: var(--text-muted) !important;
+}
+
+.modal-close:hover {
+    color: var(--text-primary) !important;
 }
 
 /* ===== SCROLLBAR ===== */
@@ -449,21 +339,184 @@ body {
     background: var(--accent-secondary);
 }
 
-/* ===== UTILITAIRES ===== */
-.text-primary { color: var(--text-primary) !important; }
-.text-secondary { color: var(--text-secondary) !important; }
-.text-muted { color: var(--text-muted) !important; }
-.text-accent { color: var(--accent-primary) !important; }
-
-.bg-card { background: var(--bg-card) !important; }
-.bg-secondary { background: var(--bg-secondary) !important; }
-
 /* ===== BOUTON THEME ===== */
 .theme-toggle {
     border-color: var(--accent-primary) !important;
     color: var(--accent-primary) !important;
+    background: transparent !important;
 }
 
 .theme-toggle:hover {
+    background: var(--accent-primary) !important;
+    color: white !important;
     box-shadow: 0 5px 15px var(--accent-glow) !important;
 }
+
+/* ===== CARDS SPÉCIFIQUES ===== */
+/* Post card */
+.post-header {
+    background: var(--bg-secondary) !important;
+    border-bottom: 1px solid var(--border-color) !important;
+}
+
+.post-author-info strong {
+    color: var(--text-primary) !important;
+}
+
+.post-meta {
+    color: var(--text-muted) !important;
+}
+
+.post-counts {
+    border-bottom: 1px solid var(--border-color) !important;
+    color: var(--text-muted) !important;
+}
+
+.post-actions {
+    border-top: 1px solid var(--border-color) !important;
+}
+
+/* Profil */
+.profile-banner {
+    background: linear-gradient(135deg, #2d1b3a, #1a1a2e) !important;
+    color: white !important;
+}
+
+.profile-info h1 {
+    color: white !important;
+}
+
+.profile-stats {
+    background: rgba(255, 255, 255, 0.15) !important;
+}
+
+/* Classement */
+.ranking-table-header {
+    background: var(--bg-secondary) !important;
+    color: var(--text-muted) !important;
+}
+
+.ranking-row {
+    background: var(--bg-card) !important;
+    border-bottom: 1px solid var(--border-color) !important;
+}
+
+.ranking-row:hover {
+    background: var(--bg-hover) !important;
+}
+
+.rank-badge {
+    background: var(--bg-tertiary) !important;
+    color: var(--text-primary) !important;
+}
+
+.rank-badge.gold {
+    background: #b8860b !important;
+    color: white !important;
+}
+
+.rank-badge.silver {
+    background: #808080 !important;
+    color: white !important;
+}
+
+.rank-badge.bronze {
+    background: #cd7f32 !important;
+    color: white !important;
+}
+
+.score-value {
+    color: var(--accent-primary) !important;
+    font-weight: 700 !important;
+}
+
+/* ===== UTILITAIRES ===== */
+.bg-primary { background: var(--accent-primary) !important; }
+.bg-secondary { background: var(--bg-secondary) !important; }
+.bg-success { background: var(--success) !important; }
+.bg-danger { background: var(--danger) !important; }
+.bg-warning { background: var(--warning) !important; }
+.bg-info { background: #2563eb !important; }
+
+.text-primary { color: var(--accent-primary) !important; }
+.text-white { color: white !important; }
+.text-dark { color: var(--text-primary) !important; }
+.text-muted { color: var(--text-muted) !important; }
+
+.border { border-color: var(--border-color) !important; }
+.border-top { border-top-color: var(--border-color) !important; }
+.border-bottom { border-bottom-color: var(--border-color) !important; 
+/* ===== NAVBAR - VERSION TRÈS VISIBLE ===== */
+.navbar {
+    background: #111111 !important;
+    border-bottom: 3px solid #8b5cf6 !important;
+    box-shadow: 0 4px 20px rgba(139, 92, 246, 0.3) !important;
+}
+
+.navbar-brand {
+    color: #ffffff !important;
+    font-size: 1.3rem !important;
+    font-weight: 800 !important;
+}
+
+.navbar-brand span {
+    color: #8b5cf6 !important;
+}
+
+.nav-link {
+    color: #e5e5e5 !important;
+    font-weight: 600 !important;
+    padding: 0.5rem 1rem !important;
+    margin: 0 0.2rem !important;
+    border-radius: 6px !important;
+    transition: all 0.3s !important;
+}
+
+.nav-link:hover,
+.nav-link.active {
+    color: #ffffff !important;
+    background: #8b5cf6 !important;
+    transform: translateY(-2px) !important;
+}
+
+/* Bouton thème */
+.theme-toggle {
+    background: #2a2a2a !important;
+    border: 2px solid #8b5cf6 !important;
+    color: #ffffff !important;
+    font-weight: 600 !important;
+    padding: 0.4rem 1rem !important;
+}
+
+.theme-toggle:hover {
+    background: #8b5cf6 !important;
+    color: #ffffff !important;
+    box-shadow: 0 0 15px #8b5cf6 !important;
+}
+
+/* Menu déroulant */
+.dropdown-menu {
+    background: #1a1a1a !important;
+    border: 1px solid #333 !important;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.5) !important;
+}
+
+.dropdown-item {
+    color: #e5e5e5 !important;
+    padding: 0.7rem 1.5rem !important;
+}
+
+.dropdown-item:hover {
+    background: #8b5cf6 !important;
+    color: #ffffff !important;
+}
+
+/* Toggler mobile */
+.navbar-toggler {
+    background: #2a2a2a !important;
+    border: 1px solid #8b5cf6 !important;
+}
+
+.navbar-toggler-icon {
+    filter: invert(1) brightness(100) !important;
+}}

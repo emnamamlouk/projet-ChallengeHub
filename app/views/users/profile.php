@@ -4,24 +4,16 @@ $active_page = "profile";
 
 require_once __DIR__ . '/../../models/Challenge.php';
 require_once __DIR__ . '/../../models/Submission.php';
-require_once __DIR__ . '/../../models/Vote.php';
 
 $challengeModel  = new Challenge();
 $submissionModel = new Submission();
-$voteModel       = new Vote();
 
 $userId          = $_SESSION['user_id'];
 $userChallenges  = $challengeModel->getChallengesByUser($userId);
 $userSubmissions = $submissionModel->getSubmissionsByUser($userId);
-$userVotes       = $voteModel->getUserVotes($userId);
 
 $totalChallenges  = count($userChallenges);
 $totalSubmissions = count($userSubmissions);
-$totalVotes       = count($userVotes);
-$votesReceived    = 0;
-foreach($userSubmissions as $sub) {
-    $votesReceived += $submissionModel->getVoteCount($sub['id']);
-}
 
 ob_start();
 ?>
@@ -62,7 +54,7 @@ ob_start();
                 </p>
             </div>
 
-            <!-- Boutons actions - AJOUT DU BOUTON CRÉER UN DÉFI -->
+            <!-- Boutons actions -->
             <div style="display:flex; gap:10px; margin-left:auto; flex-wrap:wrap;">
                 <a href="index.php?action=createChallengeForm" class="btn-edit-profile" style="background:rgba(255,255,255,0.25); border-color:rgba(255,255,255,0.7);">
                     <i class="fas fa-plus-circle"></i> Créer un défi
@@ -77,7 +69,7 @@ ob_start();
         </div>
     </div>
 
-    <!-- ===== STATS ===== -->
+    <!-- ===== STATS (seulement Défis + Participations) ===== -->
     <div class="stats-grid">
         <div class="stat-card">
             <div class="stat-icon purple"><i class="fas fa-tasks"></i></div>
@@ -89,16 +81,13 @@ ob_start();
         </div>
     </div>
 
-    <!-- ===== ONGLETS ===== -->
+    <!-- ===== ONGLETS (sans Mes votes) ===== -->
     <div class="profile-tabs">
         <button class="tab-btn active" onclick="switchTab('challenges', this)">
             <i class="fas fa-tasks"></i> Mes défis (<?= $totalChallenges ?>)
         </button>
         <button class="tab-btn" onclick="switchTab('submissions', this)">
             <i class="fas fa-paper-plane"></i> Mes participations (<?= $totalSubmissions ?>)
-        </button>
-        <button class="tab-btn" onclick="switchTab('votes', this)">
-            <i class="fas fa-thumbs-up"></i> Mes votes (<?= $totalVotes ?>)
         </button>
     </div>
 
@@ -178,31 +167,6 @@ ob_start();
         <?php endif; ?>
     </div>
 
-    <!-- TAB : Votes -->
-    <div id="tab-votes" class="tab-pane">
-        <?php if(empty($userVotes)): ?>
-            <div class="empty-state">
-                <i class="fas fa-thumbs-up fa-3x"></i>
-                <h3>Aucun vote donné</h3>
-                <p>Likez des participations !</p>
-                <a href="index.php?action=ranking" class="btn-primary-sm"><i class="fas fa-trophy"></i> Classement</a>
-            </div>
-        <?php else: ?>
-            <div class="votes-list">
-                <?php foreach($userVotes as $vote): ?>
-                    <div class="vote-row">
-                        <div class="vote-icon-wrap"><i class="fas fa-thumbs-up"></i></div>
-                        <div class="vote-text">
-                            Vote pour la participation de <strong><?= htmlspecialchars($vote['username'] ?? '?') ?></strong>
-                            au défi <em><?= htmlspecialchars($vote['challenge_title'] ?? '?') ?></em>
-                        </div>
-                        <div class="vote-date"><?= date('d/m/Y', strtotime($vote['created_at'])) ?></div>
-                    </div>
-                <?php endforeach; ?>
-            </div>
-        <?php endif; ?>
-    </div>
-
 </div>
 
 <!-- ===== MODAL : MODIFIER PROFIL ===== -->
@@ -214,25 +178,19 @@ ob_start();
         </div>
         <form action="index.php?action=updateProfile" method="POST" enctype="multipart/form-data" class="modal-form">
             <?= CSRF::field() ?>
-
             <div class="form-group">
                 <label><i class="fas fa-user"></i> Nom d'utilisateur</label>
-                <input type="text" name="username"
-                       value="<?= htmlspecialchars($userInfo['username']) ?>" required minlength="3">
+                <input type="text" name="username" value="<?= htmlspecialchars($userInfo['username']) ?>" required minlength="3">
             </div>
-
             <div class="form-group">
                 <label><i class="fas fa-quote-left"></i> Bio</label>
-                <textarea name="bio" rows="3"
-                          placeholder="Parlez-nous de vous..."><?= htmlspecialchars($userInfo['bio'] ?? '') ?></textarea>
+                <textarea name="bio" rows="3" placeholder="Parlez-nous de vous..."><?= htmlspecialchars($userInfo['bio'] ?? '') ?></textarea>
             </div>
-
             <div class="form-group">
                 <label><i class="fas fa-camera"></i> Photo de profil</label>
                 <div class="avatar-preview-row">
                     <?php if(!empty($userInfo['avatar'])): ?>
-                        <img src="public/<?= htmlspecialchars($userInfo['avatar']) ?>"
-                             class="current-avatar-preview" id="avatarPreview" alt="">
+                        <img src="public/<?= htmlspecialchars($userInfo['avatar']) ?>" class="current-avatar-preview" id="avatarPreview" alt="">
                     <?php else: ?>
                         <div class="current-avatar-placeholder" id="avatarPreview">
                             <?= strtoupper(substr($userInfo['username'], 0, 1)) ?>
@@ -247,7 +205,6 @@ ob_start();
                     </div>
                 </div>
             </div>
-
             <div class="modal-footer">
                 <button type="button" onclick="closeEditModal()" class="btn-cancel-modal">Annuler</button>
                 <button type="submit" class="btn-save-modal">
@@ -258,7 +215,7 @@ ob_start();
     </div>
 </div>
 
-<!-- ===== MODAL : SUPPRIMER DEFI ===== -->
+<!-- ===== MODAL : SUPPRIMER DÉFI ===== -->
 <div id="deleteChallengeModal" class="modal-overlay" onclick="if(event.target===this)this.style.display='none'">
     <div class="modal-box modal-small">
         <div class="modal-header danger">
@@ -294,24 +251,24 @@ ob_start();
     </div>
 </div>
 
-<!-- Modal suppression compte -->
+<!-- ===== MODAL : SUPPRIMER COMPTE ===== -->
 <div id="deleteAccountModal" class="modal-overlay" onclick="if(event.target===this)this.style.display='none'">
     <div class="modal-box">
-        <div style="text-align:center; margin-bottom:16px;">
+        <div style="text-align:center; margin-bottom:16px; padding:24px 24px 0;">
             <div style="width:60px;height:60px;background:#fee2e2;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 12px;font-size:1.6rem;color:#dc2626;">
                 <i class="fas fa-exclamation-triangle"></i>
             </div>
             <h3 style="color:#dc2626; margin:0 0 6px;">Supprimer mon compte</h3>
             <p style="color:#666; font-size:0.9rem; margin:0;">Cette action est <strong>irréversible</strong>. Tous vos défis, participations et commentaires seront supprimés.</p>
         </div>
-        <form action="index.php?action=deleteAccount" method="POST">
+        <form action="index.php?action=deleteAccount" method="POST" style="padding:0 24px 24px;">
             <?= CSRF::field() ?>
             <div style="margin-bottom:16px;">
                 <label style="display:block; font-weight:600; color:#333; margin-bottom:6px;">
                     <i class="fas fa-lock"></i> Confirmez avec votre mot de passe
                 </label>
                 <input type="password" name="password" placeholder="••••••••" required
-                    style="width:100%;padding:10px 14px;border:2px solid #e0e0e0;border-radius:10px;font-size:0.95rem;box-sizing:border-box;">
+                       style="width:100%;padding:10px 14px;border:2px solid #e0e0e0;border-radius:10px;font-size:0.95rem;box-sizing:border-box;">
             </div>
             <div style="display:flex; gap:10px; justify-content:flex-end;">
                 <button type="button" onclick="document.getElementById('deleteAccountModal').style.display='none'" class="btn-cancel-modal">Annuler</button>
@@ -347,12 +304,12 @@ ob_start();
 .empty-bio { opacity:0.5; font-style:italic; }
 .profile-since { font-size:0.82rem; opacity:0.7; }
 
-.btn-edit-profile { margin-left:auto; padding:12px 22px; background:rgba(255,255,255,0.18); border:2px solid rgba(255,255,255,0.5); color:white; border-radius:10px; cursor:pointer; font-weight:700; font-size:0.95rem; transition:all 0.3s; white-space:nowrap; }
+.btn-edit-profile { padding:12px 22px; background:rgba(255,255,255,0.18); border:2px solid rgba(255,255,255,0.5); color:white; border-radius:10px; cursor:pointer; font-weight:700; font-size:0.95rem; transition:all 0.3s; white-space:nowrap; text-decoration:none; display:inline-flex; align-items:center; gap:8px; }
 .btn-edit-profile:hover { background:white; color:#667eea; }
-.btn-delete-account { padding:12px 22px; background:rgba(220,38,38,0.15); border:2px solid rgba(255,100,100,0.5); color:white; border-radius:10px; cursor:pointer; font-weight:700; font-size:0.95rem; transition:all 0.3s; white-space:nowrap; }
-.btn-delete-account:hover { background:#dc2626; border-color:#dc2626; color:white; }
+.btn-delete-account { padding:12px 22px; background:rgba(220,38,38,0.15); border:2px solid rgba(255,100,100,0.5); color:white; border-radius:10px; cursor:pointer; font-weight:700; font-size:0.95rem; transition:all 0.3s; white-space:nowrap; display:inline-flex; align-items:center; gap:8px; }
+.btn-delete-account:hover { background:#dc2626; border-color:#dc2626; }
 
-/* STATS */
+/* STATS — 2 colonnes seulement */
 .stats-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:16px; margin-bottom:28px; }
 .stat-card { background:white; border-radius:14px; padding:18px 20px; display:flex; align-items:center; gap:16px; box-shadow:0 4px 16px rgba(0,0,0,0.06); transition:all 0.3s; }
 .stat-card:hover { transform:translateY(-4px); box-shadow:0 10px 25px rgba(0,0,0,0.1); }
@@ -363,11 +320,10 @@ ob_start();
 .stat-lbl { font-size:0.82rem; color:#888; }
 
 /* ONGLETS */
-.profile-tabs { display:flex; gap:8px; margin-bottom:20px; border-bottom:2px solid #e8e8e8; padding-bottom:0; }
+.profile-tabs { display:flex; gap:8px; margin-bottom:20px; border-bottom:2px solid #e8e8e8; }
 .tab-btn { padding:12px 22px; background:none; border:none; border-bottom:3px solid transparent; margin-bottom:-2px; color:#777; font-size:0.95rem; font-weight:600; cursor:pointer; transition:all 0.2s; display:flex; align-items:center; gap:8px; border-radius:8px 8px 0 0; }
 .tab-btn:hover { color:#667eea; background:#f5f5ff; }
 .tab-btn.active { color:#667eea; border-bottom-color:#667eea; background:#f0eeff; }
-
 .tab-pane { display:none; padding-top:20px; }
 .tab-pane.active { display:block; }
 
@@ -396,14 +352,6 @@ ob_start();
 .btn-sm.red { background:#fee2e2; color:#ef4444; }
 .btn-sm.red:hover { background:#fecaca; }
 
-/* VOTES */
-.votes-list { background:white; border-radius:14px; overflow:hidden; box-shadow:0 4px 16px rgba(0,0,0,0.06); }
-.vote-row { display:flex; align-items:center; gap:16px; padding:16px 20px; border-bottom:1px solid #f0f0f0; }
-.vote-row:last-child { border-bottom:none; }
-.vote-icon-wrap { width:38px; height:38px; background:#fee2e2; color:#ef4444; border-radius:50%; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
-.vote-text { flex:1; font-size:0.9rem; color:#444; }
-.vote-date { font-size:0.78rem; color:#aaa; white-space:nowrap; }
-
 /* EMPTY STATE */
 .empty-state { text-align:center; padding:50px 20px; background:#f9f9f9; border-radius:14px; border:2px dashed #e0e0e0; }
 .empty-state i { color:#ccc; margin-bottom:16px; display:block; }
@@ -429,8 +377,6 @@ ob_start();
 .form-group label i { color:#667eea; }
 .form-group input, .form-group textarea { width:100%; padding:11px 14px; border:2px solid #e8e8e8; border-radius:10px; font-size:0.93rem; font-family:inherit; transition:border-color 0.3s; resize:vertical; }
 .form-group input:focus, .form-group textarea:focus { outline:none; border-color:#667eea; }
-
-/* Upload avatar */
 .avatar-preview-row { display:flex; align-items:center; gap:16px; }
 .current-avatar-preview { width:70px; height:70px; border-radius:50%; object-fit:cover; border:3px solid #e8e8e8; }
 .current-avatar-placeholder { width:70px; height:70px; border-radius:50%; background:linear-gradient(135deg,#667eea,#764ba2); color:white; display:flex; align-items:center; justify-content:center; font-size:1.8rem; font-weight:800; }
@@ -439,7 +385,6 @@ ob_start();
 .upload-zone i { font-size:1.4rem; color:#bbb; display:block; margin-bottom:4px; }
 .upload-zone span { display:block; color:#667eea; font-weight:600; font-size:0.88rem; }
 .upload-zone small { color:#aaa; font-size:0.78rem; }
-
 .modal-footer { display:flex; justify-content:flex-end; gap:10px; padding:16px 24px; border-top:1px solid #f0f0f0; background:#fafafa; }
 .btn-cancel-modal { padding:10px 20px; background:#f0f0f0; border:none; border-radius:8px; color:#555; font-weight:600; cursor:pointer; transition:all 0.2s; }
 .btn-cancel-modal:hover { background:#e0e0e0; }
@@ -449,43 +394,28 @@ ob_start();
 .btn-danger-modal:hover { background:#dc2626; }
 
 @media(max-width:768px){
-    .stats-grid { grid-template-columns:repeat(2,1fr); }
+    .stats-grid { grid-template-columns:1fr 1fr; }
     .profile-header-content { flex-direction:column; text-align:center; }
     .btn-edit-profile { margin:0 auto; }
     .cards-grid { grid-template-columns:1fr; }
+    .profile-tabs { flex-wrap:wrap; }
 }
 </style>
 
 <script>
-// Onglets
 function switchTab(name, btn) {
     document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
     document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
     document.getElementById('tab-' + name).classList.add('active');
     btn.classList.add('active');
 }
-
-// Modal modifier profil
-function openDeleteAccountModal() {
-    document.getElementById('deleteAccountModal').style.display = 'flex';
-}
-function openEditModal() {
-    document.getElementById('editModal').classList.add('open');
-}
-function closeEditModal() {
-    document.getElementById('editModal').classList.remove('open');
-}
-
-// Bouton caméra ouvre aussi le modal
+function openDeleteAccountModal() { document.getElementById('deleteAccountModal').style.display = 'flex'; }
+function openEditModal() { document.getElementById('editModal').classList.add('open'); }
+function closeEditModal() { document.getElementById('editModal').classList.remove('open'); }
 function openAvatarModal() {
     openEditModal();
-    // Scroll jusqu'au champ avatar
-    setTimeout(() => {
-        document.getElementById('avatarInput').click();
-    }, 300);
+    setTimeout(() => { document.getElementById('avatarInput').click(); }, 300);
 }
-
-// Aperçu avatar avant upload
 function previewAvatar(input) {
     if (input.files && input.files[0]) {
         const reader = new FileReader();
@@ -496,14 +426,10 @@ function previewAvatar(input) {
         reader.readAsDataURL(input.files[0]);
     }
 }
-
-// Supprimer défi
 function deleteChallengeConfirm(id) {
     document.getElementById('deleteChallengeId').value = id;
     document.getElementById('deleteChallengeModal').style.display = 'flex';
 }
-
-// Supprimer participation
 function deleteSubmissionConfirm(id) {
     document.getElementById('deleteSubmissionId').value = id;
     document.getElementById('deleteSubmissionModal').style.display = 'flex';
@@ -511,7 +437,6 @@ function deleteSubmissionConfirm(id) {
 </script>
 
 <?php
-// LIGNES AJOUTÉES POUR AFFICHER LA NAVBAR ET LE FOOTER
 $content = ob_get_clean();
 require_once __DIR__ . '/../layouts/layout.php';
 ?>
