@@ -3,10 +3,10 @@ class Database {
     private static $instance = null;
     private $conn;
     
-    private $host = 'localhost';
-    private $db_name = 'challengehub';
-    private $username = 'root';
-    private $password = '';
+    private $host = 'sql213.infinityfree.com';
+    private $db_name = 'if0_41277969_user';
+    private $username = 'if0_41277969';
+    private $password = 'PkpgRvhHqhCo';
     
     private function __construct() {
         try {
