@@ -1,52 +1,117 @@
 <?php
-if(session_status() === PHP_SESSION_NONE) {
+// app/controllers/CommentController.php
+
+if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
-if(!class_exists('CSRF') && defined('ROOT_PATH')) require_once ROOT_PATH . '/app/helpers/CSRF.php';
+if (!class_exists('CSRF') && defined('ROOT_PATH')) {
+    require_once ROOT_PATH . '/app/helpers/CSRF.php';
+}
 
-require_once __DIR__ . '/../models/User.php';
+require_once __DIR__ . '/../models/Comment.php';
 
-class UserController {
-    
-    private $userModel;
-    
+class CommentController {
+
+    private $commentModel;
+
     public function __construct() {
-        $this->userModel = new User();
+        $this->commentModel = new Comment();
     }
-    
-    public function search() {
-        $search = $_GET['q'] ?? '';
-        $users = [];
-        
-        if(!empty($search)) {
-            $users = $this->userModel->searchUsers($search);
-        }
-        
-        require_once __DIR__ . '/../views/users/search.php';
-    }
-    
-    public function viewProfile() {
-        $userId = $_GET['id'] ?? 0;
-        
-        if(isset($_SESSION['user_id']) && $userId == $_SESSION['user_id']) {
-            header('Location: index.php?action=profile');
+
+    // Ajouter un commentaire (AJAX - retourne JSON)
+    public function add() {
+        header('Content-Type: application/json');
+
+        if (!isset($_SESSION['user_id'])) {
+            echo json_encode(['success' => false, 'redirect' => 'index.php?action=showLogin']);
             exit();
         }
-        
-        $user = $this->userModel->getUserById($userId);
-        
-        if(!$user) {
-            $_SESSION['error'] = "Utilisateur non trouvé";
-            header('Location: index.php');
+
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            echo json_encode(['success' => false, 'message' => 'Méthode invalide']);
             exit();
         }
-        
-        // Récupérer les défis de l'utilisateur
-        require_once __DIR__ . '/../models/Challenge.php';
-        $challengeModel = new Challenge();
-        $userChallenges = $challengeModel->getChallengesByUser($userId);
-        
-        require_once __DIR__ . '/../views/users/public_profile.php';
+
+        $submission_id = intval($_POST['submission_id'] ?? 0);
+        $content       = trim($_POST['content'] ?? '');
+        $parent_id     = isset($_POST['parent_id']) && $_POST['parent_id'] !== '' ? intval($_POST['parent_id']) : null;
+
+        if (empty($content)) {
+            echo json_encode(['success' => false, 'message' => 'Commentaire vide']);
+            exit();
+        }
+
+        if (strlen($content) > 500) {
+            echo json_encode(['success' => false, 'message' => 'Commentaire trop long (max 500 caractères)']);
+            exit();
+        }
+
+        $comment_id = $this->commentModel->addComment(
+            $_SESSION['user_id'],
+            $submission_id,
+            $content,
+            $parent_id
+        );
+
+        if ($comment_id) {
+            $total = $this->commentModel->countComments($submission_id);
+            echo json_encode([
+                'success'      => true,
+                'comment_id'   => $comment_id,
+                'username'     => $_SESSION['username'],
+                'content'      => htmlspecialchars($content),
+                'total'        => $total,
+                'is_reply'     => $parent_id !== null,
+                'parent_id'    => $parent_id,
+            ]);
+        } else {
+            echo json_encode(['success' => false, 'message' => 'Erreur lors de l\'ajout']);
+        }
+        exit();
+    }
+
+    // Supprimer un commentaire (AJAX - retourne JSON)
+    public function delete() {
+        header('Content-Type: application/json');
+
+        if (!isset($_SESSION['user_id'])) {
+            echo json_encode(['success' => false, 'message' => 'Non connecté']);
+            exit();
+        }
+
+        $comment_id    = intval($_POST['comment_id'] ?? 0);
+        $submission_id = intval($_POST['submission_id'] ?? 0);
+
+        $result = $this->commentModel->deleteComment($comment_id, $_SESSION['user_id']);
+
+        if ($result) {
+            $total = $this->commentModel->countComments($submission_id);
+            echo json_encode(['success' => true, 'total' => $total]);
+        } else {
+            echo json_encode(['success' => false, 'message' => 'Erreur ou non autorisé']);
+        }
+        exit();
+    }
+
+    // Récupérer les commentaires (AJAX - retourne JSON)
+    public function getComments() {
+        header('Content-Type: application/json');
+
+        $submission_id = intval($_GET['submission_id'] ?? 0);
+        $comments      = $this->commentModel->getCommentsBySubmission($submission_id);
+
+        echo json_encode(['success' => true, 'comments' => $comments]);
+        exit();
+    }
+
+    // Compter les commentaires (AJAX - retourne JSON)
+    public function countComments() {
+        header('Content-Type: application/json');
+
+        $submission_id = intval($_GET['submission_id'] ?? 0);
+        $total         = $this->commentModel->countComments($submission_id);
+
+        echo json_encode(['success' => true, 'total' => $total]);
+        exit();
     }
 }
-?>
