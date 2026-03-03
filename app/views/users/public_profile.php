@@ -8,733 +8,1101 @@ ob_start();
 $currentUserId = $_SESSION['user_id'] ?? null;
 ?>
 
-<!-- ══════════════════════════════════════════════════════
-     PUBLIC PROFILE
-══════════════════════════════════════════════════════ -->
-<div class="xp-root">
+<div class="profile-container">
 
-    <!-- BANNER -->
-    <div class="xp-banner">
-        <div class="xp-banner-gfx"></div>
-        <div class="xp-banner-inner">
-            <div class="xp-av-ring">
+    <!-- BANNIERE DU PROFIL -->
+    <div class="profile-banner">
+        <div class="banner-bg"></div>
+        <div class="banner-content">
+            <div class="profile-avatar">
                 <?php if(!empty($user['avatar'])): ?>
-                    <img src="public/<?= htmlspecialchars($user['avatar']) ?>" class="xp-av-img" alt="">
+                    <img src="public/<?= htmlspecialchars($user['avatar']) ?>" alt="Avatar" class="avatar-img">
                 <?php else: ?>
-                    <div class="xp-av-letter"><?= strtoupper(substr($user['username'],0,1)) ?></div>
+                    <div class="avatar-initials"><?= strtoupper(substr($user['username'], 0, 1)) ?></div>
                 <?php endif; ?>
             </div>
-            <div class="xp-banner-info">
-                <h1 class="xp-username"><?= htmlspecialchars($user['username']) ?></h1>
-                <p class="xp-since">Membre depuis <?= date('M Y', strtotime($user['created_at'])) ?></p>
+            <div class="profile-info">
+                <h1 class="profile-username"><?= htmlspecialchars($user['username']) ?></h1>
+                <p class="profile-member-since">Membre depuis <?= date('d/m/Y', strtotime($user['created_at'])) ?></p>
                 <?php if(!empty($user['bio'])): ?>
-                    <p class="xp-bio"><?= nl2br(htmlspecialchars($user['bio'])) ?></p>
+                    <p class="profile-bio"><?= nl2br(htmlspecialchars($user['bio'])) ?></p>
                 <?php endif; ?>
             </div>
-            <div class="xp-stats">
-                <div class="xp-stat">
-                    <span class="xp-stat-n"><?= count($userChallenges) ?></span>
-                    <span class="xp-stat-l">Défis créés</span>
+            <div class="profile-stats">
+                <div class="stat-item">
+                    <span class="stat-value"><?= count($userChallenges) ?></span>
+                    <span class="stat-label">Défis créés</span>
                 </div>
-                <div class="xp-stat-sep"></div>
-                <div class="xp-stat">
-                    <span class="xp-stat-n"><?= count($userSubmissions) ?></span>
-                    <span class="xp-stat-l">Participations</span>
+                <div class="stat-divider"></div>
+                <div class="stat-item">
+                    <span class="stat-value"><?= count($userSubmissions) ?></span>
+                    <span class="stat-label">Participations</span>
                 </div>
-                <div class="xp-stat-sep"></div>
-                <div class="xp-stat">
-                    <span class="xp-stat-n"><?= $totalVotesReceived ?></span>
-                    <span class="xp-stat-l">Votes reçus</span>
+                <div class="stat-divider"></div>
+                <div class="stat-item">
+                    <span class="stat-value"><?= $totalVotesReceived ?></span>
+                    <span class="stat-label">Votes reçus</span>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- TABS -->
-    <div class="xp-tabs" role="tablist">
-        <button class="xp-tab xp-tab--active" onclick="xpTab('defis',this)" role="tab">
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
-            Défis créés
-            <span class="xp-tab-pill"><?= count($userChallenges) ?></span>
+    <!-- TABS DE NAVIGATION -->
+    <div class="profile-tabs">
+        <button class="tab-btn active" onclick="showTab('challenges')">
+            <i class="fas fa-trophy"></i> Défis créés
+            <span class="tab-count"><?= count($userChallenges) ?></span>
         </button>
-        <button class="xp-tab" onclick="xpTab('participations',this)" role="tab">
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
-            Participations
-            <span class="xp-tab-pill"><?= count($userSubmissions) ?></span>
+        <button class="tab-btn" onclick="showTab('submissions')">
+            <i class="fas fa-paper-plane"></i> Participations
+            <span class="tab-count"><?= count($userSubmissions) ?></span>
         </button>
     </div>
 
-    <!-- ───────── TAB : DÉFIS ───────── -->
-    <div id="xp-panel-defis" class="xp-panel xp-panel--active">
+    <!-- CONTENU DES TABS -->
+    <div id="tab-challenges" class="tab-content active">
         <?php if(empty($userChallenges)): ?>
-            <div class="xp-empty">
-                <span class="xp-empty-ico">🏆</span>
+            <div class="empty-state">
+                <i class="fas fa-trophy"></i>
                 <p><?= htmlspecialchars($user['username']) ?> n'a pas encore créé de défi.</p>
             </div>
         <?php else: ?>
-            <div class="xp-ch-list">
-                <?php foreach($userChallenges as $ch): ?>
-                <a href="index.php?action=showChallenge&id=<?= $ch['id'] ?>" class="xp-ch-card">
-                    <?php if(!empty($ch['image'])): ?>
-                        <div class="xp-ch-thumb"><img src="public/<?= htmlspecialchars($ch['image']) ?>" alt=""></div>
-                    <?php else: ?>
-                        <div class="xp-ch-thumb xp-ch-thumb--empty">🏆</div>
-                    <?php endif; ?>
-                    <div class="xp-ch-body">
-                        <div class="xp-ch-toprow">
-                            <span class="xp-badge xp-badge--cat"><?= htmlspecialchars($ch['category']) ?></span>
-                            <span class="xp-ch-date"><?= date('d/m/Y', strtotime($ch['created_at'])) ?></span>
-                        </div>
-                        <h3 class="xp-ch-title"><?= htmlspecialchars($ch['title']) ?></h3>
-                        <p class="xp-ch-desc"><?= htmlspecialchars(mb_substr($ch['description'],0,120)) ?>…</p>
-                        <!-- Créateur clairement visible -->
-                        <div class="xp-ch-creator">
-                            <div class="xp-ch-creator-av">
-                                <?php if(!empty($user['avatar'])): ?>
-                                    <img src="public/<?= htmlspecialchars($user['avatar']) ?>" alt="">
-                                <?php else: ?>
-                                    <?= strtoupper(substr($user['username'],0,1)) ?>
-                                <?php endif; ?>
+            <div class="challenges-grid">
+                <?php foreach($userChallenges as $challenge): ?>
+                    <a href="index.php?action=showChallenge&id=<?= $challenge['id'] ?>" class="challenge-card">
+                        <div class="card-category"><?= htmlspecialchars($challenge['category']) ?></div>
+                        <?php if(!empty($challenge['image'])): ?>
+                            <div class="card-image">
+                                <img src="public/<?= htmlspecialchars($challenge['image']) ?>" alt="">
                             </div>
-                            <span>Publié par <strong><?= htmlspecialchars($user['username']) ?></strong></span>
-                            <span class="xp-ch-arrow">→</span>
+                        <?php else: ?>
+                            <div class="card-image-placeholder">
+                                <i class="fas fa-trophy"></i>
+                            </div>
+                        <?php endif; ?>
+                        <div class="card-body">
+                            <h3 class="card-title"><?= htmlspecialchars($challenge['title']) ?></h3>
+                            <p class="card-description"><?= htmlspecialchars(mb_substr($challenge['description'], 0, 100)) ?>...</p>
+                            <div class="card-footer">
+                                <span class="card-date">
+                                    <i class="fas fa-calendar"></i> <?= date('d/m/Y', strtotime($challenge['created_at'])) ?>
+                                </span>
+                                <span class="card-arrow">
+                                    <i class="fas fa-arrow-right"></i>
+                                </span>
+                            </div>
                         </div>
-                    </div>
-                </a>
+                    </a>
                 <?php endforeach; ?>
             </div>
         <?php endif; ?>
     </div>
 
-    <!-- ───────── TAB : PARTICIPATIONS ───────── -->
-    <div id="xp-panel-participations" class="xp-panel">
+    <div id="tab-submissions" class="tab-content">
         <?php if(empty($userSubmissions)): ?>
-            <div class="xp-empty">
-                <span class="xp-empty-ico">✈️</span>
-                <p><?= htmlspecialchars($user['username']) ?> n'a pas encore participé.</p>
+            <div class="empty-state">
+                <i class="fas fa-paper-plane"></i>
+                <p><?= htmlspecialchars($user['username']) ?> n'a pas encore participé à des défis.</p>
             </div>
         <?php else: ?>
-            <div class="xp-sub-feed">
-                <?php foreach($userSubmissions as $i => $sub):
-                    $sid     = $sub['id'];
-                    $voted   = $sub['user_voted'];
-                    $vcount  = (int)$sub['votes_count'];
-                    $ccount  = (int)$sub['comments_count'];
-                    $voters  = $sub['voters'];
-                    $comms   = $sub['comments'];
-                    $isOwn   = ($currentUserId == $sub['user_id']);
-                    $canVote = ($currentUserId && !$isOwn);
+            <div class="submissions-list">
+                <?php foreach($userSubmissions as $submission): 
+                    $subId = $submission['id'];
+                    $voteCount = $submission['votes_count'] ?? 0;
+                    $userVoted = $submission['user_voted'] ?? false;
+                    $canVote = $currentUserId && $currentUserId != $submission['user_id'];
                 ?>
-                <div class="xp-sub-card" id="sub-<?= $sid ?>">
-
-                    <!-- ── Header sub ── -->
-                    <div class="xp-sub-hd">
-                        <div class="xp-sub-hd-left">
-                            <!-- Avatar auteur -->
-                            <?php if(!empty($user['avatar'])): ?>
-                                <img src="public/<?= htmlspecialchars($user['avatar']) ?>" class="xp-sub-av" alt="">
-                            <?php else: ?>
-                                <div class="xp-sub-av xp-sub-av--letter"><?= strtoupper(substr($user['username'],0,1)) ?></div>
-                            <?php endif; ?>
-                            <div class="xp-sub-hd-text">
-                                <span class="xp-sub-author"><?= htmlspecialchars($user['username']) ?></span>
-                                <span class="xp-sub-ts"><?= date('d/m/Y à H:i', strtotime($sub['created_at'])) ?></span>
-                            </div>
-                        </div>
-                        <!-- Tag défi parachuté — très visible -->
-                        <a href="index.php?action=showChallenge&id=<?= $sub['challenge_id'] ?>" class="xp-defi-tag" title="Voir le défi">
-                            <span class="xp-defi-tag-icon">🏆</span>
-                            <span class="xp-defi-tag-text"><?= htmlspecialchars($sub['challenge_title']) ?></span>
-                        </a>
-                    </div>
-
-                    <!-- ── Image ── -->
-                    <?php if(!empty($sub['image'])): ?>
-                    <div class="xp-sub-img-wrap">
-                        <img src="public/<?= htmlspecialchars($sub['image']) ?>" class="xp-sub-img" alt="">
-                    </div>
-                    <?php endif; ?>
-
-                    <!-- ── Corps ── -->
-                    <div class="xp-sub-body">
-                        <p class="xp-sub-desc"><?= nl2br(htmlspecialchars(mb_substr($sub['description'],0,250))) ?><?= mb_strlen($sub['description'])>250?'…':'' ?></p>
-                        <?php if(!empty($sub['link'])): ?>
-                        <a href="<?= htmlspecialchars($sub['link']) ?>" target="_blank" rel="noopener" class="xp-sub-extlink">
-                            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
-                            Voir le projet
-                        </a>
-                        <?php endif; ?>
-                    </div>
-
-                    <!-- ── Barre d'actions ── -->
-                    <div class="xp-actions">
-                        <!-- VOTE — une seule fois -->
-                        <?php if($canVote): ?>
-                            <button class="xp-vote-btn<?= $voted?' xp-vote-btn--on':'' ?>"
-                                    id="vbtn-<?= $sid ?>"
-                                    data-sid="<?= $sid ?>"
-                                    onclick="xpVote(this)"
-                                    <?= $voted?'disabled title="Vous avez déjà voté"':'' ?>>
-                                <svg width="15" height="15" viewBox="0 0 24 24"
-                                     fill="<?= $voted?'currentColor':'none' ?>"
-                                     stroke="currentColor" stroke-width="2">
-                                    <path d="M14 9V5a3 3 0 00-3-3l-4 9v11h11.28a2 2 0 002-1.7l1.38-9a2 2 0 00-2-2.3H14z"/>
-                                    <path d="M7 22H4a2 2 0 01-2-2v-7a2 2 0 012-2h3"/>
-                                </svg>
-                                <span id="vcnt-<?= $sid ?>"><?= $vcount ?></span>
-                                <span class="xp-vote-lbl"><?= $voted?'Voté ✓':'Voter' ?></span>
-                            </button>
-                        <?php elseif($isOwn): ?>
-                            <div class="xp-vote-display">
-                                <svg width="15" height="15" viewBox="0 0 24 24" fill="#6366f1" stroke="none"><path d="M14 9V5a3 3 0 00-3-3l-4 9v11h11.28a2 2 0 002-1.7l1.38-9a2 2 0 00-2-2.3H14z"/></svg>
-                                <span id="vcnt-<?= $sid ?>"><?= $vcount ?></span> vote<?= $vcount!=1?'s':'' ?>
-                            </div>
-                        <?php else: ?>
-                            <div class="xp-vote-display xp-vote-display--muted">
-                                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 9V5a3 3 0 00-3-3l-4 9v11h11.28a2 2 0 002-1.7l1.38-9a2 2 0 00-2-2.3H14z"/><path d="M7 22H4a2 2 0 01-2-2v-7a2 2 0 012-2h3"/></svg>
-                                <span id="vcnt-<?= $sid ?>"><?= $vcount ?></span> vote<?= $vcount!=1?'s':'' ?>
-                                <a href="index.php?action=showLogin" class="xp-login-hint">Connectez-vous pour voter</a>
-                            </div>
-                        <?php endif; ?>
-
-                        <!-- QUI A VOTÉ -->
-                        <button class="xp-action-btn" onclick="xpToggle('voters-<?= $sid ?>')">
-                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
-                            <span id="vcnt2-<?= $sid ?>"><?= count($voters) ?></span> votant<?= count($voters)!=1?'s':'' ?>
-                        </button>
-
-                        <!-- COMMENTAIRES -->
-                        <button class="xp-action-btn" onclick="xpToggle('comments-<?= $sid ?>')">
-                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
-                            <span id="ccnt-<?= $sid ?>"><?= $ccount ?></span> commentaire<?= $ccount!=1?'s':'' ?>
-                        </button>
-
-                        <!-- VOIR COMPLET -->
-                        <a href="index.php?action=showSubmission&id=<?= $sid ?>" class="xp-voir-link">
-                            Voir tout →
-                        </a>
-                    </div>
-
-                    <!-- ── Panel : QUI A VOTÉ ── -->
-                    <div class="xp-panel-sub" id="voters-<?= $sid ?>" style="display:none">
-                        <div class="xp-panel-sub-title">
-                            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M14 9V5a3 3 0 00-3-3l-4 9v11h11.28a2 2 0 002-1.7l1.38-9a2 2 0 00-2-2.3H14z"/></svg>
-                            Personnes qui ont voté
-                        </div>
-                        <div class="xp-voters-wrap" id="voters-list-<?= $sid ?>">
-                            <?php if(empty($voters)): ?>
-                                <p class="xp-panel-empty">Aucun vote pour l'instant</p>
-                            <?php else: ?>
-                                <?php foreach($voters as $v): ?>
-                                <a href="index.php?action=viewProfile&id=<?= $v['id'] ?>" class="xp-voter-chip" data-uid="<?= $v['id'] ?>">
-                                    <?php if(!empty($v['avatar'])): ?>
-                                        <img src="public/<?= htmlspecialchars($v['avatar']) ?>" class="xp-voter-thumb" alt="">
+                    <div class="submission-card" id="submission-<?= $subId ?>">
+                        <!-- En-tête avec l'auteur et le lien vers le défi -->
+                        <div class="submission-header">
+                            <div class="submission-author">
+                                <div class="author-avatar">
+                                    <?php if(!empty($user['avatar'])): ?>
+                                        <img src="public/<?= htmlspecialchars($user['avatar']) ?>" alt="">
                                     <?php else: ?>
-                                        <div class="xp-voter-thumb xp-voter-thumb--letter"><?= strtoupper(substr($v['username'],0,1)) ?></div>
+                                        <div class="avatar-small"><?= strtoupper(substr($user['username'], 0, 1)) ?></div>
                                     <?php endif; ?>
-                                    <span><?= htmlspecialchars($v['username']) ?></span>
-                                </a>
-                                <?php endforeach; ?>
-                            <?php endif; ?>
-                        </div>
-                    </div>
-
-                    <!-- ── Panel : COMMENTAIRES ── -->
-                    <div class="xp-panel-sub xp-panel-sub--comments" id="comments-<?= $sid ?>" style="display:none">
-                        <div class="xp-panel-sub-title">
-                            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
-                            Commentaires
-                        </div>
-                        <!-- Formulaire (si connecté) -->
-                        <?php if($currentUserId): ?>
-                        <div class="xp-cf">
-                            <div class="xp-cf-av"><?= strtoupper(substr($_SESSION['username'],0,1)) ?></div>
-                            <div class="xp-cf-right">
-                                <textarea id="ctxt-<?= $sid ?>" class="xp-cf-txt" placeholder="Écrire un commentaire…" rows="2"
-                                          onkeydown="if(event.ctrlKey&&event.key==='Enter')xpComment(<?= $sid ?>)"></textarea>
-                                <div class="xp-cf-footer">
-                                    <span class="xp-cf-hint">Ctrl+Entrée pour envoyer</span>
-                                    <button onclick="xpComment(<?= $sid ?>)" class="xp-cf-send" id="csend-<?= $sid ?>">
-                                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
-                                        Envoyer
-                                    </button>
+                                </div>
+                                <div class="author-info">
+                                    <span class="author-name"><?= htmlspecialchars($user['username']) ?></span>
+                                    <span class="submission-date">
+                                        <i class="fas fa-clock"></i> <?= date('d/m/Y à H:i', strtotime($submission['created_at'])) ?>
+                                    </span>
                                 </div>
                             </div>
+                            <a href="index.php?action=showChallenge&id=<?= $submission['challenge_id'] ?>" class="challenge-link">
+                                <i class="fas fa-trophy"></i>
+                                <span><?= htmlspecialchars($submission['challenge_title']) ?></span>
+                            </a>
                         </div>
-                        <?php else: ?>
-                        <p class="xp-login-cta"><a href="index.php?action=showLogin">Connectez-vous</a> pour commenter.</p>
-                        <?php endif; ?>
 
-                        <!-- Liste commentaires -->
-                        <div class="xp-comm-list" id="clist-<?= $sid ?>">
-                            <?php if(empty($comms)): ?>
-                                <p class="xp-panel-empty">Aucun commentaire</p>
-                            <?php else: ?>
-                                <?php foreach($comms as $cm): ?>
-                                <div class="xp-comm-item">
-                                    <div class="xp-comm-av">
-                                        <?php if(!empty($cm['avatar'])): ?>
-                                            <img src="public/<?= htmlspecialchars($cm['avatar']) ?>" alt="">
-                                        <?php else: ?>
-                                            <?= strtoupper(substr($cm['username'],0,1)) ?>
-                                        <?php endif; ?>
-                                    </div>
-                                    <div class="xp-comm-bubble">
-                                        <div class="xp-comm-meta">
-                                            <strong><?= htmlspecialchars($cm['username']) ?></strong>
-                                            <span><?= date('d/m/Y H:i', strtotime($cm['created_at'])) ?></span>
-                                        </div>
-                                        <p><?= nl2br(htmlspecialchars($cm['content'])) ?></p>
-                                    </div>
+                        <!-- Contenu de la participation -->
+                        <div class="submission-content">
+                            <?php if(!empty($submission['image'])): ?>
+                                <div class="submission-image">
+                                    <img src="public/<?= htmlspecialchars($submission['image']) ?>" alt="">
                                 </div>
-                                <?php endforeach; ?>
+                            <?php endif; ?>
+                            
+                            <div class="submission-description">
+                                <p><?= nl2br(htmlspecialchars($submission['description'])) ?></p>
+                                
+                                <?php if(!empty($submission['link'])): ?>
+                                    <a href="<?= htmlspecialchars($submission['link']) ?>" target="_blank" class="submission-link">
+                                        <i class="fas fa-external-link-alt"></i> Voir le projet
+                                    </a>
+                                <?php endif; ?>
+                            </div>
+                        </div>
+
+                        <!-- Actions et statistiques -->
+                        <div class="submission-actions">
+                            <div class="actions-left">
+                                <!-- Bouton de vote -->
+                                <?php if($canVote): ?>
+                                    <button class="vote-btn <?= $userVoted ? 'voted' : '' ?>" 
+                                            onclick="voteSubmission(<?= $subId ?>, this)"
+                                            data-id="<?= $subId ?>">
+                                        <i class="fas fa-thumbs-up"></i>
+                                        <span class="vote-count"><?= $voteCount ?></span>
+                                        <span class="vote-label"><?= $userVoted ? 'Voté' : 'Voter' ?></span>
+                                    </button>
+                                <?php else: ?>
+                                    <div class="vote-display">
+                                        <i class="fas fa-thumbs-up"></i>
+                                        <span><?= $voteCount ?></span>
+                                    </div>
+                                <?php endif; ?>
+
+                                <!-- Bouton commentaires -->
+                                <button class="comments-toggle" onclick="toggleComments(<?= $subId ?>)">
+                                    <i class="fas fa-comment"></i>
+                                    <span class="comments-count"><?= $submission['comments_count'] ?? 0 ?></span>
+                                    <span>Commentaires</span>
+                                </button>
+                            </div>
+
+                            <!-- Lien vers la participation complète -->
+                            <a href="index.php?action=showSubmission&id=<?= $subId ?>" class="view-link">
+                                Voir en détail <i class="fas fa-arrow-right"></i>
+                            </a>
+                        </div>
+
+                        <!-- Section commentaires (cachée par défaut) -->
+                        <div class="comments-section" id="comments-<?= $subId ?>" style="display: none;">
+                            <div class="comments-list" id="comments-list-<?= $subId ?>">
+                                <!-- Les commentaires seront chargés dynamiquement -->
+                            </div>
+                            
+                            <?php if($currentUserId): ?>
+                            <div class="comment-form-wrapper">
+                                <div class="comment-avatar-mini">
+                                    <?= strtoupper(substr($_SESSION['username'], 0, 1)) ?>
+                                </div>
+                                <form class="comment-form" onsubmit="addComment(event, <?= $subId ?>)">
+                                    <input type="text" id="comment-input-<?= $subId ?>" 
+                                           placeholder="Écrire un commentaire..." required>
+                                    <button type="submit">
+                                        <i class="fas fa-paper-plane"></i>
+                                    </button>
+                                </form>
+                            </div>
                             <?php endif; ?>
                         </div>
                     </div>
-
-                </div>
                 <?php endforeach; ?>
             </div>
         <?php endif; ?>
     </div>
 
-</div><!-- /.xp-root -->
+</div>
 
-<!-- ══════════════════════════════════════════
-     STYLES
-══════════════════════════════════════════ -->
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
-.xp-root * { font-family: 'Inter', system-ui, sans-serif; box-sizing: border-box; }
-
-/* ─── Tokens ─── */
+/* ===== VARIABLES ===== */
 :root {
-  --xp-indigo: #6366f1;
-  --xp-violet: #8b5cf6;
-  --xp-red:    #f43f5e;
-  --xp-amber:  #f59e0b;
-  --xp-ink:    #111827;
-  --xp-sub:    #4b5563;
-  --xp-faint:  #9ca3af;
-  --xp-line:   #e5e7eb;
-  --xp-bg:     #f9fafb;
-  --xp-white:  #fff;
-  --xp-r:      16px;
-  --xp-sh:     0 1px 14px rgba(0,0,0,.06);
-  --xp-sh-md:  0 4px 28px rgba(0,0,0,.10);
+    --primary: #6366f1;
+    --primary-dark: #4f52e0;
+    --primary-light: #e0e7ff;
+    --secondary: #8b5cf6;
+    --success: #10b981;
+    --danger: #ef4444;
+    --warning: #f59e0b;
+    --dark: #1f2937;
+    --light: #f9fafb;
+    --gray: #6b7280;
+    --border: #e5e7eb;
 }
 
-.xp-root { max-width: 820px; margin: 0 auto; }
+/* ===== CONTAINER PRINCIPAL ===== */
+.profile-container {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 20px;
+}
 
-/* ─── BANNER ─── */
-.xp-banner { position: relative; border-radius: 22px; overflow: hidden; margin-bottom: 18px; box-shadow: var(--xp-sh-md); }
-.xp-banner-gfx { position: absolute; inset: 0; background: linear-gradient(135deg,#1e1b4b 0%,#312e81 35%,#4c1d95 65%,#6d28d9 100%); }
-.xp-banner-gfx::before { content:''; position:absolute; inset:0;
-  background:
-    radial-gradient(circle at 20% 50%, rgba(99,102,241,.35) 0%, transparent 50%),
-    radial-gradient(circle at 80% 30%, rgba(139,92,246,.25) 0%, transparent 45%); }
-.xp-banner-gfx::after { content:''; position:absolute; inset:0;
-  background:url("data:image/svg+xml,%3Csvg width='120' height='120' viewBox='0 0 120 120' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle cx='60' cy='60' r='50' fill='none' stroke='%23fff' stroke-opacity='0.04' stroke-width='1'/%3E%3C/svg%3E") repeat; }
+/* ===== BANNIERE ===== */
+.profile-banner {
+    position: relative;
+    border-radius: 16px;
+    overflow: hidden;
+    margin-bottom: 25px;
+    box-shadow: 0 10px 25px rgba(99, 102, 241, 0.2);
+}
 
-.xp-banner-inner { position:relative; display:flex; align-items:center; gap:24px; padding:34px 38px; flex-wrap:wrap; }
+.banner-bg {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, var(--primary), var(--secondary));
+    z-index: 1;
+}
 
-.xp-av-ring { flex-shrink:0; width:100px; height:100px; border-radius:50%;
-  background:linear-gradient(135deg,rgba(255,255,255,.3),rgba(255,255,255,.1));
-  padding:3px; box-shadow:0 0 0 3px rgba(255,255,255,.2); }
-.xp-av-img  { width:100%; height:100%; border-radius:50%; object-fit:cover; display:block; }
-.xp-av-letter { width:100%; height:100%; border-radius:50%; background:rgba(255,255,255,.15);
-  display:flex; align-items:center; justify-content:center;
-  font-size:2.5rem; font-weight:900; color:#fff; }
+.banner-content {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    gap: 30px;
+    padding: 35px 30px;
+    color: white;
+    flex-wrap: wrap;
+    backdrop-filter: blur(5px);
+    background: rgba(0, 0, 0, 0.1);
+}
 
-.xp-banner-info { flex:1; color:#fff; min-width:180px; }
-.xp-username { font-size:1.9rem; font-weight:900; margin:0 0 5px; letter-spacing:-.5px; }
-.xp-since    { font-size:.8rem; opacity:.65; margin:0 0 8px; }
-.xp-bio      { font-size:.9rem; opacity:.85; margin:0; line-height:1.5; max-width:380px; }
+.profile-avatar {
+    flex-shrink: 0;
+}
 
-.xp-stats { display:flex; align-items:center; gap:0; background:rgba(255,255,255,.12);
-  backdrop-filter:blur(16px); border:1px solid rgba(255,255,255,.2); border-radius:16px;
-  overflow:hidden; margin-left:auto; }
-.xp-stat { padding:18px 26px; text-align:center; color:#fff; }
-.xp-stat-n { display:block; font-size:1.9rem; font-weight:900; line-height:1; }
-.xp-stat-l { display:block; font-size:.68rem; opacity:.75; margin-top:4px; text-transform:uppercase; letter-spacing:.5px; }
-.xp-stat-sep { width:1px; background:rgba(255,255,255,.18); align-self:stretch; }
+.avatar-img {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    border: 4px solid rgba(255, 255, 255, 0.3);
+    object-fit: cover;
+}
 
-/* ─── TABS ─── */
-.xp-tabs { display:flex; gap:5px; background:var(--xp-white); border-radius:14px;
-  padding:5px; box-shadow:var(--xp-sh); border:1px solid var(--xp-line); margin-bottom:18px; }
-.xp-tab { flex:1; display:flex; align-items:center; justify-content:center; gap:7px;
-  padding:11px 18px; border:none; background:none; cursor:pointer; font-size:.88rem;
-  font-weight:600; color:var(--xp-faint); border-radius:10px; transition:all .2s; }
-.xp-tab:hover { background:var(--xp-bg); color:var(--xp-sub); }
-.xp-tab--active { background:linear-gradient(135deg,var(--xp-indigo),var(--xp-violet));
-  color:#fff !important; box-shadow:0 4px 18px rgba(99,102,241,.38); }
-.xp-tab-pill { background:rgba(0,0,0,.12); color:inherit; font-size:.7rem; font-weight:700;
-  padding:2px 8px; border-radius:20px; }
-.xp-tab--active .xp-tab-pill { background:rgba(255,255,255,.25); }
+.avatar-initials {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.2);
+    border: 4px solid rgba(255, 255, 255, 0.3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: white;
+}
 
-/* ─── PANELS ─── */
-.xp-panel { display:none; }
-.xp-panel--active { display:block; }
+.profile-info {
+    flex: 1;
+}
 
-/* ─── EMPTY ─── */
-.xp-empty { text-align:center; padding:56px 20px; color:var(--xp-faint);
-  background:var(--xp-white); border-radius:var(--xp-r); border:1px solid var(--xp-line); }
-.xp-empty-ico { display:block; font-size:2.8rem; margin-bottom:12px; }
+.profile-username {
+    font-size: 2rem;
+    font-weight: 800;
+    margin-bottom: 5px;
+}
 
-/* ─── BADGE ─── */
-.xp-badge { display:inline-block; padding:3px 10px; border-radius:20px; font-size:.7rem; font-weight:700; text-transform:uppercase; letter-spacing:.5px; }
-.xp-badge--cat { background:#ede9fe; color:var(--xp-indigo); }
+.profile-member-since {
+    font-size: 0.9rem;
+    opacity: 0.9;
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
 
-/* ══════════════════════════════════
-   DÉFIS
-══════════════════════════════════ */
-.xp-ch-list { display:flex; flex-direction:column; gap:12px; }
-.xp-ch-card { display:flex; background:var(--xp-white); border-radius:var(--xp-r);
-  border:2px solid var(--xp-line); overflow:hidden; text-decoration:none; color:inherit;
-  transition:all .25s; }
-.xp-ch-card:hover { border-color:#a5b4fc; transform:translateY(-2px); box-shadow:var(--xp-sh-md); }
+.profile-bio {
+    font-size: 0.95rem;
+    opacity: 0.95;
+    line-height: 1.6;
+    max-width: 400px;
+}
 
-.xp-ch-thumb { width:160px; flex-shrink:0; overflow:hidden; }
-.xp-ch-thumb img { width:100%; height:100%; object-fit:cover; transition:transform .35s; display:block; }
-.xp-ch-card:hover .xp-ch-thumb img { transform:scale(1.06); }
-.xp-ch-thumb--empty { background:linear-gradient(135deg,#ede9fe,#e0e7ff);
-  display:flex; align-items:center; justify-content:center; font-size:2.5rem; }
+.profile-stats {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    background: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(10px);
+    border-radius: 12px;
+    padding: 15px 25px;
+}
 
-.xp-ch-body { flex:1; padding:18px 22px; display:flex; flex-direction:column; gap:6px; }
-.xp-ch-toprow { display:flex; align-items:center; justify-content:space-between; }
-.xp-ch-date { font-size:.74rem; color:var(--xp-faint); }
-.xp-ch-title { font-size:1rem; font-weight:800; color:var(--xp-ink); margin:0; line-height:1.3; overflow-wrap:break-word; }
-.xp-ch-desc  { font-size:.83rem; color:var(--xp-sub); line-height:1.55; margin:0; flex:1; overflow-wrap:break-word; }
+.stat-item {
+    text-align: center;
+}
 
-.xp-ch-creator { display:flex; align-items:center; gap:8px; margin-top:auto; padding-top:10px;
-  border-top:1px solid var(--xp-line); font-size:.8rem; color:var(--xp-sub); }
-.xp-ch-creator-av { width:26px; height:26px; border-radius:50%; overflow:hidden;
-  background:linear-gradient(135deg,var(--xp-indigo),var(--xp-violet));
-  color:#fff; display:flex; align-items:center; justify-content:center; font-size:.7rem; font-weight:800; flex-shrink:0; }
-.xp-ch-creator-av img { width:100%; height:100%; object-fit:cover; }
-.xp-ch-arrow { margin-left:auto; color:#a5b4fc; font-size:1rem; transition:transform .2s; }
-.xp-ch-card:hover .xp-ch-arrow { transform:translateX(4px); color:var(--xp-indigo); }
+.stat-value {
+    display: block;
+    font-size: 1.8rem;
+    font-weight: 800;
+    line-height: 1;
+}
 
-/* ══════════════════════════════════
-   PARTICIPATIONS FEED
-══════════════════════════════════ */
-.xp-sub-feed { display:flex; flex-direction:column; gap:18px; }
-.xp-sub-card { background:var(--xp-white); border-radius:var(--xp-r);
-  border:2px solid var(--xp-line); overflow:hidden;
-  transition:border-color .2s, box-shadow .2s; }
-.xp-sub-card:hover { border-color:#c4b5fd; box-shadow:var(--xp-sh); }
+.stat-label {
+    display: block;
+    font-size: 0.75rem;
+    opacity: 0.8;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
 
-/* Header */
-.xp-sub-hd { display:flex; align-items:center; justify-content:space-between;
-  padding:13px 16px; background:var(--xp-bg); border-bottom:1px solid var(--xp-line); flex-wrap:wrap; gap:10px; }
-.xp-sub-hd-left { display:flex; align-items:center; gap:10px; }
-.xp-sub-av { width:38px; height:38px; border-radius:50%; object-fit:cover; flex-shrink:0; }
-.xp-sub-av--letter { background:linear-gradient(135deg,var(--xp-indigo),var(--xp-violet));
-  color:#fff; display:flex; align-items:center; justify-content:center; font-weight:800; font-size:.9rem; }
-.xp-sub-author { display:block; font-size:.88rem; font-weight:700; color:var(--xp-ink); }
-.xp-sub-ts     { display:block; font-size:.72rem; color:var(--xp-faint); }
+.stat-divider {
+    width: 1px;
+    height: 40px;
+    background: rgba(255, 255, 255, 0.3);
+}
 
-/* Tag défi — bien parachuté et visible */
-.xp-defi-tag { display:inline-flex; align-items:center; gap:7px; max-width:260px;
-  padding:7px 14px; border-radius:30px; text-decoration:none; transition:all .2s;
-  background:linear-gradient(135deg,#fef3c7,#fde68a); border:1.5px solid #fbbf24;
-  font-size:.79rem; font-weight:700; color:#78350f;
-  overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
-.xp-defi-tag:hover { background:linear-gradient(135deg,#fde68a,#f59e0b); transform:translateY(-1px); box-shadow:0 4px 12px rgba(245,158,11,.3); }
-.xp-defi-tag-icon { flex-shrink:0; }
-.xp-defi-tag-text { overflow:hidden; text-overflow:ellipsis; }
+/* ===== TABS ===== */
+.profile-tabs {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 25px;
+    border-bottom: 2px solid var(--border);
+    padding-bottom: 0;
+}
 
-/* Image */
-.xp-sub-img-wrap { border-top:1px solid var(--xp-line); }
-.xp-sub-img { width:100%; max-height:400px; object-fit:cover; display:block; }
+.tab-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 24px;
+    background: none;
+    border: none;
+    border-bottom: 3px solid transparent;
+    margin-bottom: -2px;
+    color: var(--gray);
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+}
 
-/* Corps */
-.xp-sub-body { padding:15px 17px; }
-.xp-sub-desc { font-size:.92rem; color:var(--xp-sub); line-height:1.7; margin:0 0 10px; overflow-wrap:break-word; word-break:break-word; }
-.xp-sub-extlink { display:inline-flex; align-items:center; gap:6px;
-  color:var(--xp-indigo); font-size:.82rem; font-weight:600; text-decoration:none;
-  padding:5px 12px; background:#ede9fe; border-radius:6px; transition:background .2s; }
-.xp-sub-extlink:hover { background:#ddd6fe; }
+.tab-btn i {
+    font-size: 1rem;
+}
 
-/* ─── Actions bar ─── */
-.xp-actions { display:flex; align-items:center; gap:8px; flex-wrap:wrap;
-  padding:10px 16px; background:var(--xp-bg); border-top:1px solid var(--xp-line); }
+.tab-btn:hover {
+    color: var(--primary);
+    background: var(--primary-light);
+    border-radius: 8px 8px 0 0;
+}
 
-/* Vote btn — une seule fois */
-.xp-vote-btn { display:inline-flex; align-items:center; gap:7px; padding:8px 16px;
-  border:2px solid var(--xp-line); background:var(--xp-white); border-radius:30px;
-  cursor:pointer; font-size:.84rem; font-weight:700; color:var(--xp-sub);
-  transition:all .2s; }
-.xp-vote-btn:hover:not(:disabled) { border-color:var(--xp-red); color:var(--xp-red); background:#fff1f3; }
-.xp-vote-btn--on { border-color:var(--xp-red) !important; color:var(--xp-red) !important;
-  background:#fff1f3 !important; cursor:not-allowed !important; }
-.xp-vote-btn--on svg { fill:var(--xp-red); }
-.xp-vote-btn:disabled { opacity:.8; }
-.xp-vote-btn--loading { opacity:.6; cursor:wait !important; }
+.tab-btn.active {
+    color: var(--primary);
+    border-bottom-color: var(--primary);
+    background: var(--primary-light);
+}
 
-.xp-vote-display { display:inline-flex; align-items:center; gap:6px; font-size:.84rem; font-weight:600; color:var(--xp-indigo); }
-.xp-vote-display--muted { color:var(--xp-faint); }
-.xp-login-hint { font-size:.76rem; font-weight:500; color:var(--xp-indigo); text-decoration:underline; margin-left:4px; }
+.tab-count {
+    background: #e5e7eb;
+    color: var(--dark);
+    padding: 2px 8px;
+    border-radius: 20px;
+    font-size: 0.7rem;
+    font-weight: 700;
+}
 
-.xp-action-btn { display:inline-flex; align-items:center; gap:6px; padding:8px 13px;
-  border:none; background:none; border-radius:8px; cursor:pointer;
-  font-size:.82rem; font-weight:600; color:var(--xp-sub); transition:all .2s; }
-.xp-action-btn:hover { background:#f3f4f6; color:var(--xp-indigo); }
+.tab-btn.active .tab-count {
+    background: var(--primary);
+    color: white;
+}
 
-.xp-voir-link { margin-left:auto; display:inline-flex; align-items:center; gap:5px;
-  padding:8px 16px; background:linear-gradient(135deg,var(--xp-indigo),var(--xp-violet));
-  color:#fff; border-radius:8px; text-decoration:none; font-size:.82rem; font-weight:700;
-  transition:all .2s; white-space:nowrap; }
-.xp-voir-link:hover { transform:translateY(-1px); box-shadow:0 4px 16px rgba(99,102,241,.38); }
+.tab-content {
+    display: none;
+}
 
-/* ─── Panels expansibles ─── */
-.xp-panel-sub { padding:14px 17px; border-top:1px solid var(--xp-line); background:#fafaff; }
-.xp-panel-sub--comments { background:#f8faff; }
-.xp-panel-sub-title { display:flex; align-items:center; gap:7px; font-size:.8rem;
-  font-weight:700; color:var(--xp-indigo); margin-bottom:12px; }
-.xp-panel-empty { font-size:.82rem; color:var(--xp-faint); text-align:center; padding:10px 0; margin:0; }
+.tab-content.active {
+    display: block;
+}
 
-/* Voters */
-.xp-voters-wrap { display:flex; flex-wrap:wrap; gap:7px; }
-.xp-voter-chip { display:inline-flex; align-items:center; gap:7px; padding:6px 12px;
-  background:var(--xp-white); border:1.5px solid var(--xp-line); border-radius:30px;
-  text-decoration:none; color:var(--xp-ink); font-size:.8rem; font-weight:600; transition:all .2s; }
-.xp-voter-chip:hover { border-color:var(--xp-indigo); color:var(--xp-indigo); }
-.xp-voter-thumb { width:24px; height:24px; border-radius:50%; object-fit:cover; flex-shrink:0; }
-.xp-voter-thumb--letter { background:linear-gradient(135deg,var(--xp-indigo),var(--xp-violet));
-  color:#fff; display:flex; align-items:center; justify-content:center; font-size:.68rem; font-weight:800; }
+/* ===== ÉTAT VIDE ===== */
+.empty-state {
+    text-align: center;
+    padding: 60px 20px;
+    background: var(--light);
+    border-radius: 12px;
+    border: 2px dashed var(--border);
+}
 
-/* Comment form */
-.xp-cf { display:flex; align-items:flex-start; gap:10px; margin-bottom:14px; }
-.xp-cf-av { width:34px; height:34px; border-radius:50%; background:linear-gradient(135deg,var(--xp-indigo),var(--xp-violet));
-  color:#fff; display:flex; align-items:center; justify-content:center;
-  font-size:.8rem; font-weight:800; flex-shrink:0; margin-top:2px; }
-.xp-cf-right { flex:1; background:var(--xp-white); border:2px solid var(--xp-line);
-  border-radius:14px; overflow:hidden; transition:border-color .2s; }
-.xp-cf-right:focus-within { border-color:var(--xp-indigo); }
-.xp-cf-txt { width:100%; border:none; background:transparent; font-size:.87rem;
-  color:var(--xp-ink); padding:11px 14px 6px; resize:none; outline:none;
-  font-family:inherit; line-height:1.5; }
-.xp-cf-txt::placeholder { color:var(--xp-faint); }
-.xp-cf-footer { display:flex; align-items:center; justify-content:space-between;
-  padding:6px 10px 8px; }
-.xp-cf-hint { font-size:.7rem; color:var(--xp-faint); }
-.xp-cf-send { display:inline-flex; align-items:center; gap:6px; padding:6px 14px;
-  background:linear-gradient(135deg,var(--xp-indigo),var(--xp-violet)); color:#fff;
-  border:none; border-radius:8px; cursor:pointer; font-size:.8rem; font-weight:700;
-  transition:all .2s; }
-.xp-cf-send:hover { box-shadow:0 3px 12px rgba(99,102,241,.4); }
-.xp-cf-send:disabled { opacity:.6; cursor:wait; }
-.xp-login-cta { font-size:.84rem; color:var(--xp-faint); text-align:center; padding:8px 0; margin:0 0 12px; }
-.xp-login-cta a { color:var(--xp-indigo); font-weight:600; }
+.empty-state i {
+    font-size: 3rem;
+    color: var(--gray);
+    margin-bottom: 15px;
+    opacity: 0.5;
+}
 
-/* Comment list */
-.xp-comm-list { display:flex; flex-direction:column; gap:10px; }
-.xp-comm-item { display:flex; gap:9px; }
-.xp-comm-av { width:32px; height:32px; border-radius:50%; overflow:hidden;
-  background:linear-gradient(135deg,var(--xp-indigo),var(--xp-violet));
-  color:#fff; display:flex; align-items:center; justify-content:center;
-  font-size:.74rem; font-weight:800; flex-shrink:0; }
-.xp-comm-av img { width:100%; height:100%; object-fit:cover; }
-.xp-comm-bubble { flex:1; background:var(--xp-white); border:1px solid var(--xp-line); border-radius:12px; padding:10px 14px; }
-.xp-comm-meta { display:flex; align-items:baseline; gap:8px; margin-bottom:5px; }
-.xp-comm-meta strong { font-size:.82rem; color:var(--xp-ink); }
-.xp-comm-meta span   { font-size:.72rem; color:var(--xp-faint); }
-.xp-comm-bubble p    { font-size:.86rem; color:var(--xp-sub); line-height:1.55; margin:0; overflow-wrap:break-word; }
+.empty-state p {
+    color: var(--gray);
+    font-size: 1rem;
+}
 
-/* ─── Toast ─── */
-.xp-toast { position:fixed; bottom:28px; right:28px; z-index:9999;
-  padding:12px 20px; border-radius:12px; font-size:.87rem; font-weight:600;
-  color:#fff; box-shadow:0 6px 24px rgba(0,0,0,.18);
-  transform:translateY(10px); opacity:0; pointer-events:none;
-  transition:all .25s; }
-.xp-toast--show { transform:translateY(0); opacity:1; }
-.xp-toast--ok  { background:linear-gradient(135deg,#10b981,#059669); }
-.xp-toast--err { background:linear-gradient(135deg,var(--xp-red),#be123c); }
-.xp-toast--info{ background:linear-gradient(135deg,var(--xp-indigo),var(--xp-violet)); }
+/* ===== GRILLE DES DÉFIS ===== */
+.challenges-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 20px;
+}
 
-/* ─── Responsive ─── */
-@media(max-width:680px){
-  .xp-banner-inner { padding:22px 18px; flex-direction:column; align-items:flex-start; }
-  .xp-stats { margin-left:0; width:100%; border-radius:14px; }
-  .xp-stat { flex:1; padding:14px 12px; }
-  .xp-ch-thumb { width:100px; }
-  .xp-sub-hd { flex-direction:column; align-items:flex-start; }
-  .xp-actions { gap:5px; }
-  .xp-voir-link { margin-left:0; width:100%; justify-content:center; }
-  .xp-defi-tag { max-width:100%; }
+.challenge-card {
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+    text-decoration: none;
+    color: inherit;
+    transition: all 0.3s;
+    position: relative;
+}
+
+.challenge-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 10px 25px rgba(99, 102, 241, 0.15);
+    border-color: var(--primary);
+}
+
+.card-category {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: var(--primary);
+    color: white;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    z-index: 2;
+}
+
+.card-image {
+    height: 150px;
+    overflow: hidden;
+}
+
+.card-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s;
+}
+
+.challenge-card:hover .card-image img {
+    transform: scale(1.05);
+}
+
+.card-image-placeholder {
+    height: 150px;
+    background: linear-gradient(135deg, var(--primary-light), #c7d2fe);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2.5rem;
+    color: var(--primary);
+}
+
+.card-body {
+    padding: 16px;
+}
+
+.card-title {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--dark);
+    margin-bottom: 8px;
+    line-height: 1.4;
+}
+
+.card-description {
+    font-size: 0.85rem;
+    color: var(--gray);
+    line-height: 1.5;
+    margin-bottom: 15px;
+}
+
+.card-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-top: 12px;
+    border-top: 1px solid var(--border);
+}
+
+.card-date {
+    font-size: 0.8rem;
+    color: var(--gray);
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.card-date i {
+    color: var(--primary);
+}
+
+.card-arrow {
+    color: var(--primary);
+    transition: transform 0.2s;
+}
+
+.challenge-card:hover .card-arrow {
+    transform: translateX(5px);
+}
+
+/* ===== LISTE DES PARTICIPATIONS ===== */
+.submissions-list {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.submission-card {
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+    transition: all 0.3s;
+}
+
+.submission-card:hover {
+    border-color: var(--primary);
+    box-shadow: 0 5px 15px rgba(99, 102, 241, 0.1);
+}
+
+.submission-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 15px 20px;
+    background: #f9fafb;
+    border-bottom: 1px solid var(--border);
+    flex-wrap: wrap;
+    gap: 15px;
+}
+
+.submission-author {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.author-avatar img {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.avatar-small {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--primary), var(--secondary));
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1rem;
+    font-weight: 700;
+}
+
+.author-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.author-name {
+    font-weight: 700;
+    color: var(--dark);
+    font-size: 0.95rem;
+}
+
+.submission-date {
+    font-size: 0.75rem;
+    color: var(--gray);
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.challenge-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 14px;
+    background: #fef3c7;
+    border: 1px solid #fbbf24;
+    border-radius: 30px;
+    text-decoration: none;
+    color: #92400e;
+    font-size: 0.8rem;
+    font-weight: 600;
+    transition: all 0.2s;
+    max-width: 300px;
+}
+
+.challenge-link:hover {
+    background: #fde68a;
+    transform: translateY(-1px);
+}
+
+.challenge-link i {
+    color: #b45309;
+}
+
+.submission-content {
+    display: flex;
+    gap: 20px;
+    padding: 20px;
+    flex-wrap: wrap;
+}
+
+.submission-image {
+    flex: 0 0 150px;
+}
+
+.submission-image img {
+    width: 150px;
+    height: 150px;
+    object-fit: cover;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+}
+
+.submission-description {
+    flex: 1;
+}
+
+.submission-description p {
+    color: #374151;
+    line-height: 1.7;
+    font-size: 0.95rem;
+    margin-bottom: 10px;
+}
+
+.submission-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    color: var(--primary);
+    text-decoration: none;
+    font-size: 0.85rem;
+    font-weight: 600;
+    padding: 5px 12px;
+    background: var(--primary-light);
+    border-radius: 6px;
+    transition: all 0.2s;
+}
+
+.submission-link:hover {
+    background: var(--primary);
+    color: white;
+}
+
+.submission-actions {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 15px 20px;
+    background: #f9fafb;
+    border-top: 1px solid var(--border);
+    flex-wrap: wrap;
+    gap: 15px;
+}
+
+.actions-left {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    flex-wrap: wrap;
+}
+
+.vote-btn {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 16px;
+    border: 2px solid #d1d5db;
+    border-radius: 30px;
+    background: white;
+    color: #4b5563;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.vote-btn:hover {
+    border-color: var(--danger);
+    color: var(--danger);
+    background: #fef2f2;
+}
+
+.vote-btn.voted {
+    background: #fef2f2;
+    border-color: var(--danger);
+    color: var(--danger);
+}
+
+.vote-btn i {
+    color: var(--danger);
+}
+
+.vote-display {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 16px;
+    background: #f3f4f6;
+    border-radius: 30px;
+    color: #4b5563;
+    font-size: 0.85rem;
+    font-weight: 600;
+}
+
+.vote-display i {
+    color: var(--danger);
+}
+
+.comments-toggle {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 16px;
+    background: none;
+    border: none;
+    color: #6b7280;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.comments-toggle:hover {
+    color: var(--primary);
+}
+
+.comments-toggle i {
+    color: var(--primary);
+}
+
+.view-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 20px;
+    background: linear-gradient(135deg, var(--primary), var(--secondary));
+    color: white;
+    border-radius: 8px;
+    text-decoration: none;
+    font-size: 0.85rem;
+    font-weight: 600;
+    transition: all 0.3s;
+}
+
+.view-link:hover {
+    transform: translateX(5px);
+    box-shadow: 0 5px 15px rgba(99, 102, 241, 0.3);
+}
+
+/* ===== COMMENTAIRES ===== */
+.comments-section {
+    padding: 20px;
+    background: #f9fafb;
+    border-top: 1px solid var(--border);
+}
+
+.comments-list {
+    max-height: 300px;
+    overflow-y: auto;
+    margin-bottom: 15px;
+}
+
+.comment-item {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 15px;
+}
+
+.comment-avatar-mini {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--primary), var(--secondary));
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.8rem;
+    font-weight: 700;
+    flex-shrink: 0;
+}
+
+.comment-bubble {
+    flex: 1;
+    background: white;
+    border-radius: 12px;
+    padding: 10px 14px;
+    border: 1px solid var(--border);
+}
+
+.comment-meta {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 5px;
+}
+
+.comment-author {
+    font-weight: 700;
+    color: var(--dark);
+    font-size: 0.8rem;
+}
+
+.comment-date {
+    font-size: 0.7rem;
+    color: var(--gray);
+}
+
+.comment-text {
+    font-size: 0.85rem;
+    color: #374151;
+    line-height: 1.5;
+    margin: 0;
+}
+
+.comment-form-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 15px;
+}
+
+.comment-form {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: white;
+    border: 1px solid #d1d5db;
+    border-radius: 30px;
+    padding: 4px 4px 4px 16px;
+}
+
+.comment-form input {
+    flex: 1;
+    border: none;
+    outline: none;
+    font-size: 0.9rem;
+    padding: 8px 0;
+    background: transparent;
+}
+
+.comment-form button {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--primary), var(--secondary));
+    color: white;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    transition: all 0.2s;
+}
+
+.comment-form button:hover {
+    transform: scale(1.05);
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 768px) {
+    .banner-content {
+        flex-direction: column;
+        text-align: center;
+    }
+    
+    .profile-stats {
+        width: 100%;
+        justify-content: center;
+    }
+    
+    .profile-tabs {
+        flex-direction: column;
+    }
+    
+    .tab-btn {
+        width: 100%;
+        justify-content: center;
+    }
+    
+    .submission-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    
+    .challenge-link {
+        width: 100%;
+        max-width: none;
+    }
+    
+    .submission-content {
+        flex-direction: column;
+    }
+    
+    .submission-image {
+        flex: none;
+        width: 100%;
+    }
+    
+    .submission-image img {
+        width: 100%;
+        height: auto;
+    }
+    
+    .submission-actions {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    
+    .actions-left {
+        width: 100%;
+        justify-content: space-between;
+    }
+    
+    .view-link {
+        width: 100%;
+        justify-content: center;
+    }
 }
 </style>
 
-<!-- Toast DOM -->
-<div class="xp-toast" id="xp-toast"></div>
-
-<!-- ══════════════════════════════════════════
-     JAVASCRIPT
-══════════════════════════════════════════ -->
 <script>
-/* ── Tabs ── */
-function xpTab(name, btn) {
-    document.querySelectorAll('.xp-panel').forEach(p => p.classList.remove('xp-panel--active'));
-    document.querySelectorAll('.xp-tab').forEach(t => t.classList.remove('xp-tab--active'));
-    document.getElementById('xp-panel-' + name).classList.add('xp-panel--active');
-    btn.classList.add('xp-tab--active');
+// ===== VARIABLES GLOBALES =====
+const LOGGED_IN = <?= $currentUserId ? 'true' : 'false' ?>;
+const CURRENT_USER_ID = <?= $currentUserId ?? 0 ?>;
+
+// ===== GESTION DES TABS =====
+function showTab(tabName) {
+    document.querySelectorAll('.tab-content').forEach(tab => {
+        tab.classList.remove('active');
+    });
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.classList.remove('active');
+    });
+    document.getElementById('tab-' + tabName).classList.add('active');
+    event.target.classList.add('active');
 }
 
-/* ── Toggle panels ── */
-function xpToggle(id) {
-    const el = document.getElementById(id);
-    el.style.display = el.style.display === 'none' ? 'block' : 'none';
-}
-
-/* ── Toast ── */
-let _toastTimer;
-function xpToast(msg, type='ok') {
-    const t = document.getElementById('xp-toast');
-    clearTimeout(_toastTimer);
-    t.textContent = msg;
-    t.className = 'xp-toast xp-toast--' + type + ' xp-toast--show';
-    _toastTimer = setTimeout(() => { t.className = 'xp-toast'; }, 3000);
-}
-
-/* ── VOTE (une seule fois) ── */
-function xpVote(btn) {
-    if(btn.disabled || btn.classList.contains('xp-vote-btn--loading')) return;
-    const sid = btn.dataset.sid;
-    btn.classList.add('xp-vote-btn--loading');
-    btn.disabled = true;
-
+// ===== FONCTIONS POUR LES VOTES =====
+function voteSubmission(submissionId, btn) {
+    if (!LOGGED_IN) {
+        window.location.href = 'index.php?action=showLogin';
+        return;
+    }
+    
     fetch('index.php?action=vote', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-        body: 'submission_id=' + encodeURIComponent(sid)
+        headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+        body: 'submission_id=' + submissionId
     })
     .then(r => r.json())
     .then(data => {
-        btn.classList.remove('xp-vote-btn--loading');
-
-        if(data.action === 'added' && data.success) {
-            // Vote accepté — bloquer définitivement
-            const cnt = data.new_count ?? 0;
-            document.getElementById('vcnt-' + sid).textContent = cnt;
-
-            const vcnt2 = document.getElementById('vcnt2-' + sid);
-            if(vcnt2) vcnt2.textContent = parseInt(vcnt2.textContent||0) + 1;
-
-            btn.classList.add('xp-vote-btn--on');
-            btn.querySelector('svg').setAttribute('fill', 'currentColor');
-            btn.querySelector('.xp-vote-lbl').textContent = 'Voté ✓';
-            btn.disabled = true;
-            btn.title = 'Vous avez déjà voté';
-
-            // Ajouter dans le panel votants
-            _addVoterChip(sid,
-                '<?= addslashes($_SESSION["user_id"] ?? "") ?>',
-                '<?= addslashes($_SESSION["username"] ?? "") ?>'
-            );
-            xpToast('Votre vote a été enregistré !', 'ok');
-
-        } else if(data.action === 'already_voted') {
-            btn.classList.add('xp-vote-btn--on');
-            btn.querySelector('svg').setAttribute('fill', 'currentColor');
-            btn.querySelector('.xp-vote-lbl').textContent = 'Voté ✓';
-            btn.disabled = true;
-            xpToast('Vous avez déjà voté pour cette participation', 'info');
-
-        } else if(data.message) {
-            btn.disabled = false; // remettre si erreur
-            xpToast(data.message, 'err');
+        if (data.success) {
+            const countSpan = btn.querySelector('.vote-count');
+            if (countSpan) {
+                countSpan.textContent = data.new_count;
+            }
+            btn.classList.toggle('voted', data.action === 'added');
+            btn.querySelector('.vote-label').textContent = data.action === 'added' ? 'Voté' : 'Voter';
         } else {
-            btn.disabled = false;
-            xpToast('Erreur inconnue', 'err');
+            alert(data.message || 'Erreur lors du vote');
         }
     })
-    .catch(() => {
-        btn.classList.remove('xp-vote-btn--loading');
-        btn.disabled = false;
-        xpToast('Erreur réseau', 'err');
+    .catch(err => console.error('Erreur:', err));
+}
+
+// ===== FONCTIONS POUR LES COMMENTAIRES =====
+function toggleComments(submissionId) {
+    const commentsSection = document.getElementById('comments-' + submissionId);
+    if (commentsSection.style.display === 'none') {
+        commentsSection.style.display = 'block';
+        loadComments(submissionId);
+    } else {
+        commentsSection.style.display = 'none';
+    }
+}
+
+function loadComments(submissionId) {
+    fetch('index.php?action=getComments&submission_id=' + submissionId)
+    .then(r => r.json())
+    .then(data => {
+        if (data.success) {
+            const commentsList = document.getElementById('comments-list-' + submissionId);
+            commentsList.innerHTML = '';
+            
+            if (data.comments.length === 0) {
+                commentsList.innerHTML = '<p style="color:#6b7280; text-align:center; padding:10px;">Aucun commentaire</p>';
+                return;
+            }
+            
+            data.comments.forEach(comment => {
+                const commentHtml = `
+                    <div class="comment-item">
+                        <div class="comment-avatar-mini">${comment.username.charAt(0).toUpperCase()}</div>
+                        <div class="comment-bubble">
+                            <div class="comment-meta">
+                                <span class="comment-author">${comment.username}</span>
+                                <span class="comment-date">${new Date(comment.created_at).toLocaleDateString('fr-FR')}</span>
+                            </div>
+                            <p class="comment-text">${comment.content}</p>
+                        </div>
+                    </div>
+                `;
+                commentsList.insertAdjacentHTML('beforeend', commentHtml);
+            });
+        }
     });
 }
 
-function _addVoterChip(sid, uid, username) {
-    const wrap = document.getElementById('voters-list-' + sid);
-    if(!wrap) return;
-    // Supprimer "aucun vote"
-    const empty = wrap.querySelector('.xp-panel-empty');
-    if(empty) empty.remove();
-    // Ne pas dupliquer
-    if(wrap.querySelector('[data-uid="'+uid+'"]')) return;
-    const chip = document.createElement('a');
-    chip.href = 'index.php?action=viewProfile&id=' + uid;
-    chip.className = 'xp-voter-chip';
-    chip.dataset.uid = uid;
-    chip.innerHTML =
-        '<div class="xp-voter-thumb xp-voter-thumb--letter">' +
-        username.charAt(0).toUpperCase() + '</div><span>' +
-        _esc(username) + '</span>';
-    wrap.prepend(chip);
-}
-
-/* ── COMMENTAIRE ── */
-function xpComment(sid) {
-    const txt = document.getElementById('ctxt-' + sid);
-    const content = txt.value.trim();
-    if(!content) { xpToast('Écrivez un commentaire d\'abord', 'err'); return; }
-
-    const btn = document.getElementById('csend-' + sid);
-    btn.disabled = true;
-
+function addComment(event, submissionId) {
+    event.preventDefault();
+    
+    const input = document.getElementById('comment-input-' + submissionId);
+    const content = input.value.trim();
+    
+    if (!content) return;
+    
     fetch('index.php?action=addComment', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-        body: 'submission_id=' + encodeURIComponent(sid)
-             + '&content=' + encodeURIComponent(content)
+        headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+        body: 'submission_id=' + submissionId + '&content=' + encodeURIComponent(content)
     })
     .then(r => r.json())
     .then(data => {
-        btn.disabled = false;
-        if(data.success) {
-            txt.value = '';
-            const list = document.getElementById('clist-' + sid);
-            const empty = list.querySelector('.xp-panel-empty');
-            if(empty) empty.remove();
-
-            const username = '<?= addslashes($_SESSION["username"] ?? "") ?>';
-            const avatar   = <?= !empty($_SESSION['avatar']) ? '"'.addslashes($_SESSION['avatar']).'"' : 'null' ?>;
-            const today = new Date().toLocaleDateString('fr-FR') + ' ' +
-                          new Date().toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'});
-            const avatarHtml = avatar
-                ? '<img src="public/' + _esc(avatar) + '" alt="">'
-                : username.charAt(0).toUpperCase();
-
-            const item = document.createElement('div');
-            item.className = 'xp-comm-item';
-            item.innerHTML =
-                '<div class="xp-comm-av">' + avatarHtml + '</div>' +
-                '<div class="xp-comm-bubble">' +
-                  '<div class="xp-comm-meta"><strong>' + _esc(username) + '</strong><span>' + today + '</span></div>' +
-                  '<p>' + _esc(content).replace(/\n/g,'<br>') + '</p>' +
-                '</div>';
-            list.prepend(item);
-
-            const ccnt = document.getElementById('ccnt-' + sid);
-            if(ccnt) {
-                const n = parseInt(ccnt.textContent||0) + 1;
-                ccnt.textContent = n;
+        if (data.success) {
+            input.value = '';
+            loadComments(submissionId);
+            
+            const commentCountSpan = document.querySelector(`#submission-${submissionId} .comments-count`);
+            if (commentCountSpan) {
+                const currentCount = parseInt(commentCountSpan.textContent) || 0;
+                commentCountSpan.textContent = currentCount + 1;
             }
-            xpToast('Commentaire ajouté !', 'ok');
         } else {
-            const msg = (data.errors && data.errors[0]) || data.message || 'Erreur';
-            xpToast(msg, 'err');
+            alert(data.message || 'Erreur');
         }
-    })
-    .catch(() => { btn.disabled = false; xpToast('Erreur réseau', 'err'); });
+    });
 }
 
-/* ── Escape HTML ── */
-function _esc(s) {
-    return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
-}
+// ===== INITIALISATION =====
+document.addEventListener('DOMContentLoaded', function() {
+    // Charger les commentaires si besoin
+});
 </script>
 
 <?php

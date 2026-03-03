@@ -1,0 +1,10 @@
+{
+    "name": "challengehub/app",
+    "description": "ChallengeHub application",
+    "type": "project",
+    "require": {
+        "twbs/bootstrap": "^5.3",
+        "components/jquery": "^3.7",
+        "twbs/bootstrap-icons": "^1.13"
+    }
+}

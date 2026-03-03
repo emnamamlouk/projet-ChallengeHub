@@ -84,14 +84,6 @@ class ChallengeController {
         }
         
         $is_open = $this->challengeModel->isOpen($challenge_id);
-
-        // Charger les commentaires des participations pour la vue
-        require_once __DIR__ . '/../models/Comment.php';
-        $commentModel = new Comment();
-        $comments = [];
-        foreach($submissions as $sub) {
-            $comments[$sub['id']] = $commentModel->getCommentsBySubmission($sub['id']);
-        }
         
         require_once __DIR__ . '/../views/challenges/show.php';
     }
@@ -125,10 +117,12 @@ class ChallengeController {
             if(empty($title)) {
                 $errors[] = "Le titre est requis";
             }
+            // SUPPRIMÉ : elseif(strlen($title) < 5)
             
             if(empty($description)) {
                 $errors[] = "La description est requise";
             }
+            // SUPPRIMÉ : elseif(strlen($description) < 20)
             
             if(empty($category)) {
                 $errors[] = "La catégorie est requise";
@@ -138,6 +132,8 @@ class ChallengeController {
                 $deadline_timestamp = strtotime($deadline);
                 if($deadline_timestamp === false) {
                     $errors[] = "Format de date invalide";
+                } elseif($deadline_timestamp < time()) {
+                    $errors[] = "La date limite doit être dans le futur";
                 }
             }
             
@@ -268,10 +264,12 @@ class ChallengeController {
             if(empty($title)) {
                 $errors[] = "Le titre est requis";
             }
+            // SUPPRIMÉ : elseif(strlen($title) < 5)
             
             if(empty($description)) {
                 $errors[] = "La description est requise";
             }
+            // SUPPRIMÉ : elseif(strlen($description) < 20)
             
             if(empty($category)) {
                 $errors[] = "La catégorie est requise";
@@ -387,15 +385,53 @@ class ChallengeController {
     }
     
     public function ranking() {
-        $category = $_GET['category'] ?? 'all';
-        $limit = $_GET['limit'] ?? 20;
+        $category = $_GET['category'] ?? 'Design';
+        $sort = $_GET['sort'] ?? 'votes';
         
-        $ranking = $this->submissionModel->getRanking($category, $limit);
+        if($category == 'all') {
+            header('Location: index.php?action=ranking&category=Design&sort=' . $sort);
+            exit();
+        }
+        
+        // Récupérer TOUS les défis de la catégorie (pas de limite ici)
+        $challenges = $this->challengeModel->getAllChallengesSorted('recent', $category, '');
+        
+        // Ajouter les compteurs pour chaque défi
+        foreach($challenges as &$challenge) {
+            $challenge['likes_count'] = $this->challengeModel->getLikesCount($challenge['id']);
+            $challenge['submissions_count'] = $this->challengeModel->countSubmissions($challenge['id']);
+        }
+        
+        // TRI avec gestion des ex-aequo
+        if($sort == 'votes') {
+            usort($challenges, function($a, $b) {
+                // 1. Par nombre de likes
+                if($b['likes_count'] != $a['likes_count']) {
+                    return $b['likes_count'] - $a['likes_count'];
+                }
+                // 2. En cas d'égalité, le plus récent en premier
+                return strtotime($b['created_at']) - strtotime($a['created_at']);
+            });
+        } else {
+            usort($challenges, function($a, $b) {
+                // 1. Par nombre de participations
+                if($b['submissions_count'] != $a['submissions_count']) {
+                    return $b['submissions_count'] - $a['submissions_count'];
+                }
+                // 2. En cas d'égalité, le plus récent en premier
+                return strtotime($b['created_at']) - strtotime($a['created_at']);
+            });
+        }
+        
+        // === NE PAS FILTRER ICI === On garde TOUS les défis pour la vue
+        // La vue décidera combien afficher (top 10)
+        $topChallenges = $challenges; // Tous les défis triés
+        
         $categories = $this->challengeModel->getCategories();
         
         require_once __DIR__ . '/../views/challenges/ranking.php';
     }
-
+    
     public function toggleLike() {
         header('Content-Type: application/json');
         if(!isset($_SESSION['user_id'])) {
@@ -403,20 +439,10 @@ class ChallengeController {
             exit();
         }
         if($_SERVER['REQUEST_METHOD'] === 'POST') {
-$challenge_id = $_POST['challenge_id'] ?? 0;
+            $challenge_id = $_POST['challenge_id'] ?? 0;
             $result = $this->challengeModel->toggleLike($_SESSION['user_id'], $challenge_id);
             echo json_encode(['success' => true, 'action' => $result['action'], 'count' => $result['count']]);
         }
-        exit();
-    }
-
-
-    public function getChallengeComments() {
-        header('Content-Type: application/json');
-        $challenge_id = $_GET['challenge_id'] ?? 0;
-        if(!$challenge_id) { echo json_encode(['success' => false]); exit(); }
-        $comments = $this->challengeModel->getChallengeComments($challenge_id);
-        echo json_encode(['success' => true, 'comments' => $comments]);
         exit();
     }
 
@@ -429,16 +455,12 @@ $challenge_id = $_POST['challenge_id'] ?? 0;
         if($_SERVER['REQUEST_METHOD'] === 'POST') {
             $challenge_id = $_POST['challenge_id'] ?? 0;
             $content = trim($_POST['content'] ?? '');
-            $parent_id = !empty($_POST['parent_id']) ? (int)$_POST['parent_id'] : null;
-            $result = $this->challengeModel->addChallengeComment($_SESSION['user_id'], $challenge_id, $content, $parent_id);
+            $result = $this->challengeModel->addChallengeComment($_SESSION['user_id'], $challenge_id, $content);
             if($result) {
                 echo json_encode([
                     'success' => true,
-                    'comment_id' => $result,
                     'username' => $_SESSION['username'],
-                    'content' => htmlspecialchars($content),
-                    'created_at' => date('Y-m-d H:i:s'),
-                    'parent_id' => $parent_id
+                    'content' => htmlspecialchars($content)
                 ]);
             } else {
                 echo json_encode(['success' => false, 'message' => 'Erreur']);
@@ -447,18 +469,15 @@ $challenge_id = $_POST['challenge_id'] ?? 0;
         exit();
     }
 
-    public function deleteChallengeComment() {
+    public function getChallengeComments() {
         header('Content-Type: application/json');
-        if(!isset($_SESSION['user_id'])) {
-            echo json_encode(['success' => false, 'message' => 'Non connecté']);
-            exit();
+        $challenge_id = $_GET['challenge_id'] ?? 0;
+        if(!$challenge_id) { 
+            echo json_encode(['success' => false]); 
+            exit(); 
         }
-        $comment_id = $_POST['comment_id'] ?? 0;
-        if($this->challengeModel->deleteChallengeComment($comment_id, $_SESSION['user_id'])) {
-            echo json_encode(['success' => true]);
-        } else {
-            echo json_encode(['success' => false, 'message' => 'Erreur suppression']);
-        }
+        $comments = $this->challengeModel->getChallengeComments($challenge_id);
+        echo json_encode(['success' => true, 'comments' => $comments]);
         exit();
     }
 

@@ -94,7 +94,8 @@ $routes = [
     'search' => ['controller' => 'ChallengeController', 'method' => 'home'],
 'search' => ['controller' => 'UserController', 'method' => 'search'],
 'viewProfile' => ['controller' => 'UserController', 'method' => 'viewProfile'],
-
+// THEME
+'switchTheme' => ['controller' => 'ThemeController', 'method' => 'switch'],
 
 
 

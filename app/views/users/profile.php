@@ -13,7 +13,7 @@ $voteModel       = new Vote();
 $userId          = $_SESSION['user_id'];
 $userChallenges  = $challengeModel->getChallengesByUser($userId);
 $userSubmissions = $submissionModel->getSubmissionsByUser($userId);
-$userVotes       = $challengeModel->getLikedChallengesByUser($userId);
+$userVotes       = $voteModel->getUserVotes($userId);
 
 $totalChallenges  = count($userChallenges);
 $totalSubmissions = count($userSubmissions);
@@ -62,8 +62,11 @@ ob_start();
                 </p>
             </div>
 
-            <!-- Boutons actions -->
+            <!-- Boutons actions - AJOUT DU BOUTON CRÉER UN DÉFI -->
             <div style="display:flex; gap:10px; margin-left:auto; flex-wrap:wrap;">
+                <a href="index.php?action=createChallengeForm" class="btn-edit-profile" style="background:rgba(255,255,255,0.25); border-color:rgba(255,255,255,0.7);">
+                    <i class="fas fa-plus-circle"></i> Créer un défi
+                </a>
                 <button class="btn-edit-profile" onclick="openEditModal()">
                     <i class="fas fa-edit"></i> Modifier le profil
                 </button>
@@ -83,14 +86,6 @@ ob_start();
         <div class="stat-card">
             <div class="stat-icon pink"><i class="fas fa-paper-plane"></i></div>
             <div><span class="stat-val"><?= $totalSubmissions ?></span><span class="stat-lbl">Participations</span></div>
-        </div>
-        <div class="stat-card">
-            <div class="stat-icon red"><i class="fas fa-thumbs-up"></i></div>
-            <div><span class="stat-val"><?= $votesReceived ?></span><span class="stat-lbl">Votes reçus</span></div>
-        </div>
-        <div class="stat-card">
-            <div class="stat-icon green"><i class="fas fa-thumbs-up"></i></div>
-            <div><span class="stat-val"><?= $totalVotes ?></span><span class="stat-lbl">Votes donnés</span></div>
         </div>
     </div>
 
@@ -172,8 +167,7 @@ ob_start();
                             <p><?= htmlspecialchars(substr($sub['description'], 0, 80)) ?>...</p>
                             <div class="mini-card-date"><i class="fas fa-clock"></i> <?= date('d/m/Y', strtotime($sub['created_at'])) ?></div>
                             <div class="mini-card-actions">
-                                <a href="index.php?action=showSubmission&id=<?= $sub['id'] ?>" class="btn-sm blue"><i class="fas fa-eye"></i> Ma participation</a>
-                                <a href="index.php?action=showChallenge&id=<?= $sub['challenge_id'] ?>" class="btn-sm purple"><i class="fas fa-trophy"></i> Voir le défi</a>
+                                <a href="index.php?action=showSubmission&id=<?= $sub['id'] ?>" class="btn-sm blue">Voir</a>
                                 <a href="index.php?action=editSubmissionForm&id=<?= $sub['id'] ?>" class="btn-sm gray"><i class="fas fa-edit"></i></a>
                                 <button onclick="deleteSubmissionConfirm(<?= $sub['id'] ?>)" class="btn-sm red"><i class="fas fa-trash"></i></button>
                             </div>
@@ -186,45 +180,21 @@ ob_start();
 
     <!-- TAB : Votes -->
     <div id="tab-votes" class="tab-pane">
-
-        <!-- Votes sur défis -->
-        <h4 style="color:#667eea;margin:0 0 12px;font-size:1rem;"><i class="fas fa-heart"></i> Défis likés (<?= count($userVotes) ?>)</h4>
         <?php if(empty($userVotes)): ?>
-            <div class="empty-state" style="padding:20px;">
-                <p style="color:#aaa;">Aucun défi liké pour le moment.</p>
-            </div>
-        <?php else: ?>
-            <div class="votes-list" style="margin-bottom:24px;">
-                <?php foreach($userVotes as $vote): ?>
-                    <div class="vote-row">
-                        <div class="vote-icon-wrap"><i class="fas fa-heart" style="color:#ef4444;"></i></div>
-                        <div class="vote-text">
-                            Défi <strong><a href="index.php?action=showChallenge&id=<?= $vote['id'] ?>" style="color:#667eea;text-decoration:none;"><?= htmlspecialchars($vote['title']) ?></a></strong>
-                            de <em><?= htmlspecialchars($vote['creator_name']) ?></em>
-                        </div>
-                        <div class="vote-date"><?= date('d/m/Y', strtotime($vote['liked_at'])) ?></div>
-                    </div>
-                <?php endforeach; ?>
-            </div>
-        <?php endif; ?>
-
-        <!-- Votes sur participations -->
-        <h4 style="color:#667eea;margin:0 0 12px;font-size:1rem;"><i class="fas fa-thumbs-up"></i> Participations votées (<?= $totalVotes ?>)</h4>
-        <?php
-        $submissionVotes = $voteModel->getUserVotes($userId);
-        ?>
-        <?php if(empty($submissionVotes)): ?>
-            <div class="empty-state" style="padding:20px;">
-                <p style="color:#aaa;">Aucun vote sur une participation.</p>
+            <div class="empty-state">
+                <i class="fas fa-thumbs-up fa-3x"></i>
+                <h3>Aucun vote donné</h3>
+                <p>Likez des participations !</p>
+                <a href="index.php?action=ranking" class="btn-primary-sm"><i class="fas fa-trophy"></i> Classement</a>
             </div>
         <?php else: ?>
             <div class="votes-list">
-                <?php foreach($submissionVotes as $vote): ?>
+                <?php foreach($userVotes as $vote): ?>
                     <div class="vote-row">
                         <div class="vote-icon-wrap"><i class="fas fa-thumbs-up"></i></div>
                         <div class="vote-text">
-                            Participation de <strong><?= htmlspecialchars($vote['username'] ?? '?') ?></strong>
-                            au défi <em><a href="index.php?action=showChallenge&id=<?= $vote['challenge_id'] ?? '' ?>" style="color:#667eea;text-decoration:none;"><?= htmlspecialchars($vote['challenge_title'] ?? '?') ?></a></em>
+                            Vote pour la participation de <strong><?= htmlspecialchars($vote['username'] ?? '?') ?></strong>
+                            au défi <em><?= htmlspecialchars($vote['challenge_title'] ?? '?') ?></em>
                         </div>
                         <div class="vote-date"><?= date('d/m/Y', strtotime($vote['created_at'])) ?></div>
                     </div>
@@ -383,14 +353,12 @@ ob_start();
 .btn-delete-account:hover { background:#dc2626; border-color:#dc2626; color:white; }
 
 /* STATS */
-.stats-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:16px; margin-bottom:28px; }
+.stats-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:16px; margin-bottom:28px; }
 .stat-card { background:white; border-radius:14px; padding:18px 20px; display:flex; align-items:center; gap:16px; box-shadow:0 4px 16px rgba(0,0,0,0.06); transition:all 0.3s; }
 .stat-card:hover { transform:translateY(-4px); box-shadow:0 10px 25px rgba(0,0,0,0.1); }
 .stat-icon { width:52px; height:52px; border-radius:12px; display:flex; align-items:center; justify-content:center; font-size:1.4rem; color:white; flex-shrink:0; }
 .stat-icon.purple { background:linear-gradient(135deg,#667eea,#764ba2); }
 .stat-icon.pink { background:linear-gradient(135deg,#f093fb,#f5576c); }
-.stat-icon.red { background:linear-gradient(135deg,#ff6b6b,#ee0979); }
-.stat-icon.green { background:linear-gradient(135deg,#43e97b,#38f9d7); }
 .stat-val { display:block; font-size:1.8rem; font-weight:800; color:#222; line-height:1.1; }
 .stat-lbl { font-size:0.82rem; color:#888; }
 
@@ -543,6 +511,7 @@ function deleteSubmissionConfirm(id) {
 </script>
 
 <?php
+// LIGNES AJOUTÉES POUR AFFICHER LA NAVBAR ET LE FOOTER
 $content = ob_get_clean();
 require_once __DIR__ . '/../layouts/layout.php';
 ?>

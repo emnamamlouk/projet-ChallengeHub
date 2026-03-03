@@ -74,6 +74,14 @@ if(!class_exists('CSRF') && defined('ROOT_PATH')) {
                     <?php endif; ?>
                 </ul>
 
+                <!-- THEME SWITCHER - AJOUTÉ ICI -->
+                <div class="theme-switcher">
+                    <button class="theme-toggle" id="themeToggle">
+                        <i class="fas fa-moon"></i>
+                        <span>Mode nuit</span>
+                    </button>
+                </div>
+
                 <button class="nav-toggle" id="navToggle" aria-label="Menu">
                     <span></span><span></span><span></span>
                 </button>
@@ -155,6 +163,7 @@ if(!class_exists('CSRF') && defined('ROOT_PATH')) {
 
     <script src="public/js/main.js"></script>
     <script src="public/js/challenges.js"></script>
+    <script src="public/js/theme-switcher.js"></script>
 
     <style>
         .container { max-width: 1200px; margin: 0 auto; padding: 0 20px; }
@@ -202,6 +211,43 @@ if(!class_exists('CSRF') && defined('ROOT_PATH')) {
         }
         .nav-toggle span { display: block; width: 25px; height: 2px; background: #495057; border-radius: 2px; transition: all 0.3s; }
 
+        /* Style pour le bouton theme */
+        .theme-switcher {
+            margin-right: 15px;
+            display: flex;
+            align-items: center;
+        }
+
+        .theme-toggle {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 16px;
+            border: 2px solid #667eea;
+            border-radius: 30px;
+            background: transparent;
+            color: #667eea;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            outline: none;
+        }
+
+        .theme-toggle i {
+            font-size: 1.1rem;
+            transition: transform 0.3s;
+        }
+
+        .theme-toggle:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .theme-toggle:hover i {
+            transform: rotate(15deg);
+        }
+
         @media (max-width: 768px) {
             .nav-toggle { display: flex; }
             .nav-menu {
@@ -211,6 +257,13 @@ if(!class_exists('CSRF') && defined('ROOT_PATH')) {
             }
             .nav-menu.open { display: flex; }
             .dropdown-menu { position: static; box-shadow: none; border: none; padding-left: 20px; }
+            
+            .theme-toggle span {
+                display: none;
+            }
+            .theme-toggle {
+                padding: 8px 12px;
+            }
         }
     </style>
 

@@ -4,123 +4,245 @@ $active_page = "challenge";
 ob_start();
 ?>
 
-<div class="cs-page">
+<div class="challenge-detail-page">
 
-    <!-- HEADER -->
-    <div class="cs-header">
-        <div class="cs-meta">
-            <span class="cs-cat"><?= htmlspecialchars($challenge['category']) ?></span>
-            <span class="cs-by">
-                <i class="fas fa-user"></i>
-                <a href="index.php?action=viewProfile&id=<?= $challenge['user_id'] ?>" class="cs-creator-link">
-                    <?= htmlspecialchars($challenge['creator_name']) ?>
-                </a>
+    <!-- EN-TÊTE DU DÉFI -->
+    <div class="challenge-header">
+        <div class="challenge-meta-top">
+            <span class="category-badge"><?= htmlspecialchars($challenge['category']) ?></span>
+            <span class="challenge-status <?= $is_open ? 'open' : 'closed' ?>">
+                <i class="fas <?= $is_open ? 'fa-lock-open' : 'fa-lock' ?>"></i>
+                <?= $is_open ? 'Défi ouvert' : 'Défi terminé' ?>
             </span>
-            <span class="cs-date"><i class="fas fa-calendar-alt"></i> <?= date('d/m/Y', strtotime($challenge['created_at'])) ?></span>
         </div>
-        <h1 class="cs-title"><?= htmlspecialchars($challenge['title']) ?></h1>
+        
+        <h1 class="challenge-title"><?= htmlspecialchars($challenge['title']) ?></h1>
+        
+        <div class="challenge-author-info">
+            <div class="author-avatar">
+                <?php if(!empty($challenge['creator_avatar'])): ?>
+                    <img src="public/<?= htmlspecialchars($challenge['creator_avatar']) ?>" alt="">
+                <?php else: ?>
+                    <div class="avatar-initials"><?= strtoupper(substr($challenge['creator_name'], 0, 1)) ?></div>
+                <?php endif; ?>
+            </div>
+            <div class="author-details">
+                <span class="author-name"><?= htmlspecialchars($challenge['creator_name']) ?></span>
+                <span class="publication-date">
+                    <i class="fas fa-calendar-alt"></i> Publié le <?= date('d/m/Y à H:i', strtotime($challenge['created_at'])) ?>
+                </span>
+            </div>
+        </div>
     </div>
 
-    <!-- IMAGE -->
+    <!-- IMAGE DU DÉFI -->
     <?php if(!empty($challenge['image'])): ?>
-    <div class="cs-img-wrap">
-        <img src="public/<?= htmlspecialchars($challenge['image']) ?>" alt="">
+    <div class="challenge-image-container">
+        <img src="public/<?= htmlspecialchars($challenge['image']) ?>" alt="<?= htmlspecialchars($challenge['title']) ?>" class="challenge-image">
     </div>
     <?php endif; ?>
 
-    <!-- DESCRIPTION -->
-    <div class="cs-card">
-        <h2 class="cs-card-title"><i class="fas fa-align-left"></i> Description du défi</h2>
-        <p class="cs-desc"><?= nl2br(htmlspecialchars($challenge['description'])) ?></p>
+    <!-- DESCRIPTION DU DÉFI -->
+    <div class="challenge-description-card">
+        <h2><i class="fas fa-align-left"></i> Description du défi</h2>
+        <div class="description-content">
+            <?= nl2br(htmlspecialchars($challenge['description'])) ?>
+        </div>
     </div>
 
-    <!-- ACTIONS -->
-    <div class="cs-actions">
+    <!-- INFORMATIONS COMPLÉMENTAIRES -->
+    <div class="challenge-info-grid">
+        <div class="info-item">
+            <i class="fas fa-calendar"></i>
+            <div>
+                <span class="info-label">Date limite</span>
+                <span class="info-value">
+                    <?php if(!empty($challenge['deadline'])): ?>
+                        <?= date('d/m/Y', strtotime($challenge['deadline'])) ?>
+                        <?php if($is_open): ?>
+                            <span class="deadline-remaining">
+                                (<?= round((strtotime($challenge['deadline']) - time())/86400) ?> jours restants)
+                            </span>
+                        <?php endif; ?>
+                    <?php else: ?>
+                        Pas de date limite
+                    <?php endif; ?>
+                </span>
+            </div>
+        </div>
+        
+        <div class="info-item">
+            <i class="fas fa-users"></i>
+            <div>
+                <span class="info-label">Participations</span>
+                <span class="info-value"><?= count($submissions) ?> personne<?= count($submissions) > 1 ? 's' : '' ?></span>
+            </div>
+        </div>
+        
+        <div class="info-item">
+            <i class="fas fa-thumbs-up"></i>
+            <div>
+                <span class="info-label">Votes totaux</span>
+                <span class="info-value">
+                    <?php 
+                    $totalVotes = 0;
+                    foreach($submissions as $sub) {
+                        $totalVotes += $sub['votes_count'];
+                    }
+                    echo $totalVotes;
+                    ?>
+                </span>
+            </div>
+        </div>
+    </div>
+
+    <!-- BOUTONS D'ACTION -->
+    <div class="challenge-action-buttons">
         <?php if(isset($_SESSION['user_id'])): ?>
             <?php if($_SESSION['user_id'] == $challenge['user_id']): ?>
-                <a href="index.php?action=editChallengeForm&id=<?= $challenge['id'] ?>" class="cs-btn-edit">
-                    <i class="fas fa-edit"></i> Modifier
+                <a href="index.php?action=editChallengeForm&id=<?= $challenge['id'] ?>" class="btn-edit">
+                    <i class="fas fa-edit"></i> Modifier le défi
                 </a>
-                <button onclick="document.getElementById('deleteModal').style.display='flex'" class="cs-btn-delete">
+                <button onclick="document.getElementById('deleteModal').style.display='flex'" class="btn-delete">
                     <i class="fas fa-trash"></i> Supprimer
                 </button>
             <?php else: ?>
-                <a href="index.php?action=createSubmissionForm&challenge_id=<?= $challenge['id'] ?>" class="cs-btn-primary">
-                    <i class="fas fa-plus-circle"></i> Participer
-                </a>
+                <?php if($user_participated): ?>
+                    <div class="already-participated">
+                        <i class="fas fa-check-circle"></i> Vous avez déjà participé
+                    </div>
+                <?php elseif($is_open): ?>
+                    <a href="index.php?action=createSubmissionForm&challenge_id=<?= $challenge['id'] ?>" class="btn-participate">
+                        <i class="fas fa-plus-circle"></i> Participer à ce défi
+                    </a>
+                <?php else: ?>
+                    <div class="challenge-closed-message">
+                        <i class="fas fa-clock"></i> Ce défi est terminé
+                    </div>
+                <?php endif; ?>
             <?php endif; ?>
         <?php else: ?>
-            <a href="index.php?action=showLogin" class="cs-btn-primary">
+            <a href="index.php?action=showLogin" class="btn-participate">
                 <i class="fas fa-sign-in-alt"></i> Connectez-vous pour participer
             </a>
         <?php endif; ?>
     </div>
 
-    <!-- PARTICIPATIONS -->
-    <div class="cs-card">
-        <div class="cs-subs-header">
-            <h2 class="cs-card-title" style="margin:0"><i class="fas fa-users"></i> Participations (<?= count($submissions) ?>)</h2>
+    <!-- SECTION PARTICIPATIONS -->
+    <div class="participations-section">
+        <div class="section-header">
+            <h2><i class="fas fa-users"></i> Participations (<?= count($submissions) ?>)</h2>
+            <?php if(count($submissions) > 0): ?>
+            <div class="sort-participations">
+                <label>Trier par :</label>
+                <a href="?action=showChallenge&id=<?= $challenge['id'] ?>&sort=recent" class="sort-link <?= ($_GET['sort'] ?? 'recent') == 'recent' ? 'active' : '' ?>">
+                    <i class="fas fa-clock"></i> Récents
+                </a>
+                <a href="?action=showChallenge&id=<?= $challenge['id'] ?>&sort=popular" class="sort-link <?= ($_GET['sort'] ?? 'recent') == 'popular' ? 'active' : '' ?>">
+                    <i class="fas fa-fire"></i> Populaires
+                </a>
+            </div>
+            <?php endif; ?>
         </div>
+
         <?php if(empty($submissions)): ?>
-            <div class="cs-empty">
+            <div class="empty-participations">
                 <i class="fas fa-paper-plane"></i>
-                <p>Aucune participation pour le moment — soyez le premier !</p>
+                <h3>Aucune participation pour le moment</h3>
+                <?php if(isset($_SESSION['user_id']) && $_SESSION['user_id'] != $challenge['user_id'] && $is_open): ?>
+                    <p>Soyez le premier à participer à ce défi !</p>
+                    <a href="index.php?action=createSubmissionForm&challenge_id=<?= $challenge['id'] ?>" class="btn-participate-small">
+                        <i class="fas fa-plus-circle"></i> Participer
+                    </a>
+                <?php else: ?>
+                    <p>Les participations apparaîtront ici</p>
+                <?php endif; ?>
             </div>
         <?php else: ?>
-            <div class="cs-subs-list">
+            <div class="participations-grid">
                 <?php foreach($submissions as $sub): ?>
-                <div class="cs-sub-item">
-                    <div class="cs-sub-author">
-                        <?php if(!empty($sub['avatar'])): ?>
-                            <img src="public/<?= htmlspecialchars($sub['avatar']) ?>" class="cs-sub-avatar" alt="">
-                        <?php else: ?>
-                            <div class="cs-sub-avatar-init"><?= strtoupper(substr($sub['username'], 0, 1)) ?></div>
-                        <?php endif; ?>
-                        <div>
-                            <a href="index.php?action=viewProfile&id=<?= $sub['user_id'] ?>" class="cs-sub-name">
-                                <?= htmlspecialchars($sub['username']) ?>
-                            </a>
-                            <div class="cs-sub-date"><i class="fas fa-clock"></i> <?= date('d/m/Y', strtotime($sub['created_at'])) ?></div>
+                <div class="participation-card" id="submission-<?= $sub['id'] ?>">
+                    <div class="participation-header">
+                        <div class="participant-info">
+                            <div class="participant-avatar">
+                                <?php if(!empty($sub['avatar'])): ?>
+                                    <img src="public/<?= htmlspecialchars($sub['avatar']) ?>" alt="">
+                                <?php else: ?>
+                                    <div class="avatar-small"><?= strtoupper(substr($sub['username'], 0, 1)) ?></div>
+                                <?php endif; ?>
+                            </div>
+                            <div class="participant-details">
+                                <a href="index.php?action=viewProfile&id=<?= $sub['user_id'] ?>" class="participant-name">
+                                    <?= htmlspecialchars($sub['username']) ?>
+                                </a>
+                                <span class="participation-date">
+                                    <i class="fas fa-clock"></i> <?= date('d/m/Y', strtotime($sub['created_at'])) ?>
+                                </span>
+                            </div>
                         </div>
-                        <a href="index.php?action=showSubmission&id=<?= $sub['id'] ?>" class="cs-sub-voir">
-                            <i class="fas fa-eye"></i> Voir
+                        <a href="index.php?action=showSubmission&id=<?= $sub['id'] ?>" class="btn-view-participation">
+                            Voir en détail <i class="fas fa-arrow-right"></i>
                         </a>
                     </div>
-                    <div class="cs-sub-content">
-                        <p><?= nl2br(htmlspecialchars($sub['description'])) ?></p>
+
+                    <div class="participation-content">
+                        <p class="participation-description">
+                            <?= nl2br(htmlspecialchars(mb_substr($sub['description'], 0, 150))) ?>
+                            <?= mb_strlen($sub['description']) > 150 ? '...' : '' ?>
+                        </p>
+                        
                         <?php if(!empty($sub['image'])): ?>
-                            <img src="public/<?= htmlspecialchars($sub['image']) ?>" class="cs-sub-img" alt="">
+                        <div class="participation-thumbnail">
+                            <img src="public/<?= htmlspecialchars($sub['image']) ?>" alt="">
+                        </div>
                         <?php endif; ?>
+
                         <?php if(!empty($sub['link'])): ?>
-                            <a href="<?= htmlspecialchars($sub['link']) ?>" target="_blank" class="cs-sub-link">
-                                <i class="fas fa-external-link-alt"></i> Voir le projet
-                            </a>
+                        <a href="<?= htmlspecialchars($sub['link']) ?>" target="_blank" class="participation-link">
+                            <i class="fas fa-external-link-alt"></i> Voir le projet
+                        </a>
                         <?php endif; ?>
                     </div>
-                    <div class="cs-sub-footer">
-                        <?php if(isset($_SESSION['user_id']) && $_SESSION['user_id'] != $sub['user_id']): ?>
-                            <button class="cs-vote-btn <?= $sub['user_voted'] ? 'voted' : '' ?>"
-                                    onclick="voteSubmission(<?= $sub['id'] ?>, this)">
-                                <i class="fas fa-thumbs-up"></i>
-                                <span id="votes-<?= $sub['id'] ?>"><?= $sub['votes_count'] ?></span> votes
-                            </button>
-                        <?php else: ?>
-                            <span class="cs-vote-display">
-                                <i class="fas fa-thumbs-up"></i>
-                                <span id="votes-<?= $sub['id'] ?>"><?= $sub['votes_count'] ?></span> votes
+
+                    <div class="participation-footer">
+                        <div class="participation-stats">
+                            <span class="vote-count <?= isset($sub['user_voted']) && $sub['user_voted'] ? 'voted' : '' ?>">
+                                <i class="fas fa-thumbs-up"></i> <?= $sub['votes_count'] ?> vote<?= $sub['votes_count'] > 1 ? 's' : '' ?>
                             </span>
+                            <span class="comment-count">
+                                <i class="fas fa-comment"></i> 
+                                <?= isset($sub['comments_count']) ? $sub['comments_count'] : 0 ?> commentaire<?= isset($sub['comments_count']) && $sub['comments_count'] > 1 ? 's' : '' ?>
+                            </span>
+                        </div>
+                        
+                        <?php if(isset($_SESSION['user_id']) && $_SESSION['user_id'] != $sub['user_id']): ?>
+                            <button class="vote-action-btn <?= isset($sub['user_voted']) && $sub['user_voted'] ? 'voted' : '' ?>" 
+                                    onclick="voteSubmission(<?= $sub['id'] ?>, this)">
+                                <i class="fas fa-thumbs-up"></i> 
+                                <span><?= isset($sub['user_voted']) && $sub['user_voted'] ? 'Voté' : 'Voter' ?></span>
+                            </button>
                         <?php endif; ?>
-                        <button class="cs-comment-toggle" onclick="toggleComments(<?= $sub['id'] ?>)">
-                            <i class="fas fa-comment"></i> Commentaires
+                        
+                        <button class="comment-toggle-btn" onclick="toggleComments(<?= $sub['id'] ?>)">
+                            <i class="fas fa-comments"></i> Commentaires
                         </button>
                     </div>
-                    <div class="cs-comments" id="comments-<?= $sub['id'] ?>" style="display:none;">
-                        <div class="cs-comments-list" id="comments-list-<?= $sub['id'] ?>"></div>
+
+                    <!-- SECTION COMMENTAIRES (cachée par défaut) -->
+                    <div class="comments-section" id="comments-<?= $sub['id'] ?>" style="display: none;">
+                        <div class="comments-list" id="comments-list-<?= $sub['id'] ?>">
+                            <!-- Les commentaires seront chargés dynamiquement -->
+                        </div>
+                        
                         <?php if(isset($_SESSION['user_id'])): ?>
-                        <div class="cs-comment-form">
-                            <div class="cs-comment-init"><?= strtoupper(substr($_SESSION['username'], 0, 1)) ?></div>
-                            <input type="text" id="comment-input-<?= $sub['id'] ?>" placeholder="Ajouter un commentaire..." />
-                            <button onclick="addComment(<?= $sub['id'] ?>)"><i class="fas fa-paper-plane"></i></button>
+                        <div class="comment-form-container">
+                            <div class="comment-avatar-small">
+                                <?= strtoupper(substr($_SESSION['username'], 0, 1)) ?>
+                            </div>
+                            <form class="comment-form" onsubmit="addComment(event, <?= $sub['id'] ?>)">
+                                <input type="text" id="comment-input-<?= $sub['id'] ?>" placeholder="Écrire un commentaire..." required>
+                                <button type="submit"><i class="fas fa-paper-plane"></i></button>
+                            </form>
                         </div>
                         <?php endif; ?>
                     </div>
@@ -130,390 +252,1201 @@ ob_start();
         <?php endif; ?>
     </div>
 
-    <!-- COMMENTAIRES DU DÉFI -->
-    <div class="cs-card">
-        <h2 class="cs-card-title"><i class="fas fa-comments"></i> Discussion sur ce défi <span class="cs-comment-badge" id="challengeCommentCount"></span></h2>
+    <!-- SECTION COMMENTAIRES DU DÉFI -->
+    <div class="challenge-comments-section">
+        <div class="section-header">
+            <h2><i class="fas fa-comments"></i> Discussion sur le défi</h2>
+        </div>
 
         <?php if(isset($_SESSION['user_id'])): ?>
-        <div class="cs-challenge-comment-form">
-            <div class="cs-comment-init"><?= strtoupper(substr($_SESSION['username'], 0, 1)) ?></div>
-            <input type="text" id="challenge-comment-input" placeholder="Donnez votre avis sur ce défi...">
-            <button onclick="addChallengeComment(<?= $challenge['id'] ?>)"><i class="fas fa-paper-plane"></i></button>
+        <div class="challenge-comment-form">
+            <div class="comment-avatar-medium">
+                <?= strtoupper(substr($_SESSION['username'], 0, 1)) ?>
+            </div>
+            <div class="comment-input-wrapper">
+                <textarea id="challenge-comment-input" placeholder="Donnez votre avis sur ce défi..." rows="2"></textarea>
+                <button onclick="addChallengeComment(<?= $challenge['id'] ?>)" class="btn-send-comment">
+                    <i class="fas fa-paper-plane"></i> Envoyer
+                </button>
+            </div>
         </div>
         <?php endif; ?>
 
-        <div class="cs-challenge-comments-list" id="challenge-comments-list"></div>
+        <div class="challenge-comments-list" id="challenge-comments-list">
+            <!-- Les commentaires du défi seront chargés ici -->
+        </div>
     </div>
 
 </div>
 
-<!-- Modal suppression -->
-<div id="deleteModal" class="cs-modal" onclick="if(event.target===this)this.style.display='none'">
-    <div class="cs-modal-box">
-        <div class="cs-modal-icon"><i class="fas fa-exclamation-triangle"></i></div>
+<!-- MODAL DE SUPPRESSION -->
+<div id="deleteModal" class="modal-overlay" onclick="if(event.target===this)this.style.display='none'">
+    <div class="modal-box">
+        <div class="modal-icon"><i class="fas fa-exclamation-triangle"></i></div>
         <h3>Supprimer ce défi ?</h3>
-        <p>Cette action est irréversible. Toutes les participations seront supprimées.</p>
+        <p>Cette action est irréversible. Toutes les participations et commentaires seront supprimés.</p>
         <form action="index.php?action=deleteChallenge" method="POST">
             <?= CSRF::field() ?>
             <input type="hidden" name="challenge_id" value="<?= $challenge['id'] ?>">
-            <div class="cs-modal-actions">
-                <button type="button" onclick="document.getElementById('deleteModal').style.display='none'" class="cs-modal-cancel">Annuler</button>
-                <button type="submit" class="cs-modal-confirm">Supprimer</button>
+            <div class="modal-actions">
+                <button type="button" onclick="document.getElementById('deleteModal').style.display='none'" class="btn-cancel">Annuler</button>
+                <button type="submit" class="btn-confirm-delete">Supprimer</button>
             </div>
         </form>
     </div>
 </div>
 
 <style>
-.cs-page { max-width: 800px; margin: 0 auto; }
-.cs-header { margin-bottom: 20px; }
-.cs-meta { display:flex; align-items:center; gap:12px; flex-wrap:wrap; margin-bottom:10px; }
-.cs-cat { background:linear-gradient(135deg,#667eea,#764ba2); color:white; padding:4px 14px; border-radius:20px; font-size:0.85rem; font-weight:700; }
-.cs-by { font-size:0.9rem; color:#666; display:flex; align-items:center; gap:5px; }
-.cs-by i { color:#667eea; }
-.cs-creator-link { color:#667eea; text-decoration:none; font-weight:700; }
-.cs-creator-link:hover { text-decoration:underline; }
-.cs-date { font-size:0.88rem; color:#aaa; display:flex; align-items:center; gap:5px; }
-.cs-title { font-size:2rem; font-weight:900; color:#222; line-height:1.2; overflow-wrap:break-word; word-break:break-word; }
-.cs-img-wrap { border-radius:16px; overflow:hidden; margin-bottom:20px; box-shadow:0 4px 20px rgba(0,0,0,0.1); }
-.cs-img-wrap img { width:100%; max-height:450px; object-fit:cover; display:block; }
-.cs-card { background:white; border-radius:16px; padding:24px; margin-bottom:20px; box-shadow:0 2px 16px rgba(0,0,0,0.06); border:1px solid #f0f0f0; }
-.cs-card-title { font-size:1.1rem; font-weight:800; color:#333; margin:0 0 16px; display:flex; align-items:center; gap:8px; }
-.cs-card-title i { color:#667eea; }
-.cs-desc { color:#555; line-height:1.8; font-size:0.97rem; overflow-wrap:break-word; word-break:break-word; white-space:pre-wrap; margin:0; }
-.cs-actions { display:flex; gap:12px; margin-bottom:20px; flex-wrap:wrap; }
-.cs-btn-primary { display:inline-flex; align-items:center; gap:8px; padding:12px 24px; background:linear-gradient(135deg,#667eea,#764ba2); color:white; border-radius:12px; text-decoration:none; font-weight:700; font-size:0.95rem; transition:all 0.3s; }
-.cs-btn-primary:hover { transform:translateY(-2px); box-shadow:0 6px 20px rgba(102,126,234,0.4); }
-.cs-btn-edit { display:inline-flex; align-items:center; gap:8px; padding:12px 20px; background:#ede9fe; color:#667eea; border-radius:12px; text-decoration:none; font-weight:700; }
-.cs-btn-delete { display:inline-flex; align-items:center; gap:8px; padding:12px 20px; background:#fee2e2; color:#ef4444; border:none; border-radius:12px; font-weight:700; cursor:pointer; }
-.cs-subs-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:20px; }
-.cs-empty { text-align:center; padding:40px; color:#ccc; }
-.cs-empty i { font-size:2.5rem; margin-bottom:10px; display:block; }
-.cs-subs-list { display:flex; flex-direction:column; gap:16px; }
-.cs-sub-item { border:2px solid #f0f0f0; border-radius:14px; overflow:hidden; transition:border-color 0.2s; }
-.cs-sub-item:hover { border-color:#c4b5fd; }
-.cs-sub-author { display:flex; align-items:center; gap:12px; padding:14px 16px; background:#fafafa; border-bottom:1px solid #f0f0f0; }
-.cs-sub-avatar { width:40px; height:40px; border-radius:50%; object-fit:cover; border:2px solid #ede9fe; }
-.cs-sub-avatar-init { width:40px; height:40px; border-radius:50%; background:linear-gradient(135deg,#667eea,#764ba2); color:white; display:flex; align-items:center; justify-content:center; font-weight:900; font-size:1rem; flex-shrink:0; }
-.cs-sub-name { font-weight:800; color:#222; text-decoration:none; display:block; font-size:0.95rem; }
-.cs-sub-name:hover { color:#667eea; }
-.cs-sub-date { font-size:0.75rem; color:#aaa; margin-top:2px; }
-.cs-sub-voir { margin-left:auto; display:inline-flex; align-items:center; gap:6px; padding:6px 14px; background:#ede9fe; color:#667eea; border-radius:8px; text-decoration:none; font-size:0.82rem; font-weight:700; white-space:nowrap; }
-.cs-sub-voir:hover { background:#ddd6fe; }
-.cs-sub-content { padding:16px; }
-.cs-sub-content p { color:#555; line-height:1.7; font-size:0.93rem; margin:0 0 12px; overflow-wrap:break-word; word-break:break-word; }
-.cs-sub-img { max-width:100%; border-radius:10px; margin-top:8px; display:block; }
-.cs-sub-link { display:inline-flex; align-items:center; gap:6px; color:#667eea; font-weight:600; text-decoration:none; font-size:0.88rem; margin-top:8px; }
-.cs-sub-footer { display:flex; align-items:center; gap:16px; padding:12px 16px; border-top:1px solid #f5f5f5; background:#fafafa; }
-.cs-vote-btn { display:inline-flex; align-items:center; gap:7px; padding:8px 16px; background:#f5f5f5; border:2px solid #e0e0e0; border-radius:20px; cursor:pointer; font-weight:700; font-size:0.88rem; color:#666; transition:all 0.2s; }
-.cs-vote-btn:hover { border-color:#667eea; color:#667eea; background:#f5f3ff; }
-.cs-vote-btn.voted { background:#fef2f2; border-color:#ef4444; color:#ef4444; }
-.cs-vote-display { display:inline-flex; align-items:center; gap:7px; font-size:0.88rem; color:#aaa; }
-.cs-comment-toggle { display:inline-flex; align-items:center; gap:7px; background:none; border:none; color:#888; font-size:0.88rem; font-weight:600; cursor:pointer; padding:6px 10px; border-radius:8px; transition:all 0.2s; }
-.cs-comment-toggle:hover { background:#f5f3ff; color:#667eea; }
-.cs-comments { padding:16px; background:#f8f9fa; border-top:1px solid #f0f0f0; }
-.cs-comments-list { margin-bottom:12px; }
+/* ===== STYLES PRINCIPAUX ===== */
+.challenge-detail-page {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 20px;
+}
 
-/* Comment items in submissions */
-.cs-comment-item { display:flex; gap:10px; margin-bottom:10px; }
-.cs-comment-init-sm { width:32px; height:32px; border-radius:50%; background:linear-gradient(135deg,#667eea,#764ba2); color:white; display:flex; align-items:center; justify-content:center; font-weight:700; font-size:0.78rem; flex-shrink:0; }
-.cs-comment-init-xs { width:26px; height:26px; border-radius:50%; background:linear-gradient(135deg,#667eea,#764ba2); color:white; display:flex; align-items:center; justify-content:center; font-weight:700; font-size:0.7rem; flex-shrink:0; }
-.cs-comment-body { background:white; border-radius:10px; padding:8px 12px; flex:1; }
-.cs-comment-author { font-weight:700; color:#333; font-size:0.82rem; }
-.cs-comment-date { font-size:0.72rem; color:#aaa; margin-left:8px; }
-.cs-comment-text { font-size:0.85rem; color:#555; margin:4px 0 0; overflow-wrap:break-word; }
-.cs-comment-actions-row { display:flex; gap:6px; margin-top:6px; }
-.cs-reply-btn-sm { background:none; border:none; color:#667eea; cursor:pointer; font-size:0.75rem; font-weight:700; padding:2px 6px; border-radius:6px; display:flex; align-items:center; gap:3px; }
-.cs-reply-btn-sm:hover { background:#ede9fe; }
-.cs-del-btn-sm { background:none; border:none; color:#ddd; cursor:pointer; font-size:0.75rem; padding:2px 6px; border-radius:6px; }
-.cs-del-btn-sm:hover { color:#ef4444; background:#fee2e2; }
-.cs-sub-replies { margin-top:8px; padding-left:10px; border-left:3px solid #ede9fe; display:flex; flex-direction:column; gap:6px; }
-.cs-sub-reply { display:flex; gap:8px; }
-.cs-sub-reply-body { background:#f5f3ff; border-radius:8px; padding:6px 10px; flex:1; }
-.cs-reply-form-inline { display:flex; gap:8px; align-items:center; margin-top:8px; }
-.cs-reply-form-inline input { flex:1; padding:6px 12px; border:2px solid #e8e8e8; border-radius:20px; font-size:0.85rem; }
-.cs-reply-form-inline input:focus { outline:none; border-color:#667eea; }
-.cs-reply-form-inline button { width:32px; height:32px; border-radius:50%; background:linear-gradient(135deg,#667eea,#764ba2); color:white; border:none; cursor:pointer; font-size:0.8rem; flex-shrink:0; }
-.cs-reply-form-inline .cs-cancel-sm { background:#fee2e2; color:#ef4444; }
+/* ===== EN-TÊTE ===== */
+.challenge-header {
+    margin-bottom: 25px;
+    padding-bottom: 20px;
+    border-bottom: 2px solid #f0f0f0;
+}
 
-.cs-comment-form { display:flex; gap:8px; align-items:center; }
-.cs-comment-form input { flex:1; padding:8px 14px; border:2px solid #e8e8e8; border-radius:20px; font-size:0.88rem; }
-.cs-comment-form input:focus { outline:none; border-color:#667eea; }
-.cs-comment-form button { width:36px; height:36px; background:linear-gradient(135deg,#667eea,#764ba2); color:white; border:none; border-radius:50%; cursor:pointer; font-size:0.85rem; flex-shrink:0; }
-.cs-comment-init { width:32px; height:32px; border-radius:50%; background:linear-gradient(135deg,#667eea,#764ba2); color:white; display:flex; align-items:center; justify-content:center; font-weight:700; font-size:0.78rem; flex-shrink:0; }
+.challenge-meta-top {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 15px;
+    flex-wrap: wrap;
+}
 
-/* Challenge comments section */
-.cs-comment-badge { background:#667eea; color:white; font-size:0.7rem; font-weight:800; padding:2px 8px; border-radius:20px; margin-left:4px; }
-.cs-challenge-comment-form { display:flex; gap:8px; align-items:center; margin-bottom:16px; }
-.cs-challenge-comment-form input { flex:1; padding:10px 16px; border:2px solid #e8e8e8; border-radius:25px; font-size:0.9rem; }
-.cs-challenge-comment-form input:focus { outline:none; border-color:#667eea; }
-.cs-challenge-comment-form button { width:38px; height:38px; background:linear-gradient(135deg,#667eea,#764ba2); color:white; border:none; border-radius:50%; cursor:pointer; font-size:0.88rem; flex-shrink:0; }
-.cs-challenge-comments-list { display:flex; flex-direction:column; gap:12px; }
-.cs-chall-comment { display:flex; gap:10px; }
-.cs-chall-comment-bubble { flex:1; background:#f8f9fb; border-radius:12px; padding:12px 14px; border:1px solid #f0f0f0; }
-.cs-chall-comment-meta { display:flex; align-items:center; gap:8px; margin-bottom:6px; flex-wrap:wrap; }
-.cs-chall-comment-meta strong { font-size:0.85rem; color:#222; }
-.cs-chall-comment-meta span { font-size:0.74rem; color:#aaa; }
-.cs-chall-comment-meta-actions { margin-left:auto; display:flex; gap:6px; }
-.cs-chall-replies { margin-top:10px; padding-left:10px; border-left:3px solid #ede9fe; display:flex; flex-direction:column; gap:8px; }
-.cs-chall-reply { display:flex; gap:8px; }
-.cs-chall-reply-bubble { flex:1; background:white; border-radius:10px; padding:8px 12px; border:1px solid #eee; }
-.cs-chall-reply-bubble p { font-size:0.85rem; color:#555; margin:0; }
-.cs-chall-reply-form { display:flex; gap:8px; align-items:center; margin-top:8px; }
-.cs-chall-reply-form input { flex:1; padding:6px 12px; border:2px solid #e8e8e8; border-radius:20px; font-size:0.85rem; }
-.cs-chall-reply-form input:focus { outline:none; border-color:#667eea; }
-.cs-chall-reply-form button { width:30px; height:30px; border-radius:50%; background:linear-gradient(135deg,#667eea,#764ba2); color:white; border:none; cursor:pointer; font-size:0.78rem; flex-shrink:0; }
-.cs-chall-reply-form .cs-cancel-sm { background:#fee2e2; color:#ef4444; }
+.category-badge {
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: white;
+    padding: 6px 16px;
+    border-radius: 30px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+}
 
-.cs-modal { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.5); align-items:center; justify-content:center; z-index:1000; }
-.cs-modal-box { background:white; padding:32px; border-radius:20px; max-width:400px; width:90%; text-align:center; }
-.cs-modal-icon { font-size:2.5rem; color:#f59e0b; margin-bottom:12px; }
-.cs-modal-box h3 { font-size:1.2rem; color:#222; margin:0 0 8px; }
-.cs-modal-box p { color:#777; font-size:0.9rem; margin:0 0 24px; }
-.cs-modal-actions { display:flex; gap:10px; justify-content:center; }
-.cs-modal-cancel { padding:10px 24px; background:#f0f0f0; border:none; border-radius:10px; cursor:pointer; font-weight:600; color:#666; }
-.cs-modal-confirm { padding:10px 24px; background:#ef4444; color:white; border:none; border-radius:10px; cursor:pointer; font-weight:700; }
-@media(max-width:600px) { .cs-title { font-size:1.5rem; } .cs-meta { gap:8px; } }
+.challenge-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 600;
+}
+
+.challenge-status.open {
+    background: #d4edda;
+    color: #155724;
+}
+
+.challenge-status.closed {
+    background: #f8d7da;
+    color: #721c24;
+}
+
+.challenge-title {
+    font-size: 2.2rem;
+    font-weight: 800;
+    color: #222;
+    margin-bottom: 15px;
+    line-height: 1.2;
+    word-break: break-word;
+}
+
+.challenge-author-info {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.author-avatar img {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid #667eea;
+}
+
+.avatar-initials {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.3rem;
+    font-weight: 700;
+}
+
+.author-details {
+    display: flex;
+    flex-direction: column;
+}
+
+.author-name {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #333;
+    text-decoration: none;
+}
+
+.author-name:hover {
+    color: #667eea;
+}
+
+.publication-date {
+    font-size: 0.85rem;
+    color: #888;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+/* ===== IMAGE ===== */
+.challenge-image-container {
+    border-radius: 16px;
+    overflow: hidden;
+    margin-bottom: 25px;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+}
+
+.challenge-image {
+    width: 100%;
+    max-height: 450px;
+    object-fit: cover;
+    display: block;
+}
+
+/* ===== DESCRIPTION ===== */
+.challenge-description-card {
+    background: white;
+    border-radius: 16px;
+    padding: 25px;
+    margin-bottom: 25px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.04);
+    border: 1px solid #f0f0f0;
+}
+
+.challenge-description-card h2 {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #333;
+    margin-bottom: 15px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.challenge-description-card h2 i {
+    color: #667eea;
+}
+
+.description-content {
+    color: #555;
+    line-height: 1.8;
+    font-size: 0.98rem;
+    white-space: pre-wrap;
+    word-break: break-word;
+}
+
+/* ===== GRILLE D'INFORMATIONS ===== */
+.challenge-info-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 15px;
+    margin-bottom: 25px;
+}
+
+.info-item {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding: 15px;
+    background: #f8f9fa;
+    border-radius: 12px;
+    border: 1px solid #f0f0f0;
+}
+
+.info-item i {
+    font-size: 1.3rem;
+    color: #667eea;
+    width: 30px;
+    text-align: center;
+}
+
+.info-label {
+    display: block;
+    font-size: 0.75rem;
+    color: #888;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.info-value {
+    display: block;
+    font-size: 1rem;
+    font-weight: 600;
+    color: #333;
+}
+
+.deadline-remaining {
+    font-size: 0.8rem;
+    color: #f59e0b;
+    font-weight: 500;
+    margin-left: 5px;
+}
+
+/* ===== BOUTONS D'ACTION ===== */
+.challenge-action-buttons {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 30px;
+    flex-wrap: wrap;
+}
+
+.btn-participate {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 14px 28px;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: white;
+    border-radius: 12px;
+    text-decoration: none;
+    font-weight: 700;
+    font-size: 1rem;
+    transition: all 0.3s;
+    border: none;
+    cursor: pointer;
+}
+
+.btn-participate:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(102,126,234,0.4);
+}
+
+.btn-edit {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 24px;
+    background: #ede9fe;
+    color: #667eea;
+    border-radius: 10px;
+    text-decoration: none;
+    font-weight: 600;
+    transition: all 0.2s;
+}
+
+.btn-delete {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 24px;
+    background: #fee2e2;
+    color: #ef4444;
+    border: none;
+    border-radius: 10px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.already-participated {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 24px;
+    background: #d4edda;
+    color: #155724;
+    border-radius: 10px;
+    font-weight: 600;
+}
+
+.challenge-closed-message {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 24px;
+    background: #f8d7da;
+    color: #721c24;
+    border-radius: 10px;
+    font-weight: 600;
+}
+
+/* ===== SECTION PARTICIPATIONS ===== */
+.participations-section {
+    background: white;
+    border-radius: 16px;
+    padding: 25px;
+    margin-bottom: 30px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.04);
+    border: 1px solid #f0f0f0;
+}
+
+.section-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+    gap: 15px;
+}
+
+.section-header h2 {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: #333;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.section-header h2 i {
+    color: #667eea;
+}
+
+.sort-participations {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 0.85rem;
+}
+
+.sort-participations label {
+    color: #888;
+}
+
+.sort-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 6px 14px;
+    background: #f8f9fa;
+    border: 1px solid #e0e0e0;
+    border-radius: 20px;
+    color: #666;
+    text-decoration: none;
+    font-size: 0.8rem;
+    font-weight: 600;
+    transition: all 0.2s;
+}
+
+.sort-link:hover {
+    background: #ede9fe;
+    border-color: #667eea;
+    color: #667eea;
+}
+
+.sort-link.active {
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    border-color: transparent;
+    color: white;
+}
+
+/* ===== PARTICIPATION CARD ===== */
+.participations-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.participation-card {
+    border: 1px solid #f0f0f0;
+    border-radius: 14px;
+    overflow: hidden;
+    transition: all 0.3s;
+}
+
+.participation-card:hover {
+    border-color: #c4b5fd;
+    box-shadow: 0 4px 15px rgba(102,126,234,0.1);
+}
+
+.participation-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 15px 20px;
+    background: #fafafa;
+    border-bottom: 1px solid #f0f0f0;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.participant-info {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.participant-avatar img {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.avatar-small {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1rem;
+    font-weight: 700;
+}
+
+.participant-details {
+    display: flex;
+    flex-direction: column;
+}
+
+.participant-name {
+    font-weight: 700;
+    color: #333;
+    text-decoration: none;
+    font-size: 0.95rem;
+}
+
+.participant-name:hover {
+    color: #667eea;
+}
+
+.participation-date {
+    font-size: 0.75rem;
+    color: #888;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.btn-view-participation {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 16px;
+    background: #ede9fe;
+    color: #667eea;
+    border-radius: 8px;
+    text-decoration: none;
+    font-size: 0.85rem;
+    font-weight: 600;
+    transition: all 0.2s;
+}
+
+.btn-view-participation:hover {
+    background: #ddd6fe;
+}
+
+.participation-content {
+    padding: 20px;
+}
+
+.participation-description {
+    color: #555;
+    line-height: 1.7;
+    font-size: 0.92rem;
+    margin-bottom: 15px;
+}
+
+.participation-thumbnail {
+    margin: 10px 0;
+    border-radius: 8px;
+    overflow: hidden;
+    max-width: 200px;
+}
+
+.participation-thumbnail img {
+    width: 100%;
+    height: auto;
+    display: block;
+}
+
+.participation-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    color: #667eea;
+    text-decoration: none;
+    font-size: 0.85rem;
+    font-weight: 600;
+    margin-top: 10px;
+}
+
+.participation-footer {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding: 12px 20px;
+    background: #fafafa;
+    border-top: 1px solid #f0f0f0;
+    flex-wrap: wrap;
+}
+
+.participation-stats {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    flex: 1;
+}
+
+.vote-count, .comment-count {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 0.85rem;
+    color: #666;
+}
+
+.vote-count i {
+    color: #ef4444;
+}
+
+.vote-count.voted i {
+    color: #ef4444;
+}
+
+.comment-count i {
+    color: #667eea;
+}
+
+.vote-action-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 18px;
+    background: white;
+    border: 2px solid #e0e0e0;
+    border-radius: 30px;
+    cursor: pointer;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #666;
+    transition: all 0.2s;
+}
+
+.vote-action-btn:hover {
+    border-color: #ef4444;
+    color: #ef4444;
+    background: #fff5f5;
+}
+
+.vote-action-btn.voted {
+    background: #fef2f2;
+    border-color: #ef4444;
+    color: #ef4444;
+}
+
+.comment-toggle-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 16px;
+    background: none;
+    border: none;
+    color: #888;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.comment-toggle-btn:hover {
+    color: #667eea;
+}
+
+/* ===== COMMENTAIRES ===== */
+.comments-section {
+    padding: 20px;
+    background: #f8f9fa;
+    border-top: 1px solid #f0f0f0;
+}
+
+.comments-list {
+    margin-bottom: 15px;
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+.comment-item {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 12px;
+}
+
+.comment-avatar-small {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.8rem;
+    font-weight: 700;
+    flex-shrink: 0;
+}
+
+.comment-bubble {
+    flex: 1;
+    background: white;
+    border-radius: 12px;
+    padding: 10px 14px;
+    border: 1px solid #f0f0f0;
+}
+
+.comment-meta {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 5px;
+    flex-wrap: wrap;
+}
+
+.comment-author {
+    font-weight: 700;
+    color: #333;
+    font-size: 0.85rem;
+}
+
+.comment-date {
+    font-size: 0.7rem;
+    color: #aaa;
+}
+
+.comment-text {
+    font-size: 0.85rem;
+    color: #555;
+    line-height: 1.5;
+    margin: 0;
+}
+
+.delete-comment-btn {
+    background: none;
+    border: none;
+    color: #ddd;
+    cursor: pointer;
+    font-size: 0.7rem;
+    margin-left: auto;
+}
+
+.delete-comment-btn:hover {
+    color: #ef4444;
+}
+
+.comment-form-container {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.comment-form {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: white;
+    border: 1px solid #e0e0e0;
+    border-radius: 30px;
+    padding: 5px 5px 5px 15px;
+}
+
+.comment-form input {
+    flex: 1;
+    border: none;
+    outline: none;
+    font-size: 0.9rem;
+    padding: 8px 0;
+    background: transparent;
+}
+
+.comment-form button {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: white;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.85rem;
+    flex-shrink: 0;
+}
+
+.comment-form button:hover {
+    transform: scale(1.05);
+}
+
+/* ===== COMMENTAIRES DU DÉFI ===== */
+.challenge-comments-section {
+    background: white;
+    border-radius: 16px;
+    padding: 25px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.04);
+    border: 1px solid #f0f0f0;
+}
+
+.challenge-comment-form {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.comment-avatar-medium {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1rem;
+    font-weight: 700;
+    flex-shrink: 0;
+}
+
+.comment-input-wrapper {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.comment-input-wrapper textarea {
+    width: 100%;
+    padding: 12px 15px;
+    border: 2px solid #e8e8e8;
+    border-radius: 12px;
+    font-size: 0.9rem;
+    resize: vertical;
+    font-family: inherit;
+    transition: border-color 0.3s;
+}
+
+.comment-input-wrapper textarea:focus {
+    outline: none;
+    border-color: #667eea;
+}
+
+.btn-send-comment {
+    align-self: flex-end;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 20px;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.btn-send-comment:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(102,126,234,0.4);
+}
+
+.challenge-comments-list {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    margin-top: 20px;
+}
+
+.challenge-comment-item {
+    display: flex;
+    gap: 12px;
+}
+
+.challenge-comment-bubble {
+    flex: 1;
+    background: #f8f9fa;
+    border-radius: 12px;
+    padding: 12px 16px;
+}
+
+.challenge-comment-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 5px;
+}
+
+.challenge-comment-author {
+    font-weight: 700;
+    color: #333;
+    font-size: 0.9rem;
+}
+
+.challenge-comment-date {
+    font-size: 0.75rem;
+    color: #888;
+}
+
+.challenge-comment-content {
+    font-size: 0.9rem;
+    color: #555;
+    line-height: 1.6;
+    margin: 0;
+}
+
+/* ===== ÉTAT VIDE ===== */
+.empty-participations {
+    text-align: center;
+    padding: 50px 20px;
+    background: #f9f9f9;
+    border-radius: 12px;
+    border: 2px dashed #e0e0e0;
+}
+
+.empty-participations i {
+    font-size: 2.5rem;
+    color: #ccc;
+    margin-bottom: 15px;
+    display: block;
+}
+
+.empty-participations h3 {
+    color: #555;
+    margin-bottom: 10px;
+    font-size: 1.1rem;
+}
+
+.empty-participations p {
+    color: #888;
+    margin-bottom: 20px;
+}
+
+.btn-participate-small {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 24px;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: white;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 0.9rem;
+    transition: all 0.3s;
+}
+
+.btn-participate-small:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(102,126,234,0.4);
+}
+
+/* ===== MODAL ===== */
+.modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.5);
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+}
+
+.modal-box {
+    background: white;
+    padding: 30px;
+    border-radius: 20px;
+    max-width: 400px;
+    width: 90%;
+    text-align: center;
+}
+
+.modal-icon {
+    font-size: 2.5rem;
+    color: #f59e0b;
+    margin-bottom: 15px;
+}
+
+.modal-box h3 {
+    font-size: 1.2rem;
+    color: #333;
+    margin-bottom: 10px;
+}
+
+.modal-box p {
+    color: #666;
+    margin-bottom: 20px;
+    font-size: 0.9rem;
+}
+
+.modal-actions {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+}
+
+.btn-cancel {
+    padding: 10px 24px;
+    background: #f0f0f0;
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
+    color: #666;
+    cursor: pointer;
+}
+
+.btn-confirm-delete {
+    padding: 10px 24px;
+    background: #ef4444;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 768px) {
+    .challenge-title {
+        font-size: 1.8rem;
+    }
+    
+    .section-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    
+    .participation-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    
+    .btn-view-participation {
+        width: 100%;
+        justify-content: center;
+    }
+    
+    .participation-footer {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    
+    .vote-action-btn {
+        width: 100%;
+        justify-content: center;
+    }
+    
+    .challenge-comment-form {
+        flex-direction: column;
+    }
+    
+    .comment-avatar-medium {
+        align-self: flex-start;
+    }
+}
 </style>
 
 <script>
+// ===== VARIABLES GLOBALES =====
 const CHALLENGE_ID = <?= $challenge['id'] ?>;
 const LOGGED_IN = <?= isset($_SESSION['user_id']) ? 'true' : 'false' ?>;
-const MY_INITIAL_CS = "<?= isset($_SESSION['username']) ? strtoupper(substr($_SESSION['username'], 0, 1)) : '' ?>";
+const CURRENT_USER = "<?= isset($_SESSION['username']) ? addslashes($_SESSION['username']) : '' ?>";
+const USER_INITIAL = "<?= isset($_SESSION['username']) ? strtoupper(substr($_SESSION['username'], 0, 1)) : '' ?>";
 
-// ===================== SUBMISSIONS COMMENTS =====================
+// ===== FONCTIONS POUR LES VOTES =====
 function voteSubmission(submissionId, btn) {
+    if (!LOGGED_IN) {
+        window.location.href = 'index.php?action=showLogin';
+        return;
+    }
+    
     fetch('index.php?action=vote', {
         method: 'POST',
         headers: {'Content-Type': 'application/x-www-form-urlencoded'},
         body: 'submission_id=' + submissionId
-    }).then(r => r.json()).then(data => {
-        if(data.success) {
-            document.getElementById('votes-' + submissionId).textContent = data.votes_count ?? data.new_count;
-            btn.classList.toggle('voted', data.voted ?? data.action === 'added');
-        } else if(data.message) alert(data.message);
-    });
+    })
+    .then(r => r.json())
+    .then(data => {
+        if (data.success) {
+            // Mettre à jour le compteur de votes
+            const voteCountSpan = document.querySelector(`#submission-${submissionId} .vote-count span`);
+            if (voteCountSpan) {
+                voteCountSpan.textContent = data.new_count;
+            }
+            
+            // Mettre à jour le bouton
+            btn.classList.toggle('voted', data.action === 'added');
+            btn.querySelector('span').textContent = data.action === 'added' ? 'Voté' : 'Voter';
+        } else {
+            alert(data.message || 'Erreur lors du vote');
+        }
+    })
+    .catch(err => console.error('Erreur:', err));
 }
 
+// ===== FONCTIONS POUR LES COMMENTAIRES DES PARTICIPATIONS =====
 function toggleComments(submissionId) {
-    const section = document.getElementById('comments-' + submissionId);
-    if(section.style.display === 'none') {
-        section.style.display = 'block';
+    const commentsSection = document.getElementById('comments-' + submissionId);
+    
+    if (commentsSection.style.display === 'none') {
+        commentsSection.style.display = 'block';
         loadSubmissionComments(submissionId);
     } else {
-        section.style.display = 'none';
+        commentsSection.style.display = 'none';
     }
 }
 
 function loadSubmissionComments(submissionId) {
     fetch('index.php?action=getComments&submission_id=' + submissionId)
-    .then(r => r.json()).then(data => {
-        if(!data.success) return;
-        const list = document.getElementById('comments-list-' + submissionId);
-        list.innerHTML = '';
-        if(data.comments.length === 0) {
-            list.innerHTML = '<p style="color:#ccc;font-size:0.85rem;text-align:center;padding:8px 0">Aucun commentaire</p>';
-            return;
+    .then(r => r.json())
+    .then(data => {
+        if (data.success) {
+            const commentsList = document.getElementById('comments-list-' + submissionId);
+            commentsList.innerHTML = '';
+            
+            if (data.comments.length === 0) {
+                commentsList.innerHTML = '<p style="color:#aaa; text-align:center; padding:10px;">Aucun commentaire</p>';
+                return;
+            }
+            
+            data.comments.forEach(comment => {
+                const commentHtml = `
+                    <div class="comment-item" id="comment-${comment.id}">
+                        <div class="comment-avatar-small">${comment.username.charAt(0).toUpperCase()}</div>
+                        <div class="comment-bubble">
+                            <div class="comment-meta">
+                                <span class="comment-author">${comment.username}</span>
+                                <span class="comment-date">${new Date(comment.created_at).toLocaleDateString('fr-FR')}</span>
+                                ${LOGGED_IN && comment.user_id == <?= $_SESSION['user_id'] ?? 0 ?> ? 
+                                    '<button class="delete-comment-btn" onclick="deleteComment(' + comment.id + ', ' + submissionId + ')"><i class="fas fa-times"></i></button>' : ''}
+                            </div>
+                            <p class="comment-text">${comment.content}</p>
+                        </div>
+                    </div>
+                `;
+                commentsList.insertAdjacentHTML('beforeend', commentHtml);
+            });
         }
-        data.comments.forEach(c => {
-            list.innerHTML += buildSubmissionComment(c, submissionId);
-        });
     });
 }
 
-function buildSubmissionComment(c, submissionId) {
-    const date = new Date(c.created_at).toLocaleDateString('fr-FR');
-    const canDelete = LOGGED_IN; // simplification — server checks ownership anyway
-    let repliesHtml = '';
-    if(c.replies && c.replies.length > 0) {
-        repliesHtml = '<div class="cs-sub-replies">' + c.replies.map(r => {
-            const rd = new Date(r.created_at).toLocaleDateString('fr-FR');
-            return `<div class="cs-sub-reply" id="subcomment-${r.id}">
-                <div class="cs-comment-init-xs">${r.username.charAt(0).toUpperCase()}</div>
-                <div class="cs-sub-reply-body">
-                    <span class="cs-comment-author">${r.username}</span>
-                    <span class="cs-comment-date">${rd}</span>
-                    ${LOGGED_IN ? `<button class="cs-del-btn-sm" style="float:right" onclick="deleteSubComment(${r.id}, ${submissionId})"><i class="fas fa-trash"></i></button>` : ''}
-                    <p class="cs-comment-text">${r.content}</p>
-                </div>
-            </div>`;
-        }).join('') + '</div>';
-    }
-    return `<div class="cs-comment-item" id="subcomment-${c.id}">
-        <div class="cs-comment-init-sm">${c.username.charAt(0).toUpperCase()}</div>
-        <div class="cs-comment-body">
-            <span class="cs-comment-author">${c.username}</span>
-            <span class="cs-comment-date">${date}</span>
-            ${LOGGED_IN ? `<button class="cs-del-btn-sm" style="float:right" onclick="deleteSubComment(${c.id}, ${submissionId})"><i class="fas fa-trash"></i></button>` : ''}
-            <p class="cs-comment-text">${c.content}</p>
-            ${repliesHtml}
-            ${LOGGED_IN ? `
-            <div class="cs-comment-actions-row">
-                <button class="cs-reply-btn-sm" onclick="toggleSubReplyForm(${c.id}, ${submissionId}, '${c.username}')"><i class="fas fa-reply"></i> Répondre</button>
-            </div>
-            <div class="cs-reply-form-inline" id="sub-reply-form-${c.id}" style="display:none;">
-                <div class="cs-comment-init-xs">${MY_INITIAL_CS}</div>
-                <input type="text" id="sub-reply-input-${c.id}" placeholder="Répondre à ${c.username}...">
-                <button onclick="submitSubReply(${c.id}, ${submissionId})"><i class="fas fa-paper-plane"></i></button>
-                <button class="cs-cancel-sm" onclick="document.getElementById('sub-reply-form-${c.id}').style.display='none'"><i class="fas fa-times"></i></button>
-            </div>` : ''}
-        </div>
-    </div>`;
-}
-
-function addComment(submissionId) {
+function addComment(event, submissionId) {
+    event.preventDefault();
+    
     const input = document.getElementById('comment-input-' + submissionId);
     const content = input.value.trim();
-    if(!content) return;
+    
+    if (!content) return;
+    
     fetch('index.php?action=addComment', {
         method: 'POST',
         headers: {'Content-Type': 'application/x-www-form-urlencoded'},
         body: 'submission_id=' + submissionId + '&content=' + encodeURIComponent(content)
-    }).then(r => r.json()).then(data => {
-        if(data.success) { input.value = ''; loadSubmissionComments(submissionId); }
+    })
+    .then(r => r.json())
+    .then(data => {
+        if (data.success) {
+            input.value = '';
+            loadSubmissionComments(submissionId);
+        } else {
+            alert(data.message || 'Erreur');
+        }
     });
 }
 
-function toggleSubReplyForm(commentId, submissionId, username) {
-    document.querySelectorAll('.cs-reply-form-inline').forEach(f => f.style.display = 'none');
-    const form = document.getElementById('sub-reply-form-' + commentId);
-    if(form) form.style.display = 'flex';
-}
-
-function submitSubReply(parentId, submissionId) {
-    const input = document.getElementById('sub-reply-input-' + parentId);
-    const content = input.value.trim();
-    if(!content) return;
-    fetch('index.php?action=addComment', {
-        method: 'POST',
-        headers: {'Content-Type': 'application/x-www-form-urlencoded'},
-        body: 'submission_id=' + submissionId + '&content=' + encodeURIComponent(content) + '&parent_id=' + parentId
-    }).then(r => r.json()).then(data => {
-        if(data.success) { loadSubmissionComments(submissionId); }
-    });
-}
-
-function deleteSubComment(commentId, submissionId) {
-    if(!confirm('Supprimer ce commentaire ?')) return;
+function deleteComment(commentId, submissionId) {
+    if (!confirm('Supprimer ce commentaire ?')) return;
+    
     fetch('index.php?action=deleteComment', {
         method: 'POST',
         headers: {'Content-Type': 'application/x-www-form-urlencoded'},
         body: 'comment_id=' + commentId
-    }).then(r => r.json()).then(data => {
-        if(data.success) loadSubmissionComments(submissionId);
+    })
+    .then(r => r.json())
+    .then(data => {
+        if (data.success) {
+            loadSubmissionComments(submissionId);
+        }
     });
 }
 
-// ===================== CHALLENGE COMMENTS =====================
+// ===== FONCTIONS POUR LES COMMENTAIRES DU DÉFI =====
 function loadChallengeComments() {
     fetch('index.php?action=getChallengeComments&challenge_id=' + CHALLENGE_ID)
-    .then(r => r.json()).then(data => {
-        if(!data.success) return;
-        const list = document.getElementById('challenge-comments-list');
-        const badge = document.getElementById('challengeCommentCount');
-        list.innerHTML = '';
-        if(badge) badge.textContent = data.comments.length;
-        if(data.comments.length === 0) {
-            list.innerHTML = '<p style="color:#ccc;font-size:0.88rem;text-align:center;padding:20px">Aucune discussion pour le moment</p>';
-            return;
-        }
-        data.comments.forEach(c => {
-            list.appendChild(buildChallengeComment(c));
-        });
-    });
-}
-
-function buildChallengeComment(c) {
-    const div = document.createElement('div');
-    div.className = 'cs-chall-comment';
-    div.id = 'challcomment-' + c.id;
-    const date = new Date(c.created_at).toLocaleDateString('fr-FR');
-    let repliesHtml = '';
-    if(c.replies && c.replies.length > 0) {
-        repliesHtml = '<div class="cs-chall-replies">' + c.replies.map(r => {
-            const rd = new Date(r.created_at).toLocaleDateString('fr-FR');
-            return `<div class="cs-chall-reply" id="challcomment-${r.id}">
-                <div class="cs-comment-init-xs">${r.username.charAt(0).toUpperCase()}</div>
-                <div class="cs-chall-reply-bubble">
-                    <div class="cs-chall-comment-meta">
-                        <strong>${r.username}</strong><span>${rd}</span>
-                        <div class="cs-chall-comment-meta-actions">
-                            ${LOGGED_IN ? `<button class="cs-del-btn-sm" onclick="deleteChallengeComment(${r.id})"><i class="fas fa-trash"></i></button>` : ''}
+    .then(r => r.json())
+    .then(data => {
+        if (data.success) {
+            const commentsList = document.getElementById('challenge-comments-list');
+            commentsList.innerHTML = '';
+            
+            if (data.comments.length === 0) {
+                commentsList.innerHTML = '<p style="color:#aaa; text-align:center; padding:20px;">Aucune discussion pour le moment</p>';
+                return;
+            }
+            
+            data.comments.forEach(comment => {
+                const commentHtml = `
+                    <div class="challenge-comment-item">
+                        <div class="comment-avatar-small">${comment.username.charAt(0).toUpperCase()}</div>
+                        <div class="challenge-comment-bubble">
+                            <div class="challenge-comment-header">
+                                <span class="challenge-comment-author">${comment.username}</span>
+                                <span class="challenge-comment-date">${new Date(comment.created_at).toLocaleDateString('fr-FR')}</span>
+                            </div>
+                            <p class="challenge-comment-content">${comment.content}</p>
                         </div>
                     </div>
-                    <p>${r.content}</p>
-                </div>
-            </div>`;
-        }).join('') + '</div>';
-    }
-    div.innerHTML = `
-        <div class="cs-comment-init-sm">${c.username.charAt(0).toUpperCase()}</div>
-        <div class="cs-chall-comment-bubble">
-            <div class="cs-chall-comment-meta">
-                <strong>${c.username}</strong><span>${date}</span>
-                <div class="cs-chall-comment-meta-actions">
-                    ${LOGGED_IN ? `<button class="cs-reply-btn-sm" onclick="showChallengeReplyForm(${c.id}, '${c.username}')"><i class="fas fa-reply"></i> Répondre</button>` : ''}
-                    ${LOGGED_IN ? `<button class="cs-del-btn-sm" onclick="deleteChallengeComment(${c.id})"><i class="fas fa-trash"></i></button>` : ''}
-                </div>
-            </div>
-            <p>${c.content}</p>
-            ${repliesHtml}
-            ${LOGGED_IN ? `
-            <div class="cs-chall-reply-form" id="chall-reply-form-${c.id}" style="display:none;">
-                <div class="cs-comment-init-xs">${MY_INITIAL_CS}</div>
-                <input type="text" id="chall-reply-input-${c.id}" placeholder="Répondre à ${c.username}...">
-                <button onclick="submitChallengeReply(${c.id})"><i class="fas fa-paper-plane"></i></button>
-                <button class="cs-cancel-sm" onclick="document.getElementById('chall-reply-form-${c.id}').style.display='none'"><i class="fas fa-times"></i></button>
-            </div>` : ''}
-        </div>`;
-    return div;
+                `;
+                commentsList.insertAdjacentHTML('beforeend', commentHtml);
+            });
+        }
+    });
 }
 
 function addChallengeComment(challengeId) {
+    if (!LOGGED_IN) {
+        window.location.href = 'index.php?action=showLogin';
+        return;
+    }
+    
     const input = document.getElementById('challenge-comment-input');
     const content = input.value.trim();
-    if(!content) return;
+    
+    if (!content) return;
+    
     fetch('index.php?action=addChallengeComment', {
         method: 'POST',
         headers: {'Content-Type': 'application/x-www-form-urlencoded'},
         body: 'challenge_id=' + challengeId + '&content=' + encodeURIComponent(content)
-    }).then(r => r.json()).then(data => {
-        if(data.success) { input.value = ''; loadChallengeComments(); }
+    })
+    .then(r => r.json())
+    .then(data => {
+        if (data.success) {
+            input.value = '';
+            loadChallengeComments();
+        } else {
+            alert(data.message || 'Erreur');
+        }
     });
 }
 
-function showChallengeReplyForm(commentId, username) {
-    document.querySelectorAll('.cs-chall-reply-form').forEach(f => f.style.display = 'none');
-    const form = document.getElementById('chall-reply-form-' + commentId);
-    if(form) form.style.display = 'flex';
-}
-
-function submitChallengeReply(parentId) {
-    const input = document.getElementById('chall-reply-input-' + parentId);
-    const content = input.value.trim();
-    if(!content) return;
-    fetch('index.php?action=addChallengeComment', {
-        method: 'POST',
-        headers: {'Content-Type': 'application/x-www-form-urlencoded'},
-        body: 'challenge_id=' + CHALLENGE_ID + '&content=' + encodeURIComponent(content) + '&parent_id=' + parentId
-    }).then(r => r.json()).then(data => {
-        if(data.success) loadChallengeComments();
-    });
-}
-
-function deleteChallengeComment(commentId) {
-    if(!confirm('Supprimer ce commentaire ?')) return;
-    fetch('index.php?action=deleteChallengeComment', {
-        method: 'POST',
-        headers: {'Content-Type': 'application/x-www-form-urlencoded'},
-        body: 'comment_id=' + commentId
-    }).then(r => r.json()).then(data => {
-        if(data.success) loadChallengeComments();
-    });
-}
-
-// Charger les commentaires du défi au chargement de la page
-document.addEventListener('DOMContentLoaded', loadChallengeComments);
+// ===== INITIALISATION =====
+document.addEventListener('DOMContentLoaded', function() {
+    loadChallengeComments();
+});
 </script>
 
 <?php
