@@ -1,522 +1,1571 @@
-/* ===== THEME NUIT - VERSION AMÉLIORÉE ===== */
+/* ============================================================
+   CHALLENGEHUB — NIGHT MODE : GAMING DARK
+   Palette : Noir profond + Vert néon gaming professionnel
+   Chargé via Composer → Bootstrap 5.3 + Bootstrap Icons
+   ============================================================ */
 
+/* ===== VARIABLES GAMING ===== */
 :root {
-    /* Couleurs de fond - plus contrastées */
-    --bg-primary: #0f0f0f;        /* Fond principal plus profond */
-    --bg-secondary: #1a1a1a;       /* Fond secondaire */
-    --bg-tertiary: #242424;        /* Fond tertiaire */
-    --bg-card: #1e1e1e;            /* Fond des cartes */
-    --bg-hover: #2a2a2a;           /* Survol */
-    
+    /* Noirs */
+    --night-bg-base:      #060a06;
+    --night-bg-primary:   #0a0f0a;
+    --night-bg-secondary: #0f1a0f;
+    --night-bg-card:      #111811;
+    --night-bg-elevated:  #162016;
+    --night-bg-hover:     #1c2a1c;
+
+    /* Verts néon (palette gaming pro) */
+    --night-green-neon:   #00ff88;
+    --night-green-mid:    #00cc6a;
+    --night-green-soft:   #00a855;
+    --night-green-dim:    #005c30;
+    --night-green-glow:   rgba(0, 255, 136, 0.18);
+    --night-green-glow-s: rgba(0, 255, 136, 0.35);
+
+    /* Textes */
+    --night-text-primary:   #e8ffe8;
+    --night-text-secondary: #b0d4b0;
+    --night-text-muted:     #5a8a5a;
+    --night-text-dim:       #3a5a3a;
+
     /* Bordures */
-    --border-color: #333333;
-    --border-light: #444444;
-    
-    /* Accent - Violet (conserve l'identité) */
-    --accent-primary: #8b5cf6;
-    --accent-secondary: #7c3aed;
-    --accent-light: #a78bfa;
-    --accent-glow: rgba(139, 92, 246, 0.3);
-    
-    /* Texte - PLUS CLAIR */
-    --text-primary: #ffffff;        /* Blanc pur pour titres */
-    --text-secondary: #e5e5e5;      /* Très clair pour texte normal */
-    --text-muted: #a0a0a0;          /* Gris clair pour secondaire */
-    --text-dim: #808080;            /* Gris pour les moins importants */
-    
+    --night-border:       #1a2e1a;
+    --night-border-light: #2a4a2a;
+    --night-border-glow:  rgba(0, 255, 136, 0.3);
+
     /* États */
-    --danger: #ef4444;
-    --danger-light: #7f1d1d;
-    --success: #10b981;
-    --success-light: #064e3b;
-    --warning: #f59e0b;
-    --warning-light: #78350f;
-    
+    --night-danger:       #ff4444;
+    --night-danger-bg:    #1a0505;
+    --night-success:      #00ff88;
+    --night-success-bg:   #051a0c;
+    --night-warning:      #ffaa00;
+    --night-warning-bg:   #1a0f00;
+
     /* Ombres */
-    --card-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
-    --card-shadow-hover: 0 8px 30px rgba(139, 92, 246, 0.2);
-    --glow-color: rgba(139, 92, 246, 0.3);
+    --night-shadow:       0 4px 20px rgba(0, 0, 0, 0.8);
+    --night-shadow-glow:  0 0 20px rgba(0, 255, 136, 0.15), 0 4px 20px rgba(0,0,0,0.7);
+    --night-shadow-neon:  0 0 30px rgba(0, 255, 136, 0.25), 0 0 60px rgba(0, 255, 136, 0.1);
+
+    /* Effets */
+    --night-transition:   all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+
+    /* Override variables style.css */
+    --bg-primary:    var(--night-bg-primary);
+    --bg-secondary:  var(--night-bg-secondary);
+    --bg-tertiary:   var(--night-bg-elevated);
+    --bg-card:       var(--night-bg-card);
+    --text-primary:  var(--night-text-primary);
+    --text-secondary:var(--night-text-secondary);
+    --text-muted:    var(--night-text-muted);
+    --border-color:  var(--night-border);
+    --green-primary: var(--night-green-neon);
+    --green-secondary:var(--night-green-mid);
+    --green-light:   rgba(0, 255, 136, 0.1);
+    --glow-color:    var(--night-green-glow);
+    --card-shadow:   var(--night-shadow);
+    --card-shadow-hover: var(--night-shadow-glow);
 }
 
 /* ===== BASE ===== */
-body {
-    background: var(--bg-primary) !important;
-    color: var(--text-secondary) !important;
-    line-height: 1.6 !important;
-}
-
-/* ===== NAVBAR - PLUS LISIBLE ===== */
-.navbar {
-    background: var(--bg-secondary) !important;
-    border-bottom: 2px solid var(--accent-primary) !important;
-    box-shadow: 0 2px 15px rgba(0, 0, 0, 0.3) !important;
-}
-
-.navbar-brand {
-    color: var(--text-primary) !important;
-    font-weight: 700 !important;
-}
-
-.navbar-brand span {
-    color: var(--accent-primary) !important;
-}
-
-.nav-link {
-    color: var(--text-secondary) !important;
-    font-weight: 500 !important;
-    transition: all 0.2s !important;
-}
-
-.nav-link:hover,
-.nav-link.active {
-    color: var(--accent-primary) !important;
-    background: rgba(139, 92, 246, 0.1) !important;
-    border-radius: 6px !important;
-}
-
-.navbar-toggler {
-    background: var(--bg-tertiary) !important;
-    border: 1px solid var(--border-color) !important;
-}
-
-.navbar-toggler-icon {
-    filter: invert(1) !important;
-}
-
-/* ===== DROPDOWN ===== */
-.dropdown-menu {
-    background: var(--bg-card) !important;
-    border: 1px solid var(--border-color) !important;
-    box-shadow: 0 10px 25px rgba(0,0,0,0.5) !important;
-}
-
-.dropdown-item {
-    color: var(--text-secondary) !important;
-    transition: all 0.2s !important;
-}
-
-.dropdown-item:hover {
-    background: var(--bg-hover) !important;
-    color: var(--accent-primary) !important;
-}
-
-.dropdown-divider {
-    border-top-color: var(--border-color) !important;
-}
-
-/* ===== CARDS ===== */
-.card,
-.post-card,
-.challenge-card,
-.submission-card,
-.mini-card,
-.user-card {
-    background: var(--bg-card) !important;
-    border: 1px solid var(--border-color) !important;
-    box-shadow: var(--card-shadow) !important;
-    color: var(--text-secondary) !important;
-}
-
-.card-title,
-.post-title a,
-.challenge-title a {
-    color: var(--text-primary) !important;
-    font-weight: 700 !important;
-}
-
-.card-text,
-.post-description,
-.challenge-description {
-    color: var(--text-secondary) !important;
-    line-height: 1.7 !important;
-}
-
-/* ===== BOUTONS ===== */
-.btn-outline-secondary {
-    color: var(--text-secondary) !important;
-    border-color: var(--border-color) !important;
-}
-
-.btn-outline-secondary:hover {
-    background: var(--accent-primary) !important;
-    border-color: var(--accent-primary) !important;
-    color: white !important;
-}
-
-.btn-primary {
-    background: var(--accent-primary) !important;
-    border-color: var(--accent-primary) !important;
-    color: white !important;
-}
-
-.btn-primary:hover {
-    background: var(--accent-secondary) !important;
-    border-color: var(--accent-secondary) !important;
-    transform: translateY(-2px) !important;
-    box-shadow: 0 5px 15px var(--accent-glow) !important;
-}
-
-/* ===== FORMULAIRES ===== */
-.form-control,
-.form-select {
-    background: var(--bg-tertiary) !important;
-    border: 1px solid var(--border-color) !important;
-    color: var(--text-primary) !important;
-}
-
-.form-control:focus,
-.form-select:focus {
-    background: var(--bg-tertiary) !important;
-    border-color: var(--accent-primary) !important;
-    box-shadow: 0 0 0 3px var(--accent-glow) !important;
-    color: var(--text-primary) !important;
-}
-
-.form-control::placeholder {
-    color: var(--text-dim) !important;
-}
-
-.form-label {
-    color: var(--text-secondary) !important;
-    font-weight: 600 !important;
-}
-
-.form-text {
-    color: var(--text-muted) !important;
-}
-
-/* ===== ALERTES ===== */
-.alert-success {
-    background: #0a2f1f !important;
-    color: #a7f3d0 !important;
-    border-color: #10b981 !important;
-}
-
-.alert-danger {
-    background: #3b0c0c !important;
-    color: #fecaca !important;
-    border-color: #ef4444 !important;
-}
-
-.alert-warning {
-    background: #3b2e0c !important;
-    color: #fde68a !important;
-    border-color: #f59e0b !important;
-}
-
-/* ===== TITRES ===== */
-h1, h2, h3, h4, h5, h6,
-.h1, .h2, .h3, .h4, .h5, .h6 {
-    color: var(--text-primary) !important;
-}
-
-/* ===== TEXTES ===== */
-.text-muted {
-    color: var(--text-muted) !important;
-}
-
-small, .small {
-    color: var(--text-dim) !important;
-}
-
-/* ===== LIENS ===== */
-a {
-    color: var(--accent-primary) !important;
-    transition: all 0.2s !important;
-}
-
-a:hover {
-    color: var(--accent-light) !important;
-    text-decoration: none !important;
-}
-
-/* ===== BADGES ===== */
-.badge {
-    background: var(--bg-tertiary) !important;
-    color: var(--text-secondary) !important;
-    border: 1px solid var(--border-color) !important;
-}
-
-.badge.bg-primary {
-    background: var(--accent-primary) !important;
-    color: white !important;
-}
-
-/* ===== TABLEAUX ===== */
-.table {
-    color: var(--text-secondary) !important;
-}
-
-.table thead th {
-    color: var(--text-primary) !important;
-    border-bottom-color: var(--border-color) !important;
-}
-
-.table td {
-    border-color: var(--border-color) !important;
-}
-
-/* ===== PAGINATION ===== */
-.pagination .page-link {
-    background: var(--bg-tertiary) !important;
-    border-color: var(--border-color) !important;
-    color: var(--text-secondary) !important;
-}
-
-.pagination .page-link:hover {
-    background: var(--accent-primary) !important;
-    color: white !important;
-}
-
-.pagination .active .page-link {
-    background: var(--accent-primary) !important;
-    border-color: var(--accent-primary) !important;
-    color: white !important;
-}
-
-/* ===== COMMENTAIRES ===== */
-.comment-bubble {
-    background: var(--bg-tertiary) !important;
-    border: 1px solid var(--border-color) !important;
-    color: var(--text-secondary) !important;
-}
-
-.comment-author {
-    color: var(--text-primary) !important;
-    font-weight: 700 !important;
-}
-
-.comment-date {
-    color: var(--text-dim) !important;
-}
-
-.comment-text {
-    color: var(--text-secondary) !important;
-}
-
-/* ===== MODALES ===== */
-.modal-content {
-    background: var(--bg-card) !important;
-    border: 1px solid var(--border-color) !important;
-}
-
-.modal-header {
-    border-bottom-color: var(--border-color) !important;
-}
-
-.modal-header .modal-title {
-    color: var(--text-primary) !important;
-}
-
-.modal-footer {
-    border-top-color: var(--border-color) !important;
-}
-
-.modal-close {
-    color: var(--text-muted) !important;
-}
-
-.modal-close:hover {
-    color: var(--text-primary) !important;
+body.night-mode {
+    background: var(--night-bg-base) !important;
+    color: var(--night-text-secondary) !important;
+    font-family: 'Segoe UI', Roboto, sans-serif !important;
+    /* Grille de fond subtile style terminal */
+    background-image:
+        linear-gradient(rgba(0, 255, 136, 0.015) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0, 255, 136, 0.015) 1px, transparent 1px) !important;
+    background-size: 40px 40px !important;
 }
 
 /* ===== SCROLLBAR ===== */
-::-webkit-scrollbar {
-    width: 10px;
-    background: var(--bg-primary);
+body.night-mode ::-webkit-scrollbar {
+    width: 6px;
+    background: var(--night-bg-base);
+}
+body.night-mode ::-webkit-scrollbar-track {
+    background: var(--night-bg-primary);
+}
+body.night-mode ::-webkit-scrollbar-thumb {
+    background: var(--night-green-dim);
+    border-radius: 3px;
+}
+body.night-mode ::-webkit-scrollbar-thumb:hover {
+    background: var(--night-green-neon);
+    box-shadow: 0 0 6px var(--night-green-neon);
 }
 
-::-webkit-scrollbar-track {
-    background: var(--bg-secondary);
+/* ===== NAVBAR ===== */
+body.night-mode .main-header {
+    background: rgba(6, 10, 6, 0.95) !important;
+    border-bottom: 1px solid var(--night-border-light) !important;
+    box-shadow: 0 1px 0 var(--night-green-dim), 0 4px 20px rgba(0,0,0,0.6) !important;
+    backdrop-filter: blur(10px) !important;
 }
 
-::-webkit-scrollbar-thumb {
-    background: var(--accent-primary);
-    border-radius: 5px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-    background: var(--accent-secondary);
-}
-
-/* ===== BOUTON THEME ===== */
-.theme-toggle {
-    border-color: var(--accent-primary) !important;
-    color: var(--accent-primary) !important;
-    background: transparent !important;
-}
-
-.theme-toggle:hover {
-    background: var(--accent-primary) !important;
-    color: white !important;
-    box-shadow: 0 5px 15px var(--accent-glow) !important;
-}
-
-/* ===== CARDS SPÉCIFIQUES ===== */
-/* Post card */
-.post-header {
-    background: var(--bg-secondary) !important;
-    border-bottom: 1px solid var(--border-color) !important;
-}
-
-.post-author-info strong {
-    color: var(--text-primary) !important;
-}
-
-.post-meta {
-    color: var(--text-muted) !important;
-}
-
-.post-counts {
-    border-bottom: 1px solid var(--border-color) !important;
-    color: var(--text-muted) !important;
-}
-
-.post-actions {
-    border-top: 1px solid var(--border-color) !important;
-}
-
-/* Profil */
-.profile-banner {
-    background: linear-gradient(135deg, #2d1b3a, #1a1a2e) !important;
-    color: white !important;
-}
-
-.profile-info h1 {
-    color: white !important;
-}
-
-.profile-stats {
-    background: rgba(255, 255, 255, 0.15) !important;
-}
-
-/* Classement */
-.ranking-table-header {
-    background: var(--bg-secondary) !important;
-    color: var(--text-muted) !important;
-}
-
-.ranking-row {
-    background: var(--bg-card) !important;
-    border-bottom: 1px solid var(--border-color) !important;
-}
-
-.ranking-row:hover {
-    background: var(--bg-hover) !important;
-}
-
-.rank-badge {
-    background: var(--bg-tertiary) !important;
-    color: var(--text-primary) !important;
-}
-
-.rank-badge.gold {
-    background: #b8860b !important;
-    color: white !important;
-}
-
-.rank-badge.silver {
-    background: #808080 !important;
-    color: white !important;
-}
-
-.rank-badge.bronze {
-    background: #cd7f32 !important;
-    color: white !important;
-}
-
-.score-value {
-    color: var(--accent-primary) !important;
+body.night-mode .logo a {
+    color: var(--night-text-primary) !important;
+    font-family: 'Segoe UI', 'Arial Narrow', sans-serif !important;
     font-weight: 700 !important;
+    font-size: 1.6rem !important;
+    letter-spacing: 1px !important;
+    text-decoration: none !important;
 }
 
-/* ===== UTILITAIRES ===== */
-.bg-primary { background: var(--accent-primary) !important; }
-.bg-secondary { background: var(--bg-secondary) !important; }
-.bg-success { background: var(--success) !important; }
-.bg-danger { background: var(--danger) !important; }
-.bg-warning { background: var(--warning) !important; }
-.bg-info { background: #2563eb !important; }
-
-.text-primary { color: var(--accent-primary) !important; }
-.text-white { color: white !important; }
-.text-dark { color: var(--text-primary) !important; }
-.text-muted { color: var(--text-muted) !important; }
-
-.border { border-color: var(--border-color) !important; }
-.border-top { border-top-color: var(--border-color) !important; }
-.border-bottom { border-bottom-color: var(--border-color) !important; 
-/* ===== NAVBAR - VERSION TRÈS VISIBLE ===== */
-.navbar {
-    background: #111111 !important;
-    border-bottom: 3px solid #8b5cf6 !important;
-    box-shadow: 0 4px 20px rgba(139, 92, 246, 0.3) !important;
+body.night-mode .logo-icon {
+    background: transparent !important;
+    border: 1px solid var(--night-green-neon) !important;
+    color: var(--night-green-neon) !important;
+    box-shadow: 0 0 12px var(--night-green-glow), inset 0 0 8px rgba(0,255,136,0.05) !important;
 }
 
-.navbar-brand {
-    color: #ffffff !important;
-    font-size: 1.3rem !important;
-    font-weight: 800 !important;
+body.night-mode .logo span {
+    color: var(--night-green-neon) !important;
+    text-shadow: 0 0 10px var(--night-green-glow-s) !important;
 }
 
-.navbar-brand span {
-    color: #8b5cf6 !important;
+body.night-mode .nav-menu a {
+    color: var(--night-text-secondary) !important;
+    font-weight: 500 !important;
+    border-radius: 4px !important;
+    transition: var(--night-transition) !important;
+    position: relative !important;
+    text-decoration: none !important;
 }
 
-.nav-link {
-    color: #e5e5e5 !important;
-    font-weight: 600 !important;
-    padding: 0.5rem 1rem !important;
-    margin: 0 0.2rem !important;
+body.night-mode .nav-menu a::after {
+    content: '' !important;
+    position: absolute !important;
+    bottom: 2px !important;
+    left: 50% !important;
+    transform: translateX(-50%) !important;
+    width: 0 !important;
+    height: 1px !important;
+    background: var(--night-green-neon) !important;
+    transition: width 0.3s ease !important;
+    box-shadow: 0 0 6px var(--night-green-neon) !important;
+}
+
+body.night-mode .nav-menu a:hover::after,
+body.night-mode .nav-menu a.active::after {
+    width: 60% !important;
+}
+
+body.night-mode .nav-menu a:hover,
+body.night-mode .nav-menu a.active {
+    color: var(--night-green-neon) !important;
+    background: rgba(0, 255, 136, 0.05) !important;
+}
+
+/* Dropdown */
+body.night-mode .dropdown-menu {
+    background: var(--night-bg-card) !important;
+    border: 1px solid var(--night-border-light) !important;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.8), 0 0 20px rgba(0,255,136,0.05) !important;
     border-radius: 6px !important;
-    transition: all 0.3s !important;
 }
 
-.nav-link:hover,
-.nav-link.active {
-    color: #ffffff !important;
-    background: #8b5cf6 !important;
-    transform: translateY(-2px) !important;
+body.night-mode .dropdown-menu a {
+    color: var(--night-text-secondary) !important;
+    transition: var(--night-transition) !important;
+}
+
+body.night-mode .dropdown-menu li {
+    border-bottom: 1px solid var(--night-border) !important;
+}
+
+body.night-mode .dropdown-menu a:hover {
+    background: rgba(0, 255, 136, 0.08) !important;
+    color: var(--night-green-neon) !important;
+    padding-left: 20px !important;
+}
+
+body.night-mode .text-danger {
+    color: var(--night-danger) !important;
+}
+
+body.night-mode .text-danger:hover {
+    background: rgba(255, 68, 68, 0.08) !important;
+    color: var(--night-danger) !important;
 }
 
 /* Bouton thème */
-.theme-toggle {
-    background: #2a2a2a !important;
-    border: 2px solid #8b5cf6 !important;
-    color: #ffffff !important;
+body.night-mode .theme-toggle {
+    border: 1px solid var(--night-green-dim) !important;
+    color: var(--night-green-neon) !important;
+    background: rgba(0, 255, 136, 0.03) !important;
     font-weight: 600 !important;
-    padding: 0.4rem 1rem !important;
+    transition: var(--night-transition) !important;
 }
 
-.theme-toggle:hover {
-    background: #8b5cf6 !important;
-    color: #ffffff !important;
-    box-shadow: 0 0 15px #8b5cf6 !important;
+body.night-mode .theme-toggle:hover {
+    background: rgba(0, 255, 136, 0.1) !important;
+    border-color: var(--night-green-neon) !important;
+    box-shadow: 0 0 15px var(--night-green-glow) !important;
 }
 
-/* Menu déroulant */
-.dropdown-menu {
-    background: #1a1a1a !important;
-    border: 1px solid #333 !important;
-    box-shadow: 0 10px 25px rgba(0,0,0,0.5) !important;
+/* Burger mobile */
+body.night-mode .nav-toggle span {
+    background: var(--night-green-neon) !important;
 }
 
-.dropdown-item {
-    color: #e5e5e5 !important;
-    padding: 0.7rem 1.5rem !important;
+body.night-mode .nav-menu {
+    background: var(--night-bg-card) !important;
+    border-top: 1px solid var(--night-border-light) !important;
 }
 
-.dropdown-item:hover {
-    background: #8b5cf6 !important;
-    color: #ffffff !important;
+/* ===== CARDS ===== */
+body.night-mode .challenge-card,
+body.night-mode .submission-card {
+    background: var(--night-bg-card) !important;
+    border: 1px solid var(--night-border) !important;
+    box-shadow: var(--night-shadow) !important;
+    transition: var(--night-transition) !important;
 }
 
-/* Toggler mobile */
-.navbar-toggler {
-    background: #2a2a2a !important;
-    border: 1px solid #8b5cf6 !important;
+body.night-mode .challenge-card:hover,
+body.night-mode .submission-card:hover {
+    border-color: var(--night-border-light) !important;
+    box-shadow: var(--night-shadow-glow) !important;
+    transform: translateY(-4px) !important;
 }
 
-.navbar-toggler-icon {
-    filter: invert(1) brightness(100) !important;
-}}
+body.night-mode .card-title a {
+    color: var(--night-text-primary) !important;
+    font-family: 'Segoe UI', 'Arial Narrow', sans-serif !important;
+    font-weight: 600 !important;
+    font-size: 1.15rem !important;
+    text-decoration: none !important;
+}
+
+body.night-mode .card-title a:hover {
+    color: var(--night-green-neon) !important;
+    text-shadow: 0 0 8px var(--night-green-glow-s) !important;
+}
+
+body.night-mode .card-description {
+    color: var(--night-text-secondary) !important;
+}
+
+body.night-mode .card-meta {
+    color: var(--night-text-muted) !important;
+}
+
+body.night-mode .meta-item i {
+    color: var(--night-green-mid) !important;
+}
+
+body.night-mode .meta-item.expired {
+    color: var(--night-danger) !important;
+}
+
+body.night-mode .card-stats {
+    border-top: 1px solid var(--night-border) !important;
+}
+
+body.night-mode .stat {
+    color: var(--night-text-muted) !important;
+}
+
+body.night-mode .stat i {
+    color: var(--night-green-mid) !important;
+}
+
+body.night-mode .no-image {
+    background: var(--night-bg-elevated) !important;
+    color: var(--night-text-dim) !important;
+}
+
+body.night-mode .category-badge {
+    background: transparent !important;
+    border: 1px solid var(--night-green-neon) !important;
+    color: var(--night-green-neon) !important;
+    font-family: 'Segoe UI', 'Arial Narrow', sans-serif !important;
+    font-weight: 600 !important;
+    letter-spacing: 0.5px !important;
+    text-shadow: 0 0 6px var(--night-green-glow-s) !important;
+}
+
+/* ===== BOUTONS ===== */
+body.night-mode .btn-primary {
+    background: transparent !important;
+    border: 1px solid var(--night-green-neon) !important;
+    color: var(--night-green-neon) !important;
+    font-family: 'Segoe UI', 'Arial Narrow', sans-serif !important;
+    font-weight: 600 !important;
+    letter-spacing: 0.5px !important;
+    box-shadow: none !important;
+    transition: var(--night-transition) !important;
+    position: relative !important;
+    overflow: hidden !important;
+}
+
+body.night-mode .btn-primary::before {
+    content: '' !important;
+    position: absolute !important;
+    inset: 0 !important;
+    background: linear-gradient(135deg, rgba(0,255,136,0.12), rgba(0,255,136,0.04)) !important;
+    opacity: 0 !important;
+    transition: opacity 0.25s !important;
+}
+
+body.night-mode .btn-primary:hover::before {
+    opacity: 1 !important;
+}
+
+body.night-mode .btn-primary:hover {
+    box-shadow: 0 0 20px var(--night-green-glow), 0 0 40px rgba(0,255,136,0.08) !important;
+    transform: translateY(-2px) !important;
+}
+
+body.night-mode .btn-secondary {
+    background: transparent !important;
+    border: 1px solid var(--night-border-light) !important;
+    color: var(--night-text-secondary) !important;
+    transition: var(--night-transition) !important;
+}
+
+body.night-mode .btn-secondary:hover {
+    border-color: var(--night-green-dim) !important;
+    color: var(--night-green-neon) !important;
+    background: rgba(0, 255, 136, 0.04) !important;
+}
+
+body.night-mode .btn-view {
+    border-color: var(--night-green-dim) !important;
+    color: var(--night-green-mid) !important;
+    background: transparent !important;
+    transition: var(--night-transition) !important;
+}
+
+body.night-mode .btn-view:hover {
+    background: rgba(0, 255, 136, 0.08) !important;
+    border-color: var(--night-green-neon) !important;
+    color: var(--night-green-neon) !important;
+    box-shadow: 0 0 10px var(--night-green-glow) !important;
+}
+
+body.night-mode .btn-filter {
+    background: transparent !important;
+    border: 1px solid var(--night-green-neon) !important;
+    color: var(--night-green-neon) !important;
+}
+
+body.night-mode .btn-filter:hover {
+    background: rgba(0, 255, 136, 0.1) !important;
+    box-shadow: 0 0 15px var(--night-green-glow) !important;
+}
+
+body.night-mode .btn-reset {
+    border-color: var(--night-border-light) !important;
+    color: var(--night-text-muted) !important;
+}
+
+body.night-mode .btn-reset:hover {
+    border-color: var(--night-danger) !important;
+    color: var(--night-danger) !important;
+}
+
+/* ===== TITRES ===== */
+body.night-mode h1,
+body.night-mode h2,
+body.night-mode h3,
+body.night-mode h4,
+body.night-mode h5,
+body.night-mode h6 {
+    color: var(--night-text-primary) !important;
+    font-family: 'Segoe UI', 'Arial Narrow', sans-serif !important;
+}
+
+body.night-mode .page-title {
+    color: var(--night-text-primary) !important;
+    font-family: 'Segoe UI', 'Arial Narrow', sans-serif !important;
+    font-weight: 700 !important;
+    letter-spacing: 1px !important;
+    text-transform: uppercase !important;
+}
+
+body.night-mode .page-subtitle {
+    color: var(--night-text-muted) !important;
+}
+
+/* ===== TEXTES ===== */
+body.night-mode p,
+body.night-mode span,
+body.night-mode li {
+    color: var(--night-text-secondary) !important;
+}
+
+body.night-mode small,
+body.night-mode .small {
+    color: var(--night-text-muted) !important;
+}
+
+body.night-mode .text-muted {
+    color: var(--night-text-muted) !important;
+}
+
+body.night-mode a {
+    color: var(--night-green-mid) !important;
+    transition: color 0.2s !important;
+    text-decoration: none !important;
+}
+
+body.night-mode a:hover {
+    color: var(--night-green-neon) !important;
+}
+
+/* ===== FORMULAIRES ===== */
+body.night-mode .form-container,
+body.night-mode .filters-section {
+    background: var(--night-bg-card) !important;
+    border: 1px solid var(--night-border) !important;
+    box-shadow: var(--night-shadow) !important;
+}
+
+body.night-mode .form-group label,
+body.night-mode .filter-group label {
+    color: var(--night-text-secondary) !important;
+    font-weight: 500 !important;
+    font-size: 0.85rem !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.5px !important;
+}
+
+body.night-mode .form-group input,
+body.night-mode .form-group select,
+body.night-mode .form-group textarea,
+body.night-mode .filter-group input,
+body.night-mode .filter-group select {
+    background: var(--night-bg-elevated) !important;
+    border: 1px solid var(--night-border-light) !important;
+    color: var(--night-text-primary) !important;
+    transition: var(--night-transition) !important;
+    font-family: 'Segoe UI', Roboto, sans-serif !important;
+}
+
+body.night-mode .form-group input::placeholder,
+body.night-mode .form-group textarea::placeholder {
+    color: var(--night-text-dim) !important;
+}
+
+body.night-mode .form-group input:focus,
+body.night-mode .form-group select:focus,
+body.night-mode .form-group textarea:focus,
+body.night-mode .filter-group input:focus,
+body.night-mode .filter-group select:focus {
+    outline: none !important;
+    border-color: var(--night-green-neon) !important;
+    box-shadow: 0 0 0 2px rgba(0, 255, 136, 0.12) !important;
+    background: var(--night-bg-hover) !important;
+}
+
+body.night-mode .form-hint {
+    color: var(--night-text-muted) !important;
+}
+
+body.night-mode select option {
+    background: var(--night-bg-card) !important;
+    color: var(--night-text-primary) !important;
+}
+
+/* ===== AUTH ===== */
+body.night-mode .auth-container {
+    background: radial-gradient(ellipse at 30% 20%, rgba(0,255,136,0.06) 0%, transparent 60%),
+                radial-gradient(ellipse at 70% 80%, rgba(0,180,80,0.04) 0%, transparent 60%),
+                var(--night-bg-base) !important;
+}
+
+body.night-mode .auth-card {
+    background: var(--night-bg-card) !important;
+    border: 1px solid var(--night-border-light) !important;
+    box-shadow: 0 0 40px rgba(0, 255, 136, 0.08), 0 20px 60px rgba(0,0,0,0.8) !important;
+}
+
+body.night-mode .auth-header .logo {
+    color: var(--night-text-primary) !important;
+    font-family: 'Segoe UI', 'Arial Narrow', sans-serif !important;
+}
+
+body.night-mode .auth-header .logo span {
+    color: var(--night-green-neon) !important;
+    text-shadow: 0 0 10px var(--night-green-glow-s) !important;
+}
+
+body.night-mode .auth-header h1 {
+    color: var(--night-text-primary) !important;
+    font-family: 'Segoe UI', 'Arial Narrow', sans-serif !important;
+}
+
+body.night-mode .auth-header p {
+    color: var(--night-text-muted) !important;
+}
+
+body.night-mode .auth-footer {
+    border-top-color: var(--night-border) !important;
+}
+
+body.night-mode .auth-footer a {
+    color: var(--night-green-neon) !important;
+}
+
+body.night-mode .form-group input {
+    background: var(--night-bg-elevated) !important;
+    border-color: var(--night-border-light) !important;
+    color: var(--night-text-primary) !important;
+}
+
+body.night-mode .form-group label i {
+    color: var(--night-green-mid) !important;
+}
+
+body.night-mode .demo-account {
+    background: var(--night-bg-elevated) !important;
+    border: 1px solid var(--night-border) !important;
+}
+
+body.night-mode .demo-account p {
+    color: var(--night-text-muted) !important;
+}
+
+body.night-mode .demo-account code {
+    background: var(--night-bg-hover) !important;
+    color: var(--night-green-neon) !important;
+    border: 1px solid var(--night-border-light) !important;
+}
+
+body.night-mode .forgot-password {
+    color: var(--night-green-mid) !important;
+}
+
+body.night-mode .checkmark {
+    background: var(--night-bg-elevated) !important;
+    border-color: var(--night-border-light) !important;
+}
+
+body.night-mode .checkbox input:checked ~ .checkmark {
+    background: var(--night-green-neon) !important;
+    border-color: var(--night-green-neon) !important;
+}
+
+/* ===== ALERTES ===== */
+body.night-mode .alert-success {
+    background: var(--night-success-bg) !important;
+    border-left-color: var(--night-green-neon) !important;
+    color: var(--night-green-neon) !important;
+}
+
+body.night-mode .alert-danger {
+    background: var(--night-danger-bg) !important;
+    border-left-color: var(--night-danger) !important;
+    color: #ff8888 !important;
+}
+
+body.night-mode .alert-warning {
+    background: var(--night-warning-bg) !important;
+    border-left-color: var(--night-warning) !important;
+    color: #ffcc66 !important;
+}
+
+/* ===== FOOTER ===== */
+body.night-mode .main-footer {
+    background: var(--night-bg-secondary) !important;
+    border-top: 1px solid var(--night-border-light) !important;
+}
+
+body.night-mode .footer-section h4 {
+    color: var(--night-text-primary) !important;
+    font-family: 'Segoe UI', 'Arial Narrow', sans-serif !important;
+    font-weight: 600 !important;
+    letter-spacing: 0.5px !important;
+}
+
+body.night-mode .footer-section a {
+    color: var(--night-text-muted) !important;
+}
+
+body.night-mode .footer-section a:hover {
+    color: var(--night-green-neon) !important;
+}
+
+body.night-mode .footer-bottom {
+    border-top-color: var(--night-border) !important;
+    color: var(--night-text-dim) !important;
+}
+
+/* ===== PAGE PROFIL ===== */
+body.night-mode .profile-banner,
+body.night-mode .profile-modern .profile-banner {
+    background: linear-gradient(135deg, #0a1f0a 0%, #061206 50%, #0a0f0a 100%) !important;
+    border-bottom: 1px solid var(--night-border-light) !important;
+    box-shadow: 0 4px 30px rgba(0,0,0,0.6) !important;
+}
+
+body.night-mode .profile-info h1,
+body.night-mode .profile-info .profile-username {
+    color: var(--night-text-primary) !important;
+    font-family: 'Segoe UI', 'Arial Narrow', sans-serif !important;
+}
+
+body.night-mode .profile-avatar-default,
+body.night-mode .avatar-initials {
+    background: linear-gradient(135deg, var(--night-green-dim), #0a3a1a) !important;
+    color: var(--night-green-neon) !important;
+    border: 1px solid var(--night-green-dim) !important;
+    font-family: 'Segoe UI', 'Arial Narrow', sans-serif !important;
+    font-weight: 700 !important;
+}
+
+body.night-mode .profile-stats {
+    background: rgba(0, 255, 136, 0.04) !important;
+    border: 1px solid var(--night-border-light) !important;
+    border-radius: 8px !important;
+}
+
+body.night-mode .stat-val,
+body.night-mode .stat-value {
+    color: var(--night-green-neon) !important;
+    font-family: 'Segoe UI', 'Arial Narrow', sans-serif !important;
+    font-weight: 700 !important;
+    text-shadow: 0 0 10px var(--night-green-glow-s) !important;
+}
+
+body.night-mode .stat-lbl,
+body.night-mode .stat-label {
+    color: var(--night-text-muted) !important;
+}
+
+body.night-mode .stat-card {
+    background: var(--night-bg-card) !important;
+    border: 1px solid var(--night-border) !important;
+}
+
+body.night-mode .stat-icon.purple,
+body.night-mode .stat-icon.pink {
+    background: rgba(0, 255, 136, 0.08) !important;
+    color: var(--night-green-neon) !important;
+    border: 1px solid var(--night-border-light) !important;
+}
+
+body.night-mode .profile-tabs {
+    background: var(--night-bg-secondary) !important;
+    border-bottom: 1px solid var(--night-border-light) !important;
+}
+
+body.night-mode .tab-btn {
+    color: var(--night-text-muted) !important;
+    background: transparent !important;
+    border-bottom: 2px solid transparent !important;
+    font-family: 'Segoe UI', 'Arial Narrow', sans-serif !important;
+    font-weight: 600 !important;
+    transition: var(--night-transition) !important;
+}
+
+body.night-mode .tab-btn:hover,
+body.night-mode .tab-btn.active {
+    color: var(--night-green-neon) !important;
+    border-bottom-color: var(--night-green-neon) !important;
+}
+
+body.night-mode .tab-count {
+    background: var(--night-bg-elevated) !important;
+    color: var(--night-green-mid) !important;
+    border: 1px solid var(--night-border-light) !important;
+}
+
+body.night-mode .btn-edit-profile {
+    background: rgba(0, 255, 136, 0.06) !important;
+    border: 1px solid var(--night-green-dim) !important;
+    color: var(--night-green-neon) !important;
+    transition: var(--night-transition) !important;
+}
+
+body.night-mode .btn-edit-profile:hover {
+    background: rgba(0, 255, 136, 0.12) !important;
+    border-color: var(--night-green-neon) !important;
+    box-shadow: 0 0 15px var(--night-green-glow) !important;
+}
+
+body.night-mode .btn-delete-account {
+    background: rgba(255, 68, 68, 0.06) !important;
+    border: 1px solid rgba(255, 68, 68, 0.3) !important;
+    color: var(--night-danger) !important;
+}
+
+body.night-mode .btn-delete-account:hover {
+    background: rgba(255, 68, 68, 0.12) !important;
+    border-color: var(--night-danger) !important;
+}
+
+/* ===== RECHERCHE ===== */
+body.night-mode .search-page .search-header h1 {
+    color: var(--night-text-primary) !important;
+    font-family: 'Segoe UI', 'Arial Narrow', sans-serif !important;
+}
+
+body.night-mode .search-box input {
+    background: var(--night-bg-elevated) !important;
+    border-color: var(--night-border-light) !important;
+    color: var(--night-text-primary) !important;
+}
+
+body.night-mode .search-box input:focus {
+    border-color: var(--night-green-neon) !important;
+    box-shadow: 0 0 0 2px rgba(0,255,136,0.1) !important;
+    outline: none !important;
+}
+
+body.night-mode .search-box button {
+    background: transparent !important;
+    border: 1px solid var(--night-green-neon) !important;
+    color: var(--night-green-neon) !important;
+}
+
+body.night-mode .search-box button:hover {
+    background: rgba(0, 255, 136, 0.1) !important;
+    box-shadow: 0 0 12px var(--night-green-glow) !important;
+}
+
+body.night-mode .user-card {
+    background: var(--night-bg-card) !important;
+    border: 1px solid var(--night-border) !important;
+    box-shadow: var(--night-shadow) !important;
+}
+
+body.night-mode .user-card:hover {
+    border-color: var(--night-border-light) !important;
+    box-shadow: var(--night-shadow-glow) !important;
+}
+
+body.night-mode .user-avatar {
+    border-color: var(--night-green-dim) !important;
+}
+
+body.night-mode .user-avatar .default-avatar {
+    background: linear-gradient(135deg, var(--night-green-dim), #051505) !important;
+    color: var(--night-green-neon) !important;
+}
+
+body.night-mode .user-info h3 {
+    color: var(--night-text-primary) !important;
+    font-family: 'Segoe UI', 'Arial Narrow', sans-serif !important;
+}
+
+body.night-mode .user-info p {
+    color: var(--night-text-secondary) !important;
+}
+
+body.night-mode .user-info small {
+    color: var(--night-text-muted) !important;
+}
+
+body.night-mode .no-results {
+    background: var(--night-bg-card) !important;
+    border: 1px solid var(--night-border) !important;
+}
+
+body.night-mode .no-results i {
+    color: var(--night-border-light) !important;
+}
+
+body.night-mode .no-results p {
+    color: var(--night-text-muted) !important;
+}
+
+/* ===== CLASSEMENT ===== */
+body.night-mode .ranking-table-header {
+    background: var(--night-bg-secondary) !important;
+    color: var(--night-text-muted) !important;
+    border-bottom: 1px solid var(--night-border-light) !important;
+    font-family: 'Segoe UI', 'Arial Narrow', sans-serif !important;
+    text-transform: uppercase !important;
+    letter-spacing: 1px !important;
+}
+
+body.night-mode .ranking-row {
+    background: var(--night-bg-card) !important;
+    border-bottom: 1px solid var(--night-border) !important;
+    transition: var(--night-transition) !important;
+}
+
+body.night-mode .ranking-row:hover {
+    background: var(--night-bg-hover) !important;
+    border-left: 2px solid var(--night-green-neon) !important;
+}
+
+body.night-mode .rank-badge {
+    background: var(--night-bg-elevated) !important;
+    color: var(--night-text-secondary) !important;
+    border: 1px solid var(--night-border-light) !important;
+    font-family: 'Segoe UI', 'Arial Narrow', sans-serif !important;
+    font-weight: 700 !important;
+}
+
+body.night-mode .rank-badge.gold {
+    background: rgba(255, 180, 0, 0.1) !important;
+    border-color: #ffb400 !important;
+    color: #ffb400 !important;
+    box-shadow: 0 0 10px rgba(255, 180, 0, 0.15) !important;
+}
+
+body.night-mode .rank-badge.silver {
+    background: rgba(160, 160, 160, 0.1) !important;
+    border-color: #aaa !important;
+    color: #ccc !important;
+}
+
+body.night-mode .rank-badge.bronze {
+    background: rgba(180, 100, 40, 0.1) !important;
+    border-color: #b46428 !important;
+    color: #c87040 !important;
+}
+
+body.night-mode .score-value {
+    color: var(--night-green-neon) !important;
+    font-family: 'Segoe UI', 'Arial Narrow', sans-serif !important;
+    font-weight: 700 !important;
+    text-shadow: 0 0 8px var(--night-green-glow-s) !important;
+}
+
+/* ===== COMMENTAIRES ===== */
+body.night-mode .comment-bubble {
+    background: var(--night-bg-elevated) !important;
+    border: 1px solid var(--night-border) !important;
+    border-radius: 8px !important;
+}
+
+body.night-mode .comment-author {
+    color: var(--night-text-primary) !important;
+    font-family: 'Segoe UI', 'Arial Narrow', sans-serif !important;
+    font-weight: 600 !important;
+}
+
+body.night-mode .comment-date {
+    color: var(--night-text-dim) !important;
+}
+
+body.night-mode .comment-text {
+    color: var(--night-text-secondary) !important;
+}
+
+/* ===== MODALES ===== */
+body.night-mode .modal-content,
+body.night-mode [class*="modal-"] .modal-content {
+    background: var(--night-bg-card) !important;
+    border: 1px solid var(--night-border-light) !important;
+    box-shadow: 0 0 60px rgba(0, 255, 136, 0.05), 0 20px 60px rgba(0,0,0,0.9) !important;
+}
+
+body.night-mode [class*="modal"] h2,
+body.night-mode [class*="modal"] h3 {
+    font-family: 'Segoe UI', 'Arial Narrow', sans-serif !important;
+    color: var(--night-text-primary) !important;
+}
+
+/* ===== EFFETS SPÉCIAUX GAMING ===== */
+
+/* Scan line subtile sur les cards au hover */
+body.night-mode .challenge-card::after,
+body.night-mode .submission-card::after {
+    content: '' !important;
+    position: absolute !important;
+    top: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    height: 1px !important;
+    background: linear-gradient(90deg, transparent, var(--night-green-neon), transparent) !important;
+    opacity: 0 !important;
+    transition: opacity 0.3s !important;
+}
+
+body.night-mode .challenge-card:hover::after,
+body.night-mode .submission-card:hover::after {
+    opacity: 0.4 !important;
+}
+
+body.night-mode .challenge-card,
+body.night-mode .submission-card {
+    position: relative !important;
+}
+
+/* Accent sur les images de card */
+body.night-mode .card-image::after {
+    content: '' !important;
+    position: absolute !important;
+    inset: 0 !important;
+    background: linear-gradient(to bottom, transparent 50%, rgba(6, 10, 6, 0.6) 100%) !important;
+}
+
+/* ===== UTILITAIRES ===== */
+body.night-mode .border,
+body.night-mode hr {
+    border-color: var(--night-border) !important;
+}
+
+body.night-mode .bg-light {
+    background: var(--night-bg-elevated) !important;
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 768px) {
+    body.night-mode .nav-menu {
+        background: rgba(6, 10, 6, 0.98) !important;
+        border-top: 1px solid var(--night-border-light) !important;
+    }
+}
+
+/* ============================================================
+   OVERRIDES SPÉCIFIQUES — HOME (vue connectée style feed)
+   Classes définies inline dans home.php
+   ============================================================ */
+
+/* Layout */
+body.night-mode .fb-layout { background: transparent !important; }
+
+/* Sidebar gauche */
+body.night-mode .sidebar-user-card {
+    background: var(--night-bg-card) !important;
+    border-color: var(--night-border) !important;
+    box-shadow: var(--night-shadow) !important;
+}
+
+body.night-mode .sidebar-user-info strong {
+    color: var(--night-text-primary) !important;
+}
+
+body.night-mode .sidebar-user-info a {
+    color: var(--night-green-mid) !important;
+}
+
+body.night-mode .sidebar-nav {
+    background: var(--night-bg-card) !important;
+    border-color: var(--night-border) !important;
+    box-shadow: var(--night-shadow) !important;
+}
+
+body.night-mode .snav-item {
+    color: var(--night-text-secondary) !important;
+    text-decoration: none !important;
+}
+
+body.night-mode .snav-item i {
+    color: var(--night-green-dim) !important;
+}
+
+body.night-mode .snav-item:hover,
+body.night-mode .snav-item.active {
+    background: rgba(0, 255, 136, 0.07) !important;
+    color: var(--night-green-neon) !important;
+}
+
+body.night-mode .snav-item:hover i,
+body.night-mode .snav-item.active i {
+    color: var(--night-green-neon) !important;
+}
+
+/* Barre de tri */
+body.night-mode .feed-sort-bar {
+    background: var(--night-bg-card) !important;
+    border-color: var(--night-border) !important;
+    box-shadow: var(--night-shadow) !important;
+}
+
+body.night-mode .sort-label {
+    color: var(--night-text-muted) !important;
+}
+
+body.night-mode .sort-btn {
+    background: var(--night-bg-elevated) !important;
+    color: var(--night-text-secondary) !important;
+    border: 1px solid var(--night-border-light) !important;
+}
+
+body.night-mode .sort-btn:hover {
+    background: rgba(0, 255, 136, 0.07) !important;
+    color: var(--night-green-neon) !important;
+    border-color: var(--night-green-dim) !important;
+}
+
+body.night-mode .sort-btn.active {
+    background: transparent !important;
+    border-color: var(--night-green-neon) !important;
+    color: var(--night-green-neon) !important;
+    box-shadow: 0 0 12px var(--night-green-glow) !important;
+}
+
+/* Post cards */
+body.night-mode .post-card {
+    background: var(--night-bg-card) !important;
+    border-color: var(--night-border) !important;
+    box-shadow: var(--night-shadow) !important;
+}
+
+body.night-mode .post-card:hover {
+    box-shadow: var(--night-shadow-glow) !important;
+    border-color: var(--night-border-light) !important;
+}
+
+body.night-mode .post-author-info strong,
+body.night-mode .creator-link strong {
+    color: var(--night-text-primary) !important;
+}
+
+body.night-mode .post-meta {
+    color: var(--night-text-dim) !important;
+}
+
+body.night-mode .category-tag {
+    background: rgba(0, 255, 136, 0.08) !important;
+    color: var(--night-green-neon) !important;
+    border: 1px solid var(--night-green-dim) !important;
+}
+
+body.night-mode .post-link-btn {
+    color: var(--night-text-dim) !important;
+}
+
+body.night-mode .post-link-btn:hover {
+    background: var(--night-bg-elevated) !important;
+    color: var(--night-green-neon) !important;
+}
+
+body.night-mode .post-title a {
+    color: var(--night-text-primary) !important;
+    font-family: 'Segoe UI', 'Arial Narrow', sans-serif !important;
+    font-weight: 600 !important;
+    font-size: 1.1rem !important;
+}
+
+body.night-mode .post-title a:hover {
+    color: var(--night-green-neon) !important;
+}
+
+body.night-mode .post-description {
+    color: var(--night-text-secondary) !important;
+}
+
+body.night-mode .post-deadline {
+    background: var(--night-bg-elevated) !important;
+    color: var(--night-text-muted) !important;
+    border: 1px solid var(--night-border) !important;
+}
+
+body.night-mode .post-counts {
+    color: var(--night-text-muted) !important;
+    border-bottom-color: var(--night-border) !important;
+}
+
+body.night-mode .text-red { color: #ff6666 !important; }
+body.night-mode .text-blue { color: #4da6ff !important; }
+body.night-mode .text-gray { color: var(--night-text-dim) !important; }
+
+/* Actions du post */
+body.night-mode .post-actions {
+    border-bottom-color: var(--night-border) !important;
+}
+
+body.night-mode .action-btn {
+    color: var(--night-text-muted) !important;
+    background: none !important;
+    transition: var(--night-transition) !important;
+}
+
+body.night-mode .action-btn:hover {
+    background: rgba(0, 255, 136, 0.05) !important;
+    color: var(--night-green-neon) !important;
+}
+
+body.night-mode .vote-btn.liked,
+body.night-mode .vote-btn.liked i {
+    color: #ff6666 !important;
+}
+
+body.night-mode .participated-badge {
+    color: var(--night-green-mid) !important;
+}
+
+body.night-mode .participate-btn:hover {
+    color: var(--night-green-neon) !important;
+}
+
+/* Section commentaires */
+body.night-mode .post-comments {
+    background: var(--night-bg-secondary) !important;
+    border-top: 1px solid var(--night-border) !important;
+}
+
+body.night-mode .comment-bubble {
+    background: var(--night-bg-elevated) !important;
+    border: 1px solid var(--night-border) !important;
+    box-shadow: none !important;
+}
+
+body.night-mode .comment-bubble strong {
+    color: var(--night-text-primary) !important;
+}
+
+body.night-mode .comment-bubble p {
+    color: var(--night-text-secondary) !important;
+}
+
+body.night-mode .comment-bubble small {
+    color: var(--night-text-dim) !important;
+}
+
+body.night-mode .no-comments {
+    color: var(--night-text-dim) !important;
+}
+
+body.night-mode .comment-input-wrap {
+    background: var(--night-bg-elevated) !important;
+    border-color: var(--night-border-light) !important;
+}
+
+body.night-mode .comment-input-wrap:focus-within {
+    border-color: var(--night-green-neon) !important;
+    box-shadow: 0 0 0 2px rgba(0,255,136,0.08) !important;
+}
+
+body.night-mode .comment-input-wrap input {
+    background: transparent !important;
+    color: var(--night-text-primary) !important;
+}
+
+body.night-mode .comment-input-wrap input::placeholder {
+    color: var(--night-text-dim) !important;
+}
+
+body.night-mode .comment-input-wrap button {
+    color: var(--night-green-mid) !important;
+}
+
+body.night-mode .comment-input-wrap button:hover {
+    color: var(--night-green-neon) !important;
+}
+
+/* Sidebar droite — widgets */
+body.night-mode .widget {
+    background: var(--night-bg-card) !important;
+    border-color: var(--night-border) !important;
+    box-shadow: var(--night-shadow) !important;
+}
+
+body.night-mode .widget-title {
+    color: var(--night-text-primary) !important;
+    font-family: 'Segoe UI', 'Arial Narrow', sans-serif !important;
+    font-weight: 700 !important;
+    letter-spacing: 0.5px !important;
+    border-bottom: 1px solid var(--night-border) !important;
+    padding-bottom: 8px !important;
+}
+
+body.night-mode .widget-title i {
+    color: var(--night-green-mid) !important;
+}
+
+body.night-mode .top-challenge-item {
+    color: var(--night-text-secondary) !important;
+    border-bottom-color: var(--night-border) !important;
+    text-decoration: none !important;
+}
+
+body.night-mode .top-challenge-item:hover {
+    color: var(--night-green-neon) !important;
+}
+
+body.night-mode .rank-number {
+    background: var(--night-bg-elevated) !important;
+    border: 1px solid var(--night-green-dim) !important;
+    color: var(--night-green-neon) !important;
+}
+
+body.night-mode .rank-title {
+    color: var(--night-text-secondary) !important;
+}
+
+body.night-mode .rank-likes {
+    color: #ff6666 !important;
+}
+
+body.night-mode .widget-search,
+body.night-mode .widget-select {
+    background: var(--night-bg-elevated) !important;
+    border-color: var(--night-border-light) !important;
+    color: var(--night-text-primary) !important;
+}
+
+body.night-mode .widget-search:focus,
+body.night-mode .widget-select:focus {
+    border-color: var(--night-green-neon) !important;
+    box-shadow: 0 0 0 2px rgba(0,255,136,0.08) !important;
+    outline: none !important;
+}
+
+body.night-mode .widget-search::placeholder {
+    color: var(--night-text-dim) !important;
+}
+
+body.night-mode .widget-btn {
+    background: transparent !important;
+    border: 1px solid var(--night-green-neon) !important;
+    color: var(--night-green-neon) !important;
+    font-family: 'Segoe UI', 'Arial Narrow', sans-serif !important;
+    font-weight: 600 !important;
+}
+
+body.night-mode .widget-btn:hover {
+    background: rgba(0, 255, 136, 0.08) !important;
+    box-shadow: 0 0 12px var(--night-green-glow) !important;
+    opacity: 1 !important;
+}
+
+/* Empty feed */
+body.night-mode .empty-feed {
+    background: var(--night-bg-card) !important;
+    border: 1px solid var(--night-border) !important;
+}
+
+body.night-mode .empty-feed i {
+    color: var(--night-border-light) !important;
+}
+
+body.night-mode .empty-feed h3 {
+    color: var(--night-text-primary) !important;
+}
+
+body.night-mode .empty-feed p {
+    color: var(--night-text-muted) !important;
+}
+
+body.night-mode .btn-create {
+    background: transparent !important;
+    border: 1px solid var(--night-green-neon) !important;
+    color: var(--night-green-neon) !important;
+}
+
+/* Avatar initiales */
+body.night-mode .avatar-initials {
+    background: linear-gradient(135deg, var(--night-green-dim), #051505) !important;
+    color: var(--night-green-neon) !important;
+    border: 1px solid var(--night-green-dim) !important;
+}
+
+/* ============================================================
+   OVERRIDES — PROFIL (mini-cards challenges/participations)
+   ============================================================ */
+
+body.night-mode .mini-card {
+    background: var(--night-bg-card) !important;
+    border: 1px solid var(--night-border) !important;
+    box-shadow: var(--night-shadow) !important;
+}
+
+body.night-mode .mini-card:hover {
+    border-color: var(--night-border-light) !important;
+    box-shadow: var(--night-shadow-glow) !important;
+}
+
+body.night-mode .mini-badge {
+    background: transparent !important;
+    border: 1px solid var(--night-green-neon) !important;
+    color: var(--night-green-neon) !important;
+}
+
+body.night-mode .mini-no-img {
+    background: linear-gradient(135deg, #0a1a0a, #0f1f0f) !important;
+    color: var(--night-border-light) !important;
+}
+
+/* Cards du profil — info section */
+body.night-mode .mini-card .card-title a,
+body.night-mode .mini-card h3,
+body.night-mode .mini-card h4 {
+    color: var(--night-text-primary) !important;
+}
+
+body.night-mode .mini-card p,
+body.night-mode .mini-card .card-description {
+    color: var(--night-text-secondary) !important;
+}
+
+body.night-mode .mini-card small,
+body.night-mode .mini-card .card-meta {
+    color: var(--night-text-muted) !important;
+}
+
+body.night-mode .mini-card .card-meta i {
+    color: var(--night-green-dim) !important;
+}
+
+body.night-mode .mini-card .card-footer {
+    border-top-color: var(--night-border) !important;
+}
+
+/* Stat cards profil */
+body.night-mode .stat-card {
+    background: var(--night-bg-card) !important;
+    border: 1px solid var(--night-border) !important;
+    box-shadow: var(--night-shadow) !important;
+}
+
+body.night-mode .stat-val {
+    color: var(--night-green-neon) !important;
+    text-shadow: 0 0 10px var(--night-green-glow-s) !important;
+}
+
+body.night-mode .stat-lbl {
+    color: var(--night-text-muted) !important;
+}
+
+/* Tab buttons profil */
+body.night-mode .tab-btn {
+    color: var(--night-text-muted) !important;
+    background: none !important;
+}
+
+body.night-mode .tab-btn:hover {
+    color: var(--night-green-neon) !important;
+    background: rgba(0, 255, 136, 0.04) !important;
+}
+
+body.night-mode .tab-btn.active {
+    color: var(--night-green-neon) !important;
+    border-bottom-color: var(--night-green-neon) !important;
+    background: rgba(0, 255, 136, 0.04) !important;
+}
+
+body.night-mode .tab-count {
+    background: var(--night-bg-elevated) !important;
+    color: var(--night-green-mid) !important;
+}
+
+/* ============================================================
+   OVERRIDES — MODALES inline profil
+   ============================================================ */
+
+body.night-mode [id*="Modal"],
+body.night-mode [class*="modal-overlay"] {
+    background: rgba(0, 0, 0, 0.85) !important;
+}
+
+body.night-mode [id*="Modal"] > div,
+body.night-mode [id*="modal"] > div {
+    background: var(--night-bg-card) !important;
+    border: 1px solid var(--night-border-light) !important;
+    color: var(--night-text-secondary) !important;
+}
+
+body.night-mode [id*="Modal"] p,
+body.night-mode [id*="modal"] p {
+    color: var(--night-text-secondary) !important;
+}
+
+body.night-mode [id*="Modal"] h2,
+body.night-mode [id*="Modal"] h3,
+body.night-mode [id*="modal"] h2,
+body.night-mode [id*="modal"] h3 {
+    color: var(--night-text-primary) !important;
+    font-family: 'Segoe UI', 'Arial Narrow', sans-serif !important;
+}
+
+body.night-mode [id*="Modal"] label {
+    color: var(--night-text-secondary) !important;
+}
+
+body.night-mode [id*="Modal"] input,
+body.night-mode [id*="modal"] input {
+    background: var(--night-bg-elevated) !important;
+    border-color: var(--night-border-light) !important;
+    color: var(--night-text-primary) !important;
+}
+
+/* ============================================================
+   OVERRIDES — VUE DÉCONNECTÉ (guest home)
+   ============================================================ */
+
+body.night-mode .hero-section {
+    background: linear-gradient(135deg, #0a1a0a 0%, #060f06 60%, #0d1a0d 100%) !important;
+    border: 1px solid var(--night-border-light) !important;
+}
+
+body.night-mode .hero-badge {
+    background: rgba(0, 255, 136, 0.06) !important;
+    border-color: var(--night-green-dim) !important;
+    color: var(--night-green-neon) !important;
+}
+
+body.night-mode .hero-feature {
+    background: rgba(0, 255, 136, 0.06) !important;
+    color: var(--night-text-secondary) !important;
+}
+
+body.night-mode .about-card {
+    background: var(--night-bg-card) !important;
+    border-color: var(--night-border) !important;
+    box-shadow: var(--night-shadow) !important;
+}
+
+body.night-mode .about-card h3 {
+    color: var(--night-text-primary) !important;
+}
+
+body.night-mode .about-card p {
+    color: var(--night-text-secondary) !important;
+}
+
+body.night-mode .about-icon {
+    background: rgba(0, 255, 136, 0.08) !important;
+    border: 1px solid var(--night-green-dim) !important;
+    color: var(--night-green-neon) !important;
+}
+
+body.night-mode .section-title {
+    color: var(--night-text-primary) !important;
+    font-family: 'Segoe UI', 'Arial Narrow', sans-serif !important;
+}
+
+body.night-mode .no-challenges {
+    background: var(--night-bg-card) !important;
+    border: 1px solid var(--night-border) !important;
+}
+
+body.night-mode .card-footer {
+    border-top-color: var(--night-border) !important;
+}
+
+/* Correction catégorie badge guest view */
+body.night-mode .category-badge {
+    background: transparent !important;
+    border: 1px solid var(--night-green-neon) !important;
+    color: var(--night-green-neon) !important;
+}
+
+/* ============================================================
+   OVERRIDES — PAGE CLASSEMENT (ranking.php)
+   ============================================================ */
+
+body.night-mode .ranking-header {
+    border-bottom-color: var(--night-border) !important;
+}
+
+body.night-mode .ranking-filters {
+    background: var(--night-bg-card) !important;
+    border: 1px solid var(--night-border) !important;
+    box-shadow: var(--night-shadow) !important;
+}
+
+body.night-mode .ranking-filters:hover {
+    border-color: var(--night-border-light) !important;
+    box-shadow: var(--night-shadow-glow) !important;
+}
+
+body.night-mode .ranking-filters .filter-group label {
+    color: var(--night-text-muted) !important;
+    font-family: 'Segoe UI', 'Arial Narrow', sans-serif !important;
+    font-weight: 600 !important;
+    letter-spacing: 1px !important;
+    text-transform: uppercase !important;
+}
+
+body.night-mode .ranking-filters select,
+body.night-mode .ranking-filters .widget-select {
+    background: var(--night-bg-elevated) !important;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 10 10'%3E%3Cpath fill='%2300ff88' d='M5 7L0 2h10z'/%3E%3C/svg%3E") !important;
+    background-repeat: no-repeat !important;
+    background-position: right 12px center !important;
+    border: 1.5px solid var(--night-border-light) !important;
+    color: var(--night-text-primary) !important;
+}
+
+body.night-mode .ranking-filters select:focus {
+    border-color: var(--night-green-neon) !important;
+    background-color: var(--night-bg-hover) !important;
+    box-shadow: 0 0 0 2px rgba(0,255,136,0.08) !important;
+    outline: none !important;
+}
+
+/* Table principale */
+body.night-mode .ranking-card {
+    background: var(--night-bg-card) !important;
+    border: 1px solid var(--night-border) !important;
+    box-shadow: var(--night-shadow) !important;
+}
+
+body.night-mode .ranking-table-header {
+    background: var(--night-bg-secondary) !important;
+    border-bottom: 2px solid var(--night-border-light) !important;
+    color: var(--night-text-muted) !important;
+}
+
+/* Lignes du tableau */
+body.night-mode .ranking-row {
+    background: var(--night-bg-card) !important;
+    border-bottom-color: var(--night-border) !important;
+}
+
+body.night-mode .ranking-row:hover {
+    background: var(--night-bg-hover) !important;
+}
+
+/* Surcharge les couleurs gold/silver/bronze claires */
+body.night-mode .ranking-row.gold {
+    background: rgba(255, 180, 0, 0.04) !important;
+    border-left: 2px solid #ffb400 !important;
+}
+
+body.night-mode .ranking-row.silver {
+    background: rgba(160, 160, 160, 0.04) !important;
+    border-left: 2px solid #aaaaaa !important;
+}
+
+body.night-mode .ranking-row.bronze {
+    background: rgba(180, 100, 40, 0.04) !important;
+    border-left: 2px solid #b46428 !important;
+}
+
+body.night-mode .ranking-row.gold:hover {
+    background: rgba(255, 180, 0, 0.07) !important;
+}
+
+body.night-mode .ranking-row.silver:hover {
+    background: rgba(160, 160, 160, 0.07) !important;
+}
+
+body.night-mode .ranking-row.bronze:hover {
+    background: rgba(180, 100, 40, 0.07) !important;
+}
+
+/* Notice & footer */
+body.night-mode .ranking-notice {
+    background: rgba(0, 255, 136, 0.04) !important;
+    border-top: 1px solid var(--night-border) !important;
+    color: var(--night-text-muted) !important;
+}
+
+body.night-mode .ranking-footer {
+    background: var(--night-bg-secondary) !important;
+    border-top: 1px solid var(--night-border) !important;
+}
+
+body.night-mode .ranking-footer:hover {
+    background: var(--night-bg-hover) !important;
+}
+
+/* État vide */
+body.night-mode .ranking-empty {
+    background: var(--night-bg-card) !important;
+    border: 1px solid var(--night-border) !important;
+}
+
+body.night-mode .ranking-empty i {
+    color: var(--night-border-light) !important;
+}
+
+body.night-mode .ranking-empty h3 {
+    color: var(--night-text-primary) !important;
+    font-family: 'Segoe UI', 'Arial Narrow', sans-serif !important;
+}
+
+body.night-mode .ranking-empty p {
+    color: var(--night-text-muted) !important;
+}

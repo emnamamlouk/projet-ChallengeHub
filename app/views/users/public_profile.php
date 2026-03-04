@@ -46,11 +46,11 @@ $currentUserId = $_SESSION['user_id'] ?? null;
     <!-- TABS DE NAVIGATION -->
     <div class="profile-tabs">
         <button class="tab-btn active" onclick="showTab('challenges', event)">
-            <i class="fas fa-trophy"></i> Défis créés
+            <i class="bi bi-trophy-fill"></i> Défis créés
             <span class="tab-count"><?= count($userChallenges) ?></span>
         </button>
         <button class="tab-btn" onclick="showTab('submissions', event)">
-            <i class="fas fa-paper-plane"></i> Participations
+            <i class="bi bi-send-fill"></i> Participations
             <span class="tab-count"><?= count($userSubmissions) ?></span>
         </button>
     </div>
@@ -59,7 +59,7 @@ $currentUserId = $_SESSION['user_id'] ?? null;
     <div id="tab-challenges" class="tab-content active">
         <?php if(empty($userChallenges)): ?>
             <div class="empty-state">
-                <i class="fas fa-trophy"></i>
+                <i class="bi bi-trophy-fill"></i>
                 <p><?= htmlspecialchars($user['username']) ?> n'a pas encore créé de défi.</p>
             </div>
         <?php else: ?>
@@ -73,7 +73,7 @@ $currentUserId = $_SESSION['user_id'] ?? null;
                             </div>
                         <?php else: ?>
                             <div class="card-image-placeholder">
-                                <i class="fas fa-trophy"></i>
+                                <i class="bi bi-trophy-fill"></i>
                             </div>
                         <?php endif; ?>
                         <div class="card-body">
@@ -81,9 +81,9 @@ $currentUserId = $_SESSION['user_id'] ?? null;
                             <p class="card-description"><?= htmlspecialchars(mb_substr($challenge['description'], 0, 100)) ?>...</p>
                             <div class="card-footer">
                                 <span class="card-date">
-                                    <i class="fas fa-calendar"></i> <?= date('d/m/Y', strtotime($challenge['created_at'])) ?>
+                                    <i class="bi bi-calendar-fill"></i> <?= date('d/m/Y', strtotime($challenge['created_at'])) ?>
                                 </span>
-                                <span class="card-arrow"><i class="fas fa-arrow-right"></i></span>
+                                <span class="card-arrow"><i class="bi bi-arrow-right"></i></span>
                             </div>
                         </div>
                     </a>
@@ -96,7 +96,7 @@ $currentUserId = $_SESSION['user_id'] ?? null;
     <div id="tab-submissions" class="tab-content">
         <?php if(empty($userSubmissions)): ?>
             <div class="empty-state">
-                <i class="fas fa-paper-plane"></i>
+                <i class="bi bi-send-fill"></i>
                 <p><?= htmlspecialchars($user['username']) ?> n'a pas encore participé à des défis.</p>
             </div>
         <?php else: ?>
@@ -121,12 +121,12 @@ $currentUserId = $_SESSION['user_id'] ?? null;
                                 <div class="author-info">
                                     <span class="author-name"><?= htmlspecialchars($user['username']) ?></span>
                                     <span class="submission-date">
-                                        <i class="fas fa-clock"></i> <?= date('d/m/Y à H:i', strtotime($submission['created_at'])) ?>
+                                        <i class="bi bi-clock-fill"></i> <?= date('d/m/Y à H:i', strtotime($submission['created_at'])) ?>
                                     </span>
                                 </div>
                             </div>
                             <a href="index.php?action=showChallenge&id=<?= $submission['challenge_id'] ?>" class="challenge-link">
-                                <i class="fas fa-trophy"></i>
+                                <i class="bi bi-trophy-fill"></i>
                                 <span><?= htmlspecialchars($submission['challenge_title']) ?></span>
                             </a>
                         </div>
@@ -142,7 +142,7 @@ $currentUserId = $_SESSION['user_id'] ?? null;
                                 <p><?= nl2br(htmlspecialchars($submission['description'])) ?></p>
                                 <?php if(!empty($submission['link'])): ?>
                                     <a href="<?= htmlspecialchars($submission['link']) ?>" target="_blank" class="submission-link">
-                                        <i class="fas fa-external-link-alt"></i> Voir le projet
+                                        <i class="bi bi-box-arrow-up-right"></i> Voir le projet
                                     </a>
                                 <?php endif; ?>
                             </div>
@@ -155,24 +155,24 @@ $currentUserId = $_SESSION['user_id'] ?? null;
                                     <button class="vote-btn <?= $userVoted ? 'voted' : '' ?>"
                                             onclick="voteSubmission(<?= $subId ?>, this)"
                                             data-id="<?= $subId ?>">
-                                        <i class="fas fa-thumbs-up"></i>
+                                        <i class="bi bi-hand-thumbs-up-fill"></i>
                                         <span class="vote-count"><?= $voteCount ?></span>
                                         <span class="vote-label"><?= $userVoted ? 'Voté' : 'Voter' ?></span>
                                     </button>
                                 <?php else: ?>
                                     <div class="vote-display">
-                                        <i class="fas fa-thumbs-up"></i>
+                                        <i class="bi bi-hand-thumbs-up-fill"></i>
                                         <span><?= $voteCount ?></span>
                                     </div>
                                 <?php endif; ?>
                                 <button class="comments-toggle" onclick="toggleComments(<?= $subId ?>)">
-                                    <i class="fas fa-comment"></i>
+                                    <i class="bi bi-chat-fill"></i>
                                     <span class="comments-count"><?= $submission['comments_count'] ?? 0 ?></span>
                                     <span>Commentaires</span>
                                 </button>
                             </div>
                             <a href="index.php?action=showSubmission&id=<?= $subId ?>" class="view-link">
-                                Voir en détail <i class="fas fa-arrow-right"></i>
+                                Voir en détail <i class="bi bi-arrow-right"></i>
                             </a>
                         </div>
 
@@ -184,7 +184,7 @@ $currentUserId = $_SESSION['user_id'] ?? null;
                                 <div class="comment-avatar-mini"><?= strtoupper(substr($_SESSION['username'], 0, 1)) ?></div>
                                 <form class="comment-form" onsubmit="addComment(event, <?= $subId ?>)">
                                     <input type="text" id="comment-input-<?= $subId ?>" placeholder="Écrire un commentaire..." required>
-                                    <button type="submit"><i class="fas fa-paper-plane"></i></button>
+                                    <button type="submit"><i class="bi bi-send-fill"></i></button>
                                 </form>
                             </div>
                             <?php endif; ?>

@@ -30,19 +30,19 @@ ob_start();
         </div>
         <nav class="sidebar-nav">
             <a href="index.php?action=home" class="snav-item active">
-                <i class="fas fa-home"></i> Accueil
+                <i class="bi bi-house-fill"></i> Accueil
             </a>
             <a href="index.php?action=createChallengeForm" class="snav-item">
-                <i class="fas fa-plus-circle"></i> Créer un défi
+                <i class="bi bi-plus-lg-circle"></i> Créer un défi
             </a>
             <a href="index.php?action=ranking" class="snav-item">
-                <i class="fas fa-trophy"></i> Classement
+                <i class="bi bi-trophy-fill"></i> Classement
             </a>
             <a href="index.php?action=search" class="snav-item">
-                <i class="fas fa-search"></i> Recherche
+                <i class="bi bi-search"></i> Recherche
             </a>
             <a href="index.php?action=profile" class="snav-item">
-                <i class="fas fa-user"></i> Mon profil
+                <i class="bi bi-person-fill"></i> Mon profil
             </a>
         </nav>
     </aside>
@@ -52,18 +52,18 @@ ob_start();
 
         <!-- Barre de tri -->
         <div class="feed-sort-bar">
-            <span class="sort-label"><i class="fas fa-filter"></i> Trier par :</span>
+            <span class="sort-label"><i class="bi bi-funnel-fill"></i> Trier par :</span>
             <a href="?action=home&sort=recent&category=<?= urlencode($current_category) ?>&search=<?= urlencode($current_search) ?>"
                class="sort-btn <?= $current_sort === 'recent' ? 'active' : '' ?>">
-                <i class="fas fa-clock"></i> Plus récents
+                <i class="bi bi-clock-fill"></i> Plus récents
             </a>
             <a href="?action=home&sort=likes&category=<?= urlencode($current_category) ?>&search=<?= urlencode($current_search) ?>"
                class="sort-btn <?= $current_sort === 'likes' ? 'active' : '' ?>">
-                <i class="fas fa-thumbs-up"></i> Plus votés
+                <i class="bi bi-hand-thumbs-up-fill"></i> Plus votés
             </a>
             <a href="?action=home&sort=participations&category=<?= urlencode($current_category) ?>&search=<?= urlencode($current_search) ?>"
                class="sort-btn <?= $current_sort === 'participations' ? 'active' : '' ?>">
-                <i class="fas fa-users"></i> Plus participés
+                <i class="bi bi-person-fills"></i> Plus participés
             </a>
         </div>
 
@@ -89,7 +89,7 @@ ob_start();
                         </span>
                     </div>
                     <a href="index.php?action=showChallenge&id=<?= $challenge['id'] ?>" class="post-link-btn" title="Voir le défi">
-                        <i class="fas fa-external-link-alt"></i>
+                        <i class="bi bi-box-arrow-up-right"></i>
                     </a>
                 </div>
 
@@ -118,7 +118,7 @@ ob_start();
                     if(!empty($dl) && $dl_ts > 0 && $dl_ts > mktime(0,0,0,1,1,2000)):
                     ?>
                     <div class="post-deadline">
-                        <i class="fas fa-clock"></i>
+                        <i class="bi bi-clock-fill"></i>
                         Date limite : <strong><?= date('d/m/Y', $dl_ts) ?></strong>
                         <?php
                             $diff = $dl_ts - time();
@@ -132,15 +132,15 @@ ob_start();
                 <!-- Compteurs -->
                 <div class="post-counts">
                     <span>
-                        <i class="fas fa-thumbs-up text-red"></i>
+                        <i class="bi bi-hand-thumbs-up-fill text-red"></i>
                         <span id="like-count-<?= $challenge['id'] ?>"><?= isset($challenge['likes_count']) ? $challenge['likes_count'] : 0 ?></span> voter
                     </span>
                     <span>
-                        <i class="fas fa-users text-blue"></i>
+                        <i class="bi bi-person-fills text-blue"></i>
                         <?= isset($challenge['submissions_count']) ? $challenge['submissions_count'] : 0 ?> participation<?= (isset($challenge['submissions_count']) && $challenge['submissions_count'] > 1) ? 's' : '' ?>
                     </span>
                     <span>
-                        <i class="fas fa-comment text-gray"></i>
+                        <i class="bi bi-chat-fill text-gray"></i>
                         <span id="comment-count-<?= $challenge['id'] ?>"><?= isset($challenge['comments_count']) ? $challenge['comments_count'] : 0 ?></span> commentaire<?= (isset($challenge['comments_count']) && $challenge['comments_count'] > 1) ? 's' : '' ?>
                     </span>
                 </div>
@@ -155,24 +155,24 @@ ob_start();
                     </button>
 
                     <button class="action-btn comment-btn" onclick="toggleComments(<?= $challenge['id'] ?>)">
-                        <i class="far fa-comment"></i>
+                        <i class="bi bi-chat-fill"></i>
                         <span>Commenter</span>
                     </button>
 
                     <?php if(empty($challenge['user_participated'])): ?>
                     <a href="index.php?action=createSubmissionForm&challenge_id=<?= $challenge['id'] ?>" class="action-btn participate-btn">
-                        <i class="fas fa-flag-checkered"></i>
+                        <i class="bi bi-flag-fill"></i>
                         <span>Participer</span>
                     </a>
                     <?php else: ?>
                     <span class="action-btn participated-badge">
-                        <i class="fas fa-check-circle"></i>
+                        <i class="bi bi-check-circle-fill"></i>
                         <span>Participé !</span>
                     </span>
                     <?php endif; ?>
 
                     <a href="index.php?action=showChallenge&id=<?= $challenge['id'] ?>" class="action-btn view-btn">
-                        <i class="fas fa-eye"></i>
+                        <i class="bi bi-eye-fill"></i>
                         <span>Voir tout</span>
                     </a>
                 </div>
@@ -213,7 +213,7 @@ ob_start();
                                    placeholder="Écrire un commentaire..."
                                    onkeypress="submitComment(event, <?= $challenge['id'] ?>)">
                             <button onclick="submitComment(null, <?= $challenge['id'] ?>, true)">
-                                <i class="fas fa-paper-plane"></i>
+                                <i class="bi bi-send-fill"></i>
                             </button>
                         </div>
                     </div>
@@ -223,11 +223,11 @@ ob_start();
             <?php endforeach; ?>
         <?php else: ?>
             <div class="empty-feed">
-                <i class="fas fa-trophy fa-3x"></i>
+                <i class="bi bi-trophy-fill fa-3x"></i>
                 <h3>Aucun défi pour l'instant</h3>
                 <p>Soyez le premier à créer un défi !</p>
                 <a href="index.php?action=createChallengeForm" class="btn-create">
-                    <i class="fas fa-plus"></i> Créer un défi
+                    <i class="bi bi-plus-lg"></i> Créer un défi
                 </a>
             </div>
         <?php endif; ?>
@@ -236,21 +236,21 @@ ob_start();
     <!-- COLONNE DROITE -->
     <aside class="fb-sidebar-right">
         <div class="widget">
-            <h4 class="widget-title"><i class="fas fa-fire"></i> Top défis</h4>
+            <h4 class="widget-title"><i class="bi bi-fire"></i> Top défis</h4>
             <?php if(!empty($challenges)): ?>
                 <?php $top = array_slice($challenges, 0, 5); ?>
                 <?php foreach($top as $i => $c): ?>
                 <a href="index.php?action=showChallenge&id=<?= $c['id'] ?>" class="top-challenge-item">
                     <span class="rank-number"><?= $i + 1 ?></span>
                     <span class="rank-title"><?= htmlspecialchars(substr($c['title'], 0, 30)) ?><?= strlen($c['title']) > 30 ? '...' : '' ?></span>
-                    <span class="rank-likes"><i class="fas fa-thumbs-up"></i> <?= $c['likes_count'] ?></span>
+                    <span class="rank-likes"><i class="bi bi-hand-thumbs-up-fill"></i> <?= $c['likes_count'] ?></span>
                 </a>
                 <?php endforeach; ?>
             <?php endif; ?>
         </div>
 
         <div class="widget">
-            <h4 class="widget-title"><i class="fas fa-search"></i> Filtres</h4>
+            <h4 class="widget-title"><i class="bi bi-search"></i> Filtres</h4>
             <form action="index.php" method="GET">
                 <input type="hidden" name="action" value="home">
                 <input type="hidden" name="sort" value="<?= htmlspecialchars($current_sort) ?>">
@@ -266,7 +266,7 @@ ob_start();
                     <option value="Musique"   <?= $current_category === 'Musique'   ? 'selected' : '' ?>>🎵 Musique</option>
                     <option value="Autre"     <?= $current_category === 'Autre'     ? 'selected' : '' ?>>📦 Autre</option>
                 </select>
-                <button type="submit" class="widget-btn"><i class="fas fa-search"></i> Filtrer</button>
+                <button type="submit" class="widget-btn"><i class="bi bi-search"></i> Filtrer</button>
             </form>
         </div>
     </aside>
@@ -277,38 +277,38 @@ ob_start();
 <div class="guest-layout">
         <div class="hero-section">
             <div class="hero-inner">
-                <div class="hero-badge"><i class="fas fa-trophy"></i> Plateforme de défis créatifs</div>
+                <div class="hero-badge"><i class="bi bi-trophy-fill"></i> Plateforme de défis créatifs</div>
                 <h1 class="hero-title">Challenge<span>Hub</span></h1>
 
                 <div class="hero-features">
-                    <div class="hero-feature"><i class="fas fa-flag-checkered"></i><span>Défis variés</span></div>
-                    <div class="hero-feature"><i class="fas fa-users"></i><span>Communauté active</span></div>
-                    <div class="hero-feature"><i class="fas fa-thumbs-up"></i><span>Système de votes</span></div>
-                    <div class="hero-feature"><i class="fas fa-medal"></i><span>Classements</span></div>
+                    <div class="hero-feature"><i class="bi bi-flag-fill"></i><span>Défis variés</span></div>
+                    <div class="hero-feature"><i class="bi bi-person-fills"></i><span>Communauté active</span></div>
+                    <div class="hero-feature"><i class="bi bi-hand-thumbs-up-fill"></i><span>Système de votes</span></div>
+                    <div class="hero-feature"><i class="bi bi-award-fill"></i><span>Classements</span></div>
                 </div>
                 <div class="hero-cta">
-                    <a href="index.php?action=showRegister" class="btn-hero-primary"><i class="fas fa-user-plus"></i> Rejoindre la communauté</a>
-                    <a href="index.php?action=showLogin" class="btn-hero-secondary"><i class="fas fa-sign-in-alt"></i> Se connecter</a>
+                    <a href="index.php?action=showRegister" class="btn-hero-primary"><i class="bi bi-person-plus-fill"></i> Rejoindre la communauté</a>
+                    <a href="index.php?action=showLogin" class="btn-hero-secondary"><i class="bi bi-box-arrow-in-right"></i> Se connecter</a>
                 </div>
             </div>
         </div>
 
         <div class="about-section">
             <div class="about-grid">
-                <div class="about-card"><div class="about-icon"><i class="fas fa-flag-checkered"></i></div><h3>Relevez des défis</h3><p>Des dizaines de défis créatifs dans des catégories variées.</p></div>
-                <div class="about-card"><div class="about-icon"><i class="fas fa-upload"></i></div><h3>Partagez vos créations</h3><p>Soumettez vos réalisations et recevez des retours.</p></div>
-                <div class="about-card"><div class="about-icon"><i class="fas fa-thumbs-up"></i></div><h3>Votez & encouragez</h3><p>Likez les soumissions qui vous inspirent.</p></div>
-                <div class="about-card"><div class="about-icon"><i class="fas fa-trophy"></i></div><h3>Grimpez en classement</h3><p>Accumulez des votes et montez dans le classement.</p></div>
+                <div class="about-card"><div class="about-icon"><i class="bi bi-flag-fill"></i></div><h3>Relevez des défis</h3><p>Des dizaines de défis créatifs dans des catégories variées.</p></div>
+                <div class="about-card"><div class="about-icon"><i class="bi bi-upload"></i></div><h3>Partagez vos créations</h3><p>Soumettez vos réalisations et recevez des retours.</p></div>
+                <div class="about-card"><div class="about-icon"><i class="bi bi-hand-thumbs-up-fill"></i></div><h3>Votez & encouragez</h3><p>Likez les soumissions qui vous inspirent.</p></div>
+                <div class="about-card"><div class="about-icon"><i class="bi bi-trophy-fill"></i></div><h3>Grimpez en classement</h3><p>Accumulez des votes et montez dans le classement.</p></div>
             </div>
         </div>
 
         <div class="filters-section">
-            <h2 class="section-title"><i class="fas fa-fire"></i> Les défis en cours</h2>
+            <h2 class="section-title"><i class="bi bi-fire"></i> Les défis en cours</h2>
             <form action="index.php" method="GET" class="filters-form">
                 <input type="hidden" name="action" value="home">
                 <div class="filters-grid">
                     <div class="filter-group">
-                        <i class="fas fa-search filter-icon"></i>
+                        <i class="bi bi-search filter-icon"></i>
                         <input type="text" name="search" placeholder="Rechercher un défi..." value="<?= htmlspecialchars($current_search) ?>">
                     </div>
                     <div class="filter-group">
@@ -326,7 +326,7 @@ ob_start();
                             <option value="participations" <?= $current_sort === 'participations' ? 'selected' : '' ?>>Plus participés</option>
                         </select>
                     </div>
-                    <button type="submit" class="btn-filter"><i class="fas fa-search"></i> Filtrer</button>
+                    <button type="submit" class="btn-filter"><i class="bi bi-search"></i> Filtrer</button>
                 </div>
             </form>
         </div>
@@ -339,7 +339,7 @@ ob_start();
                         <?php if(!empty($challenge['image'])): ?>
                             <img src="public/<?= htmlspecialchars($challenge['image']) ?>" alt="<?= htmlspecialchars($challenge['title']) ?>">
                         <?php else: ?>
-                            <div class="no-image"><i class="fas fa-image"></i></div>
+                            <div class="no-image"><i class="bi bi-card-image"></i></div>
                         <?php endif; ?>
                         <span class="category-badge"><?= htmlspecialchars($challenge['category']) ?></span>
                     </div>
@@ -347,22 +347,22 @@ ob_start();
                         <h3 class="card-title"><a href="index.php?action=showChallenge&id=<?= $challenge['id'] ?>"><?= htmlspecialchars($challenge['title']) ?></a></h3>
                         <p class="card-description"><?= htmlspecialchars(substr($challenge['description'], 0, 120)) ?>...</p>
                         <div class="card-meta">
-                            <span><i class="fas fa-user"></i> <?= htmlspecialchars($challenge['creator_name']) ?></span>
-                            <span><i class="fas fa-thumbs-up"></i> <?= $challenge['likes_count'] ?? 0 ?></span>
-                            <span><i class="fas fa-users"></i> <?= $challenge['submissions_count'] ?? 0 ?></span>
+                            <span><i class="bi bi-person-fill"></i> <?= htmlspecialchars($challenge['creator_name']) ?></span>
+                            <span><i class="bi bi-hand-thumbs-up-fill"></i> <?= $challenge['likes_count'] ?? 0 ?></span>
+                            <span><i class="bi bi-person-fills"></i> <?= $challenge['submissions_count'] ?? 0 ?></span>
                         </div>
                         <div class="card-footer">
-                            <a href="index.php?action=showChallenge&id=<?= $challenge['id'] ?>" class="btn-view">Voir le défi <i class="fas fa-arrow-right"></i></a>
+                            <a href="index.php?action=showChallenge&id=<?= $challenge['id'] ?>" class="btn-view">Voir le défi <i class="bi bi-arrow-right"></i></a>
                         </div>
                     </div>
                 </div>
                 <?php endforeach; ?>
             <?php else: ?>
                 <div class="no-challenges">
-                    <i class="fas fa-tasks fa-4x"></i>
+                    <i class="bi bi-list-check fa-4x"></i>
                     <h3>Aucun défi trouvé</h3>
                     <p>Inscrivez-vous pour créer le premier défi !</p>
-                    <a href="index.php?action=showRegister" class="btn-primary"><i class="fas fa-user-plus"></i> S'inscrire</a>
+                    <a href="index.php?action=showRegister" class="btn-primary"><i class="bi bi-person-plus-fill"></i> S'inscrire</a>
                 </div>
             <?php endif; ?>
         </div>
@@ -857,10 +857,10 @@ function toggleLike(challengeId) {
         const countEl = document.getElementById('like-count-' + challengeId);
         if (data.action === 'liked') {
             btn.classList.add('liked');
-            btn.querySelector('i').className = 'fas fa-thumbs-up';
+            btn.querySelector('i').className = 'bi bi-hand-thumbs-up-fill';
         } else {
             btn.classList.remove('liked');
-            btn.querySelector('i').className = 'far fa-thumbs-up';
+            btn.querySelector('i').className = 'bi bi-hand-thumbs-up-fill';
         }
         countEl.textContent = data.count;
     })

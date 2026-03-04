@@ -215,7 +215,6 @@ ob_start();
 </div>
 
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
 .cr-wrap, .cr-wrap * { font-family: 'Inter', system-ui, sans-serif; box-sizing: border-box; }
 
 :root {

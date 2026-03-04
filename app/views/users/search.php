@@ -18,7 +18,7 @@ ob_start();
                        value="<?= htmlspecialchars($_GET['q'] ?? '') ?>"
                        autofocus>
                 <button type="submit">
-                    <i class="fas fa-search"></i> Rechercher
+                    <i class="bi bi-search"></i> Rechercher
                 </button>
             </div>
         </form>
@@ -30,7 +30,7 @@ ob_start();
             
             <?php if(empty($users)): ?>
                 <div class="no-results">
-                    <i class="fas fa-users fa-4x"></i>
+                    <i class="bi bi-people" style="font-size:4rem;"></i>
                     <p>Aucun utilisateur trouvé</p>
                 </div>
             <?php else: ?>
@@ -43,7 +43,7 @@ ob_start();
                                          alt="<?= htmlspecialchars($user['username']) ?>">
                                 <?php else: ?>
                                     <div class="default-avatar">
-                                        <i class="fas fa-user-astronaut"></i>
+                                        <i class="bi bi-person-fill"></i>
                                     </div>
                                 <?php endif; ?>
                             </div>
@@ -222,6 +222,7 @@ ob_start();
 .no-results i {
     color: #ccc;
     margin-bottom: 20px;
+    display: block;
 }
 
 .no-results p {

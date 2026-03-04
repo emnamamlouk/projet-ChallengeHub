@@ -8,10 +8,10 @@ ob_start();
 
     <!-- BREADCRUMB -->
     <div class="sv-breadcrumb">
-        <a href="index.php?action=home"><i class="fas fa-home"></i> Accueil</a>
-        <i class="fas fa-chevron-right sv-sep"></i>
-        <a href="index.php?action=showChallenge&id=<?= $submission['challenge_id'] ?>"><i class="fas fa-trophy"></i> Le défi</a>
-        <i class="fas fa-chevron-right sv-sep"></i>
+        <a href="index.php?action=home"><i class="bi bi-house-fill"></i> Accueil</a>
+        <i class="bi bi-chevron-right sv-sep"></i>
+        <a href="index.php?action=showChallenge&id=<?= $submission['challenge_id'] ?>"><i class="bi bi-trophy-fill"></i> Le défi</a>
+        <i class="bi bi-chevron-right sv-sep"></i>
         <span><?= htmlspecialchars($submission['username']) ?></span>
     </div>
 
@@ -31,19 +31,19 @@ ob_start();
                             <?= htmlspecialchars($submission['username']) ?>
                         </a>
                         <span class="sv-author-date">
-                            <i class="far fa-clock"></i>
+                            <i class="bi bi-clock-fill"></i>
                             <?= date('d/m/Y à H:i', strtotime($submission['created_at'])) ?>
                         </span>
                     </div>
                     <?php if(isset($_SESSION['user_id']) && $_SESSION['user_id'] == $submission['user_id']): ?>
                     <div class="sv-owner-btns">
                         <a href="index.php?action=editSubmissionForm&id=<?= $submission['id'] ?>" class="sv-btn-edit">
-                            <i class="fas fa-edit"></i> Modifier
+                            <i class="bi bi-pencil-square"></i> Modifier
                         </a>
                         <form action="index.php?action=deleteSubmission" method="POST" style="display:inline" onsubmit="return confirm('Supprimer ?')">
                             <?= CSRF::field() ?>
                             <input type="hidden" name="submission_id" value="<?= $submission['id'] ?>">
-                            <button type="submit" class="sv-btn-del"><i class="fas fa-trash"></i></button>
+                            <button type="submit" class="sv-btn-del"><i class="bi bi-trash-fill"></i></button>
                         </form>
                     </div>
                     <?php endif; ?>
@@ -59,11 +59,11 @@ ob_start();
 
             <!-- DESCRIPTION -->
             <div class="sv-card">
-                <div class="sv-card-label"><i class="fas fa-align-left"></i> Description</div>
+                <div class="sv-card-label"><i class="bi bi-text-left"></i> Description</div>
                 <p class="sv-desc"><?= nl2br(htmlspecialchars($submission['description'])) ?></p>
                 <?php if(!empty($submission['link'])): ?>
                 <a href="<?= htmlspecialchars($submission['link']) ?>" target="_blank" rel="noopener" class="sv-proj-link">
-                    <i class="fas fa-external-link-alt"></i> Voir le projet
+                    <i class="bi bi-box-arrow-up-right"></i> Voir le projet
                 </a>
                 <?php endif; ?>
             </div>
@@ -80,25 +80,25 @@ ob_start();
                     </button>
                     <?php else: ?>
                     <div class="sv-vote-own">
-                        <i class="fas fa-thumbs-up"></i>
+                        <i class="bi bi-hand-thumbs-up-fill"></i>
                         <strong><?= $submission['votes_count'] ?></strong>
                         vote<?= $submission['votes_count'] > 1 ? 's' : '' ?> reçus
                     </div>
                     <?php endif; ?>
                 <?php else: ?>
                     <a href="index.php?action=showLogin" class="sv-vote-btn">
-                        <i class="fas fa-sign-in-alt"></i> Connectez-vous pour voter
+                        <i class="bi bi-box-arrow-in-right"></i> Connectez-vous pour voter
                     </a>
                 <?php endif; ?>
                 <a href="index.php?action=showChallenge&id=<?= $submission['challenge_id'] ?>" class="sv-defi-btn">
-                    <i class="fas fa-trophy"></i> Voir le défi
+                    <i class="bi bi-trophy-fill"></i> Voir le défi
                 </a>
             </div>
 
             <!-- COMMENTAIRES -->
             <div class="sv-card sv-comments-card">
                 <div class="sv-card-label">
-                    <i class="fas fa-comments"></i> Commentaires
+                    <i class="bi bi-chat-fills"></i> Commentaires
                     <span class="sv-comment-count" id="mainCommentCount"><?= count($comments) ?></span>
                 </div>
 
@@ -108,7 +108,7 @@ ob_start();
                     <div class="sv-comment-input-row">
                         <div class="sv-av-sm"><?= strtoupper(substr($_SESSION['username'], 0, 1)) ?></div>
                         <input type="text" name="content" id="commentContent" placeholder="Écrire un commentaire..." required class="sv-comment-input">
-                        <button type="submit" class="sv-comment-send"><i class="fas fa-paper-plane"></i></button>
+                        <button type="submit" class="sv-comment-send"><i class="bi bi-send-fill"></i></button>
                     </div>
                 </form>
                 <?php endif; ?>
@@ -125,12 +125,12 @@ ob_start();
                                     <div class="sv-comment-actions">
                                         <?php if(isset($_SESSION['user_id'])): ?>
                                         <button class="sv-reply-btn" onclick="showReplyForm(<?= $c['id'] ?>, '<?= htmlspecialchars($c['username']) ?>')">
-                                            <i class="fas fa-reply"></i> Répondre
+                                            <i class="bi bi-reply-fill"></i> Répondre
                                         </button>
                                         <?php endif; ?>
                                         <?php if(isset($_SESSION['user_id']) && $_SESSION['user_id'] == $c['user_id']): ?>
                                         <button class="sv-del-comment" onclick="deleteComment(<?= $c['id'] ?>)">
-                                            <i class="fas fa-trash"></i>
+                                            <i class="bi bi-trash-fill"></i>
                                         </button>
                                         <?php endif; ?>
                                     </div>
@@ -149,7 +149,7 @@ ob_start();
                                                 <span><?= date('d/m/Y', strtotime($r['created_at'])) ?></span>
                                                 <?php if(isset($_SESSION['user_id']) && $_SESSION['user_id'] == $r['user_id']): ?>
                                                 <button class="sv-del-comment" onclick="deleteComment(<?= $r['id'] ?>)">
-                                                    <i class="fas fa-trash"></i>
+                                                    <i class="bi bi-trash-fill"></i>
                                                 </button>
                                                 <?php endif; ?>
                                             </div>
@@ -166,8 +166,8 @@ ob_start();
                                     <div class="sv-comment-input-row" style="margin-top:8px;">
                                         <div class="sv-av-sm sv-av-xs"><?= strtoupper(substr($_SESSION['username'], 0, 1)) ?></div>
                                         <input type="text" id="reply-input-<?= $c['id'] ?>" class="sv-comment-input" placeholder="Répondre...">
-                                        <button class="sv-comment-send" onclick="submitReply(<?= $c['id'] ?>, <?= $submission['id'] ?>)"><i class="fas fa-paper-plane"></i></button>
-                                        <button class="sv-cancel-reply" onclick="hideReplyForm(<?= $c['id'] ?>)"><i class="fas fa-times"></i></button>
+                                        <button class="sv-comment-send" onclick="submitReply(<?= $c['id'] ?>, <?= $submission['id'] ?>)"><i class="bi bi-send-fill"></i></button>
+                                        <button class="sv-cancel-reply" onclick="hideReplyForm(<?= $c['id'] ?>)"><i class="bi bi-x-circle-fill"></i></button>
                                     </div>
                                 </div>
                                 <?php endif; ?>
@@ -176,7 +176,7 @@ ob_start();
                         <?php endforeach; ?>
                     <?php else: ?>
                         <div class="sv-no-comments" id="sv-no-comments">
-                            <i class="fas fa-comment-slash"></i>
+                            <i class="bi bi-chat-fill-slash"></i>
                             <p>Aucun commentaire — soyez le premier !</p>
                         </div>
                     <?php endif; ?>
@@ -190,7 +190,7 @@ ob_start();
             <div class="sv-card sv-sidebar-card">
                 <div class="sv-sidebar-title">À propos du défi</div>
                 <div class="sv-sidebar-defi-link">
-                    <i class="fas fa-trophy"></i>
+                    <i class="bi bi-trophy-fill"></i>
                     <a href="index.php?action=showChallenge&id=<?= $submission['challenge_id'] ?>">Voir le défi complet</a>
                 </div>
                 <hr class="sv-hr">
@@ -306,7 +306,7 @@ function doVote(btn) {
             const count = data.new_count ?? data.votes_count;
             btn.querySelector('.sv-vote-count').textContent = count;
             btn.querySelector('.sv-vote-lbl').textContent = voted ? 'Voté' : 'Voter';
-            btn.querySelector('i').className = voted ? 'fas fa-thumbs-up' : 'far fa-thumbs-up';
+            btn.querySelector('i').className = voted ? 'bi bi-hand-thumbs-up-fill' : 'bi bi-hand-thumbs-up-fill';
             btn.classList.toggle('sv-voted', voted);
         }
     });
@@ -349,8 +349,8 @@ function appendComment(data, submissionId) {
                 <strong>${data.username}</strong>
                 <span>${date}</span>
                 <div class="sv-comment-actions">
-                    ${LOGGED_IN ? `<button class="sv-reply-btn" onclick="showReplyForm(${data.comment_id}, '${data.username}')"><i class="fas fa-reply"></i> Répondre</button>` : ''}
-                    <button class="sv-del-comment" onclick="deleteComment(${data.comment_id})"><i class="fas fa-trash"></i></button>
+                    ${LOGGED_IN ? `<button class="sv-reply-btn" onclick="showReplyForm(${data.comment_id}, '${data.username}')"><i class="bi bi-reply-fill"></i> Répondre</button>` : ''}
+                    <button class="sv-del-comment" onclick="deleteComment(${data.comment_id})"><i class="bi bi-trash-fill"></i></button>
                 </div>
             </div>
             <p>${data.content}</p>
@@ -359,8 +359,8 @@ function appendComment(data, submissionId) {
                 <div class="sv-comment-input-row" style="margin-top:8px;">
                     <div class="sv-av-sm sv-av-xs">${MY_INITIAL}</div>
                     <input type="text" id="reply-input-${data.comment_id}" class="sv-comment-input" placeholder="Répondre...">
-                    <button class="sv-comment-send" onclick="submitReply(${data.comment_id}, ${submissionId})"><i class="fas fa-paper-plane"></i></button>
-                    <button class="sv-cancel-reply" onclick="hideReplyForm(${data.comment_id})"><i class="fas fa-times"></i></button>
+                    <button class="sv-comment-send" onclick="submitReply(${data.comment_id}, ${submissionId})"><i class="bi bi-send-fill"></i></button>
+                    <button class="sv-cancel-reply" onclick="hideReplyForm(${data.comment_id})"><i class="bi bi-x-circle-fill"></i></button>
                 </div>
             </div>
         </div>`;
@@ -412,7 +412,7 @@ function submitReply(parentId, submissionId) {
                     <div class="sv-comment-meta">
                         <strong>${data.username}</strong>
                         <span>${date}</span>
-                        <button class="sv-del-comment" onclick="deleteComment(${data.comment_id})"><i class="fas fa-trash"></i></button>
+                        <button class="sv-del-comment" onclick="deleteComment(${data.comment_id})"><i class="bi bi-trash-fill"></i></button>
                     </div>
                     <p>${data.content}</p>
                 </div>`;

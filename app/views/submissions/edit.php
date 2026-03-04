@@ -9,7 +9,7 @@ ob_start();
 
         <nav aria-label="breadcrumb" class="mb-4">
             <ol class="breadcrumb">
-                <li class="breadcrumb-item"><a href="index.php?action=home" class="text-decoration-none"><i class="fas fa-home me-1"></i>Accueil</a></li>
+                <li class="breadcrumb-item"><a href="index.php?action=home" class="text-decoration-none"><i class="bi bi-house-fill me-1"></i>Accueil</a></li>
                 <li class="breadcrumb-item"><a href="index.php?action=showSubmission&id=<?= $submission['id'] ?>" class="text-decoration-none">Ma participation</a></li>
                 <li class="breadcrumb-item active">Modifier</li>
             </ol>
@@ -21,7 +21,7 @@ ob_start();
                 <div class="text-center mb-4">
                     <div class="mx-auto mb-3 rounded-3 d-flex align-items-center justify-content-center text-white"
                          style="width:48px;height:48px;background:linear-gradient(135deg,#667eea,#764ba2);">
-                        <i class="fas fa-edit fs-5"></i>
+                        <i class="bi bi-pencil-square fs-5"></i>
                     </div>
                     <h1 class="h5 fw-bold mb-1">Modifier ma participation</h1>
                     <p class="text-muted small">Mettez à jour votre soumission</p>
@@ -33,7 +33,7 @@ ob_start();
 
                     <div class="mb-3">
                         <label for="description" class="form-label fw-semibold">
-                            <i class="fas fa-align-left me-1 text-primary"></i> Description <span class="text-danger">*</span>
+                            <i class="bi bi-text-left me-1 text-primary"></i> Description <span class="text-danger">*</span>
                         </label>
                         <textarea class="form-control" id="description" name="description"
                                   rows="5" required><?= htmlspecialchars($_SESSION['old_input']['description'] ?? $submission['description']) ?></textarea>
@@ -41,7 +41,7 @@ ob_start();
 
                     <?php if (!empty($submission['image'])): ?>
                     <div class="mb-3">
-                        <label class="form-label fw-semibold"><i class="fas fa-image me-1 text-primary"></i> Image actuelle</label>
+                        <label class="form-label fw-semibold"><i class="bi bi-card-image me-1 text-primary"></i> Image actuelle</label>
                         <div class="p-2 bg-light rounded-3">
                             <img src="public/<?= htmlspecialchars($submission['image']) ?>" class="rounded-2" style="max-height:120px;">
                         </div>
@@ -50,7 +50,7 @@ ob_start();
 
                     <div class="mb-3">
                         <label for="image" class="form-label fw-semibold">
-                            <i class="fas fa-upload me-1 text-primary"></i> Changer l'image
+                            <i class="bi bi-upload me-1 text-primary"></i> Changer l'image
                             <span class="badge bg-secondary fw-normal ms-1">Optionnel</span>
                         </label>
                         <input type="file" class="form-control" id="image" name="image"
@@ -59,14 +59,14 @@ ob_start();
                             <img id="previewImg" src="" class="rounded-3 border" style="max-height:150px;max-width:100%;">
                             <br>
                             <button type="button" class="btn btn-sm btn-outline-danger mt-2" id="removeImage">
-                                <i class="fas fa-times me-1"></i> Supprimer
+                                <i class="bi bi-x-circle-fill me-1"></i> Supprimer
                             </button>
                         </div>
                     </div>
 
                     <div class="mb-4">
                         <label for="link" class="form-label fw-semibold">
-                            <i class="fas fa-link me-1 text-primary"></i> Lien externe
+                            <i class="bi bi-link-45deg me-1 text-primary"></i> Lien externe
                             <span class="badge bg-secondary fw-normal ms-1">Optionnel</span>
                         </label>
                         <input type="url" class="form-control" id="link" name="link"
@@ -76,10 +76,10 @@ ob_start();
 
                     <div class="d-flex justify-content-between gap-3">
                         <a href="index.php?action=showSubmission&id=<?= $submission['id'] ?>" class="btn btn-outline-secondary rounded-pill px-4">
-                            <i class="fas fa-arrow-left me-1"></i> Annuler
+                            <i class="bi bi-arrow-left me-1"></i> Annuler
                         </a>
                         <button type="submit" class="btn btn-primary rounded-pill px-4 fw-semibold">
-                            <i class="fas fa-save me-2"></i> Enregistrer
+                            <i class="bi bi-floppy-fill me-2"></i> Enregistrer
                         </button>
                     </div>
                 </form>

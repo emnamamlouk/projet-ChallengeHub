@@ -20,7 +20,7 @@ ob_start();
             <?= CSRF::field() ?>
             <div class="form-group">
                 <label for="username">
-                    <i class="fas fa-user"></i>
+                    <i class="bi bi-person-fill"></i>
                     Nom d'utilisateur
                 </label>
                 <input type="text" 
@@ -35,7 +35,7 @@ ob_start();
 
             <div class="form-group">
                 <label for="email">
-                    <i class="fas fa-envelope"></i>
+                    <i class="bi bi-envelope-fill"></i>
                     Adresse email
                 </label>
                 <input type="email" 
@@ -48,7 +48,7 @@ ob_start();
 
             <div class="form-group">
                 <label for="password">
-                    <i class="fas fa-lock"></i>
+                    <i class="bi bi-lock-fill"></i>
                     Mot de passe
                 </label>
                 <input type="password" 
@@ -61,7 +61,7 @@ ob_start();
 
             <div class="form-group">
                 <label for="confirm_password">
-                    <i class="fas fa-lock"></i>
+                    <i class="bi bi-lock-fill"></i>
                     Confirmer le mot de passe
                 </label>
                 <input type="password" 
@@ -72,7 +72,7 @@ ob_start();
             </div>
 
             <button type="submit" class="btn-primary btn-block">
-                <i class="fas fa-user-plus"></i>
+                <i class="bi bi-person-plus-fill"></i>
                 Créer mon compte
             </button>
         </form>

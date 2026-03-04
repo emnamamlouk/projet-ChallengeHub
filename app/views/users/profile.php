@@ -35,21 +35,21 @@ ob_start();
                     </div>
                 <?php endif; ?>
                 <button class="avatar-camera-btn" onclick="openAvatarModal()" title="Changer la photo">
-                    <i class="fas fa-camera"></i>
+                    <i class="bi bi-camera-fill"></i>
                 </button>
             </div>
 
             <!-- Infos -->
             <div class="profile-info">
                 <h1><?= htmlspecialchars($userInfo['username']) ?></h1>
-                <p class="profile-email"><i class="fas fa-envelope"></i> <?= htmlspecialchars($userInfo['email']) ?></p>
+                <p class="profile-email"><i class="bi bi-envelope-fill"></i> <?= htmlspecialchars($userInfo['email']) ?></p>
                 <?php if(!empty($userInfo['bio'])): ?>
                     <p class="profile-bio"><?= htmlspecialchars($userInfo['bio']) ?></p>
                 <?php else: ?>
                     <p class="profile-bio empty-bio">Aucune bio — cliquez sur Modifier pour en ajouter une</p>
                 <?php endif; ?>
                 <p class="profile-since">
-                    <i class="fas fa-calendar-alt"></i>
+                    <i class="bi bi-calendar-event-fill"></i>
                     Membre depuis <?= date('d/m/Y', strtotime($userInfo['created_at'])) ?>
                 </p>
             </div>
@@ -57,13 +57,13 @@ ob_start();
             <!-- Boutons actions -->
             <div style="display:flex; gap:10px; margin-left:auto; flex-wrap:wrap;">
                 <a href="index.php?action=createChallengeForm" class="btn-edit-profile" style="background:rgba(255,255,255,0.25); border-color:rgba(255,255,255,0.7);">
-                    <i class="fas fa-plus-circle"></i> Créer un défi
+                    <i class="bi bi-plus-lg-circle"></i> Créer un défi
                 </a>
                 <button class="btn-edit-profile" onclick="openEditModal()">
-                    <i class="fas fa-edit"></i> Modifier le profil
+                    <i class="bi bi-pencil-square"></i> Modifier le profil
                 </button>
                 <button class="btn-delete-account" onclick="openDeleteAccountModal()">
-                    <i class="fas fa-trash-alt"></i> Supprimer le compte
+                    <i class="bi bi-trash-fill-alt"></i> Supprimer le compte
                 </button>
             </div>
         </div>
@@ -72,11 +72,11 @@ ob_start();
     <!-- ===== STATS (seulement Défis + Participations) ===== -->
     <div class="stats-grid">
         <div class="stat-card">
-            <div class="stat-icon purple"><i class="fas fa-tasks"></i></div>
+            <div class="stat-icon purple"><i class="bi bi-list-check"></i></div>
             <div><span class="stat-val"><?= $totalChallenges ?></span><span class="stat-lbl">Défis créés</span></div>
         </div>
         <div class="stat-card">
-            <div class="stat-icon pink"><i class="fas fa-paper-plane"></i></div>
+            <div class="stat-icon pink"><i class="bi bi-send-fill"></i></div>
             <div><span class="stat-val"><?= $totalSubmissions ?></span><span class="stat-lbl">Participations</span></div>
         </div>
     </div>
@@ -84,10 +84,10 @@ ob_start();
     <!-- ===== ONGLETS (sans Mes votes) ===== -->
     <div class="profile-tabs">
         <button class="tab-btn active" onclick="switchTab('challenges', this)">
-            <i class="fas fa-tasks"></i> Mes défis (<?= $totalChallenges ?>)
+            <i class="bi bi-list-check"></i> Mes défis (<?= $totalChallenges ?>)
         </button>
         <button class="tab-btn" onclick="switchTab('submissions', this)">
-            <i class="fas fa-paper-plane"></i> Mes participations (<?= $totalSubmissions ?>)
+            <i class="bi bi-send-fill"></i> Mes participations (<?= $totalSubmissions ?>)
         </button>
     </div>
 
@@ -95,11 +95,11 @@ ob_start();
     <div id="tab-challenges" class="tab-pane active">
         <?php if(empty($userChallenges)): ?>
             <div class="empty-state">
-                <i class="fas fa-tasks fa-3x"></i>
+                <i class="bi bi-list-check fa-3x"></i>
                 <h3>Aucun défi créé</h3>
                 <p>Créez votre premier défi !</p>
                 <a href="index.php?action=createChallengeForm" class="btn-primary-sm">
-                    <i class="fas fa-plus"></i> Créer un défi
+                    <i class="bi bi-plus-lg"></i> Créer un défi
                 </a>
             </div>
         <?php else: ?>
@@ -110,18 +110,18 @@ ob_start();
                             <?php if(!empty($ch['image'])): ?>
                                 <img src="public/<?= htmlspecialchars($ch['image']) ?>" alt="">
                             <?php else: ?>
-                                <div class="mini-no-img"><i class="fas fa-image"></i></div>
+                                <div class="mini-no-img"><i class="bi bi-card-image"></i></div>
                             <?php endif; ?>
                             <span class="mini-badge"><?= htmlspecialchars($ch['category']) ?></span>
                         </div>
                         <div class="mini-card-body">
                             <h4><a href="index.php?action=showChallenge&id=<?= $ch['id'] ?>"><?= htmlspecialchars($ch['title']) ?></a></h4>
                             <p><?= htmlspecialchars(substr($ch['description'], 0, 80)) ?>...</p>
-                            <div class="mini-card-date"><i class="fas fa-calendar"></i> <?= date('d/m/Y', strtotime($ch['created_at'])) ?></div>
+                            <div class="mini-card-date"><i class="bi bi-calendar-fill"></i> <?= date('d/m/Y', strtotime($ch['created_at'])) ?></div>
                             <div class="mini-card-actions">
                                 <a href="index.php?action=showChallenge&id=<?= $ch['id'] ?>" class="btn-sm blue">Voir</a>
-                                <a href="index.php?action=editChallengeForm&id=<?= $ch['id'] ?>" class="btn-sm gray"><i class="fas fa-edit"></i></a>
-                                <button onclick="deleteChallengeConfirm(<?= $ch['id'] ?>)" class="btn-sm red"><i class="fas fa-trash"></i></button>
+                                <a href="index.php?action=editChallengeForm&id=<?= $ch['id'] ?>" class="btn-sm gray"><i class="bi bi-pencil-square"></i></a>
+                                <button onclick="deleteChallengeConfirm(<?= $ch['id'] ?>)" class="btn-sm red"><i class="bi bi-trash-fill"></i></button>
                             </div>
                         </div>
                     </div>
@@ -134,10 +134,10 @@ ob_start();
     <div id="tab-submissions" class="tab-pane">
         <?php if(empty($userSubmissions)): ?>
             <div class="empty-state">
-                <i class="fas fa-paper-plane fa-3x"></i>
+                <i class="bi bi-send-fill fa-3x"></i>
                 <h3>Aucune participation</h3>
                 <p>Participez à des défis !</p>
-                <a href="index.php?action=home" class="btn-primary-sm"><i class="fas fa-search"></i> Explorer</a>
+                <a href="index.php?action=home" class="btn-primary-sm"><i class="bi bi-search"></i> Explorer</a>
             </div>
         <?php else: ?>
             <div class="cards-grid">
@@ -147,18 +147,18 @@ ob_start();
                             <?php if(!empty($sub['image'])): ?>
                                 <img src="public/<?= htmlspecialchars($sub['image']) ?>" alt="">
                             <?php else: ?>
-                                <div class="mini-no-img"><i class="fas fa-image"></i></div>
+                                <div class="mini-no-img"><i class="bi bi-card-image"></i></div>
                             <?php endif; ?>
-                            <span class="mini-votes"><i class="fas fa-thumbs-up"></i> <?= $submissionModel->getVoteCount($sub['id']) ?></span>
+                            <span class="mini-votes"><i class="bi bi-hand-thumbs-up-fill"></i> <?= $submissionModel->getVoteCount($sub['id']) ?></span>
                         </div>
                         <div class="mini-card-body">
                             <h4><a href="index.php?action=showChallenge&id=<?= $sub['challenge_id'] ?>"><?= htmlspecialchars($sub['challenge_title'] ?? 'Défi') ?></a></h4>
                             <p><?= htmlspecialchars(substr($sub['description'], 0, 80)) ?>...</p>
-                            <div class="mini-card-date"><i class="fas fa-clock"></i> <?= date('d/m/Y', strtotime($sub['created_at'])) ?></div>
+                            <div class="mini-card-date"><i class="bi bi-clock-fill"></i> <?= date('d/m/Y', strtotime($sub['created_at'])) ?></div>
                             <div class="mini-card-actions">
                                 <a href="index.php?action=showSubmission&id=<?= $sub['id'] ?>" class="btn-sm blue">Voir</a>
-                                <a href="index.php?action=editSubmissionForm&id=<?= $sub['id'] ?>" class="btn-sm gray"><i class="fas fa-edit"></i></a>
-                                <button onclick="deleteSubmissionConfirm(<?= $sub['id'] ?>)" class="btn-sm red"><i class="fas fa-trash"></i></button>
+                                <a href="index.php?action=editSubmissionForm&id=<?= $sub['id'] ?>" class="btn-sm gray"><i class="bi bi-pencil-square"></i></a>
+                                <button onclick="deleteSubmissionConfirm(<?= $sub['id'] ?>)" class="btn-sm red"><i class="bi bi-trash-fill"></i></button>
                             </div>
                         </div>
                     </div>
@@ -173,21 +173,21 @@ ob_start();
 <div id="editModal" class="modal-overlay" onclick="if(event.target===this)closeEditModal()">
     <div class="modal-box">
         <div class="modal-header">
-            <h3><i class="fas fa-edit"></i> Modifier mon profil</h3>
-            <button onclick="closeEditModal()" class="modal-close"><i class="fas fa-times"></i></button>
+            <h3><i class="bi bi-pencil-square"></i> Modifier mon profil</h3>
+            <button onclick="closeEditModal()" class="modal-close"><i class="bi bi-x-circle-fill"></i></button>
         </div>
         <form action="index.php?action=updateProfile" method="POST" enctype="multipart/form-data" class="modal-form">
             <?= CSRF::field() ?>
             <div class="form-group">
-                <label><i class="fas fa-user"></i> Nom d'utilisateur</label>
+                <label><i class="bi bi-person-fill"></i> Nom d'utilisateur</label>
                 <input type="text" name="username" value="<?= htmlspecialchars($userInfo['username']) ?>" required minlength="3">
             </div>
             <div class="form-group">
-                <label><i class="fas fa-quote-left"></i> Bio</label>
+                <label><i class="bi bi-quote"></i> Bio</label>
                 <textarea name="bio" rows="3" placeholder="Parlez-nous de vous..."><?= htmlspecialchars($userInfo['bio'] ?? '') ?></textarea>
             </div>
             <div class="form-group">
-                <label><i class="fas fa-camera"></i> Photo de profil</label>
+                <label><i class="bi bi-camera-fill"></i> Photo de profil</label>
                 <div class="avatar-preview-row">
                     <?php if(!empty($userInfo['avatar'])): ?>
                         <img src="public/<?= htmlspecialchars($userInfo['avatar']) ?>" class="current-avatar-preview" id="avatarPreview" alt="">
@@ -197,7 +197,7 @@ ob_start();
                         </div>
                     <?php endif; ?>
                     <div class="upload-zone" onclick="document.getElementById('avatarInput').click()">
-                        <i class="fas fa-cloud-upload-alt"></i>
+                        <i class="bi bi-cloud-upload-fill"></i>
                         <span>Choisir une image</span>
                         <small>JPEG, PNG, GIF — Max 2Mo</small>
                         <input type="file" id="avatarInput" name="avatar" accept="image/*"
@@ -208,7 +208,7 @@ ob_start();
             <div class="modal-footer">
                 <button type="button" onclick="closeEditModal()" class="btn-cancel-modal">Annuler</button>
                 <button type="submit" class="btn-save-modal">
-                    <i class="fas fa-save"></i> Enregistrer
+                    <i class="bi bi-floppy-fill"></i> Enregistrer
                 </button>
             </div>
         </form>
@@ -219,7 +219,7 @@ ob_start();
 <div id="deleteChallengeModal" class="modal-overlay" onclick="if(event.target===this)this.style.display='none'">
     <div class="modal-box modal-small">
         <div class="modal-header danger">
-            <h3><i class="fas fa-exclamation-triangle"></i> Supprimer le défi</h3>
+            <h3><i class="bi bi-exclamation-triangle-fill"></i> Supprimer le défi</h3>
         </div>
         <p style="padding:20px;color:#555;">Êtes-vous sûr ? Toutes les participations seront supprimées.</p>
         <form action="index.php?action=deleteChallenge" method="POST">
@@ -227,7 +227,7 @@ ob_start();
             <input type="hidden" name="challenge_id" id="deleteChallengeId">
             <div class="modal-footer">
                 <button type="button" onclick="document.getElementById('deleteChallengeModal').style.display='none'" class="btn-cancel-modal">Annuler</button>
-                <button type="submit" class="btn-danger-modal"><i class="fas fa-trash"></i> Supprimer</button>
+                <button type="submit" class="btn-danger-modal"><i class="bi bi-trash-fill"></i> Supprimer</button>
             </div>
         </form>
     </div>
@@ -237,7 +237,7 @@ ob_start();
 <div id="deleteSubmissionModal" class="modal-overlay" onclick="if(event.target===this)this.style.display='none'">
     <div class="modal-box modal-small">
         <div class="modal-header danger">
-            <h3><i class="fas fa-exclamation-triangle"></i> Supprimer la participation</h3>
+            <h3><i class="bi bi-exclamation-triangle-fill"></i> Supprimer la participation</h3>
         </div>
         <p style="padding:20px;color:#555;">Êtes-vous sûr de vouloir supprimer cette participation ?</p>
         <form action="index.php?action=deleteSubmission" method="POST">
@@ -245,7 +245,7 @@ ob_start();
             <input type="hidden" name="submission_id" id="deleteSubmissionId">
             <div class="modal-footer">
                 <button type="button" onclick="document.getElementById('deleteSubmissionModal').style.display='none'" class="btn-cancel-modal">Annuler</button>
-                <button type="submit" class="btn-danger-modal"><i class="fas fa-trash"></i> Supprimer</button>
+                <button type="submit" class="btn-danger-modal"><i class="bi bi-trash-fill"></i> Supprimer</button>
             </div>
         </form>
     </div>
@@ -256,7 +256,7 @@ ob_start();
     <div class="modal-box">
         <div style="text-align:center; margin-bottom:16px; padding:24px 24px 0;">
             <div style="width:60px;height:60px;background:#fee2e2;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 12px;font-size:1.6rem;color:#dc2626;">
-                <i class="fas fa-exclamation-triangle"></i>
+                <i class="bi bi-exclamation-triangle-fill"></i>
             </div>
             <h3 style="color:#dc2626; margin:0 0 6px;">Supprimer mon compte</h3>
             <p style="color:#666; font-size:0.9rem; margin:0;">Cette action est <strong>irréversible</strong>. Tous vos défis, participations et commentaires seront supprimés.</p>
@@ -265,7 +265,7 @@ ob_start();
             <?= CSRF::field() ?>
             <div style="margin-bottom:16px;">
                 <label style="display:block; font-weight:600; color:#333; margin-bottom:6px;">
-                    <i class="fas fa-lock"></i> Confirmez avec votre mot de passe
+                    <i class="bi bi-lock-fill"></i> Confirmez avec votre mot de passe
                 </label>
                 <input type="password" name="password" placeholder="••••••••" required
                        style="width:100%;padding:10px 14px;border:2px solid #e0e0e0;border-radius:10px;font-size:0.95rem;box-sizing:border-box;">
@@ -273,7 +273,7 @@ ob_start();
             <div style="display:flex; gap:10px; justify-content:flex-end;">
                 <button type="button" onclick="document.getElementById('deleteAccountModal').style.display='none'" class="btn-cancel-modal">Annuler</button>
                 <button type="submit" style="padding:10px 20px;background:#dc2626;color:white;border:none;border-radius:8px;font-weight:700;cursor:pointer;">
-                    <i class="fas fa-trash-alt"></i> Supprimer définitivement
+                    <i class="bi bi-trash-fill-alt"></i> Supprimer définitivement
                 </button>
             </div>
         </form>

@@ -29,7 +29,7 @@ ob_start();
             <div class="author-details">
                 <span class="author-name"><?= htmlspecialchars($challenge['creator_name']) ?></span>
                 <span class="publication-date">
-                    <i class="fas fa-calendar-alt"></i> Publié le <?= date('d/m/Y à H:i', strtotime($challenge['created_at'])) ?>
+                    <i class="bi bi-calendar-event-fill"></i> Publié le <?= date('d/m/Y à H:i', strtotime($challenge['created_at'])) ?>
                 </span>
             </div>
         </div>
@@ -44,7 +44,7 @@ ob_start();
 
     <!-- DESCRIPTION DU DÉFI -->
     <div class="challenge-description-card">
-        <h2><i class="fas fa-align-left"></i> Description du défi</h2>
+        <h2><i class="bi bi-text-left"></i> Description du défi</h2>
         <div class="description-content">
             <?= nl2br(htmlspecialchars($challenge['description'])) ?>
         </div>
@@ -53,7 +53,7 @@ ob_start();
     <!-- INFORMATIONS COMPLÉMENTAIRES -->
     <div class="challenge-info-grid">
         <div class="info-item">
-            <i class="fas fa-calendar"></i>
+            <i class="bi bi-calendar-fill"></i>
             <div>
                 <span class="info-label">Date limite</span>
                 <span class="info-value">
@@ -72,7 +72,7 @@ ob_start();
         </div>
         
         <div class="info-item">
-            <i class="fas fa-users"></i>
+            <i class="bi bi-person-fills"></i>
             <div>
                 <span class="info-label">Participations</span>
                 <span class="info-value"><?= count($submissions) ?> personne<?= count($submissions) > 1 ? 's' : '' ?></span>
@@ -80,7 +80,7 @@ ob_start();
         </div>
         
         <div class="info-item">
-            <i class="fas fa-thumbs-up"></i>
+            <i class="bi bi-hand-thumbs-up-fill"></i>
             <div>
                 <span class="info-label">Votes totaux</span>
                 <span class="info-value">
@@ -101,29 +101,29 @@ ob_start();
         <?php if(isset($_SESSION['user_id'])): ?>
             <?php if($_SESSION['user_id'] == $challenge['user_id']): ?>
                 <a href="index.php?action=editChallengeForm&id=<?= $challenge['id'] ?>" class="btn-edit">
-                    <i class="fas fa-edit"></i> Modifier le défi
+                    <i class="bi bi-pencil-square"></i> Modifier le défi
                 </a>
                 <button onclick="document.getElementById('deleteModal').style.display='flex'" class="btn-delete">
-                    <i class="fas fa-trash"></i> Supprimer
+                    <i class="bi bi-trash-fill"></i> Supprimer
                 </button>
             <?php else: ?>
                 <?php if($user_participated): ?>
                     <div class="already-participated">
-                        <i class="fas fa-check-circle"></i> Vous avez déjà participé
+                        <i class="bi bi-check-circle-fill"></i> Vous avez déjà participé
                     </div>
                 <?php elseif($is_open): ?>
                     <a href="index.php?action=createSubmissionForm&challenge_id=<?= $challenge['id'] ?>" class="btn-participate">
-                        <i class="fas fa-plus-circle"></i> Participer à ce défi
+                        <i class="bi bi-plus-lg-circle"></i> Participer à ce défi
                     </a>
                 <?php else: ?>
                     <div class="challenge-closed-message">
-                        <i class="fas fa-clock"></i> Ce défi est terminé
+                        <i class="bi bi-clock-fill"></i> Ce défi est terminé
                     </div>
                 <?php endif; ?>
             <?php endif; ?>
         <?php else: ?>
             <a href="index.php?action=showLogin" class="btn-participate">
-                <i class="fas fa-sign-in-alt"></i> Connectez-vous pour participer
+                <i class="bi bi-box-arrow-in-right"></i> Connectez-vous pour participer
             </a>
         <?php endif; ?>
     </div>
@@ -131,15 +131,15 @@ ob_start();
     <!-- SECTION PARTICIPATIONS -->
     <div class="participations-section">
         <div class="section-header">
-            <h2><i class="fas fa-users"></i> Participations (<?= count($submissions) ?>)</h2>
+            <h2><i class="bi bi-person-fills"></i> Participations (<?= count($submissions) ?>)</h2>
             <?php if(count($submissions) > 0): ?>
             <div class="sort-participations">
                 <label>Trier par :</label>
                 <a href="?action=showChallenge&id=<?= $challenge['id'] ?>&sort=recent" class="sort-link <?= ($_GET['sort'] ?? 'recent') == 'recent' ? 'active' : '' ?>">
-                    <i class="fas fa-clock"></i> Récents
+                    <i class="bi bi-clock-fill"></i> Récents
                 </a>
                 <a href="?action=showChallenge&id=<?= $challenge['id'] ?>&sort=popular" class="sort-link <?= ($_GET['sort'] ?? 'recent') == 'popular' ? 'active' : '' ?>">
-                    <i class="fas fa-fire"></i> Populaires
+                    <i class="bi bi-fire"></i> Populaires
                 </a>
             </div>
             <?php endif; ?>
@@ -147,12 +147,12 @@ ob_start();
 
         <?php if(empty($submissions)): ?>
             <div class="empty-participations">
-                <i class="fas fa-paper-plane"></i>
+                <i class="bi bi-send-fill"></i>
                 <h3>Aucune participation pour le moment</h3>
                 <?php if(isset($_SESSION['user_id']) && $_SESSION['user_id'] != $challenge['user_id'] && $is_open): ?>
                     <p>Soyez le premier à participer à ce défi !</p>
                     <a href="index.php?action=createSubmissionForm&challenge_id=<?= $challenge['id'] ?>" class="btn-participate-small">
-                        <i class="fas fa-plus-circle"></i> Participer
+                        <i class="bi bi-plus-lg-circle"></i> Participer
                     </a>
                 <?php else: ?>
                     <p>Les participations apparaîtront ici</p>
@@ -176,12 +176,12 @@ ob_start();
                                     <?= htmlspecialchars($sub['username']) ?>
                                 </a>
                                 <span class="participation-date">
-                                    <i class="fas fa-clock"></i> <?= date('d/m/Y', strtotime($sub['created_at'])) ?>
+                                    <i class="bi bi-clock-fill"></i> <?= date('d/m/Y', strtotime($sub['created_at'])) ?>
                                 </span>
                             </div>
                         </div>
                         <a href="index.php?action=showSubmission&id=<?= $sub['id'] ?>" class="btn-view-participation">
-                            Voir en détail <i class="fas fa-arrow-right"></i>
+                            Voir en détail <i class="bi bi-arrow-right"></i>
                         </a>
                     </div>
 
@@ -199,7 +199,7 @@ ob_start();
 
                         <?php if(!empty($sub['link'])): ?>
                         <a href="<?= htmlspecialchars($sub['link']) ?>" target="_blank" class="participation-link">
-                            <i class="fas fa-external-link-alt"></i> Voir le projet
+                            <i class="bi bi-box-arrow-up-right"></i> Voir le projet
                         </a>
                         <?php endif; ?>
                     </div>
@@ -207,10 +207,10 @@ ob_start();
                     <div class="participation-footer">
                         <div class="participation-stats">
                             <span class="vote-count <?= isset($sub['user_voted']) && $sub['user_voted'] ? 'voted' : '' ?>">
-                                <i class="fas fa-thumbs-up"></i> <?= $sub['votes_count'] ?> vote<?= $sub['votes_count'] > 1 ? 's' : '' ?>
+                                <i class="bi bi-hand-thumbs-up-fill"></i> <?= $sub['votes_count'] ?> vote<?= $sub['votes_count'] > 1 ? 's' : '' ?>
                             </span>
                             <span class="comment-count">
-                                <i class="fas fa-comment"></i> 
+                                <i class="bi bi-chat-fill"></i> 
                                 <?= isset($sub['comments_count']) ? $sub['comments_count'] : 0 ?> commentaire<?= isset($sub['comments_count']) && $sub['comments_count'] > 1 ? 's' : '' ?>
                             </span>
                         </div>
@@ -218,13 +218,13 @@ ob_start();
                         <?php if(isset($_SESSION['user_id']) && $_SESSION['user_id'] != $sub['user_id']): ?>
                             <button class="vote-action-btn <?= isset($sub['user_voted']) && $sub['user_voted'] ? 'voted' : '' ?>" 
                                     onclick="voteSubmission(<?= $sub['id'] ?>, this)">
-                                <i class="fas fa-thumbs-up"></i> 
+                                <i class="bi bi-hand-thumbs-up-fill"></i> 
                                 <span><?= isset($sub['user_voted']) && $sub['user_voted'] ? 'Voté' : 'Voter' ?></span>
                             </button>
                         <?php endif; ?>
                         
                         <button class="comment-toggle-btn" onclick="toggleComments(<?= $sub['id'] ?>)">
-                            <i class="fas fa-comments"></i> Commentaires
+                            <i class="bi bi-chat-fills"></i> Commentaires
                         </button>
                     </div>
 
@@ -241,7 +241,7 @@ ob_start();
                             </div>
                             <form class="comment-form" onsubmit="addComment(event, <?= $sub['id'] ?>)">
                                 <input type="text" id="comment-input-<?= $sub['id'] ?>" placeholder="Écrire un commentaire..." required>
-                                <button type="submit"><i class="fas fa-paper-plane"></i></button>
+                                <button type="submit"><i class="bi bi-send-fill"></i></button>
                             </form>
                         </div>
                         <?php endif; ?>
@@ -255,7 +255,7 @@ ob_start();
     <!-- SECTION COMMENTAIRES DU DÉFI -->
     <div class="challenge-comments-section">
         <div class="section-header">
-            <h2><i class="fas fa-comments"></i> Discussion sur le défi</h2>
+            <h2><i class="bi bi-chat-fills"></i> Discussion sur le défi</h2>
         </div>
 
         <?php if(isset($_SESSION['user_id'])): ?>
@@ -266,7 +266,7 @@ ob_start();
             <div class="comment-input-wrapper">
                 <textarea id="challenge-comment-input" placeholder="Donnez votre avis sur ce défi..." rows="2"></textarea>
                 <button onclick="addChallengeComment(<?= $challenge['id'] ?>)" class="btn-send-comment">
-                    <i class="fas fa-paper-plane"></i> Envoyer
+                    <i class="bi bi-send-fill"></i> Envoyer
                 </button>
             </div>
         </div>
@@ -282,7 +282,7 @@ ob_start();
 <!-- MODAL DE SUPPRESSION -->
 <div id="deleteModal" class="modal-overlay" onclick="if(event.target===this)this.style.display='none'">
     <div class="modal-box">
-        <div class="modal-icon"><i class="fas fa-exclamation-triangle"></i></div>
+        <div class="modal-icon"><i class="bi bi-exclamation-triangle-fill"></i></div>
         <h3>Supprimer ce défi ?</h3>
         <p>Cette action est irréversible. Toutes les participations et commentaires seront supprimés.</p>
         <form action="index.php?action=deleteChallenge" method="POST">
@@ -1331,7 +1331,7 @@ function loadSubmissionComments(submissionId) {
                                 <span class="comment-author">${comment.username}</span>
                                 <span class="comment-date">${new Date(comment.created_at).toLocaleDateString('fr-FR')}</span>
                                 ${LOGGED_IN && comment.user_id == <?= $_SESSION['user_id'] ?? 0 ?> ? 
-                                    '<button class="delete-comment-btn" onclick="deleteComment(' + comment.id + ', ' + submissionId + ')"><i class="fas fa-times"></i></button>' : ''}
+                                    '<button class="delete-comment-btn" onclick="deleteComment(' + comment.id + ', ' + submissionId + ')"><i class="bi bi-x-circle-fill"></i></button>' : ''}
                             </div>
                             <p class="comment-text">${comment.content}</p>
                         </div>

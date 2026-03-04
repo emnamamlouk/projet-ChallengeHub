@@ -12,7 +12,7 @@ ob_start();
         <div class="d-flex align-items-center gap-3 mb-4">
             <div class="rounded-3 d-flex align-items-center justify-content-center text-white"
                  style="width:48px;height:48px;background:linear-gradient(135deg,#667eea,#764ba2);">
-                <i class="fas fa-edit fs-5"></i>
+                <i class="bi bi-pencil-square fs-5"></i>
             </div>
             <div>
                 <h1 class="h4 fw-bold mb-0">Modifier le défi</h1>
@@ -28,7 +28,7 @@ ob_start();
 
                     <div class="mb-3">
                         <label for="title" class="form-label fw-semibold">
-                            <i class="fas fa-heading me-1 text-primary"></i> Titre <span class="text-danger">*</span>
+                            <i class="bi bi-type-h1 me-1 text-primary"></i> Titre <span class="text-danger">*</span>
                         </label>
                         <input type="text" class="form-control" id="title" name="title"
                                value="<?= htmlspecialchars($old_input['title'] ?? $challenge['title']) ?>"
@@ -37,7 +37,7 @@ ob_start();
 
                     <div class="mb-3">
                         <label for="category" class="form-label fw-semibold">
-                            <i class="fas fa-tag me-1 text-primary"></i> Catégorie <span class="text-danger">*</span>
+                            <i class="bi bi-tags-fill me-1 text-primary"></i> Catégorie <span class="text-danger">*</span>
                         </label>
                         <select class="form-select" id="category" name="category" required>
                             <?php
@@ -53,7 +53,7 @@ ob_start();
 
                     <div class="mb-3">
                         <label for="description" class="form-label fw-semibold">
-                            <i class="fas fa-align-left me-1 text-primary"></i> Description <span class="text-danger">*</span>
+                            <i class="bi bi-text-left me-1 text-primary"></i> Description <span class="text-danger">*</span>
                         </label>
                         <textarea class="form-control" id="description" name="description"
                                   rows="5" required><?= htmlspecialchars($old_input['description'] ?? $challenge['description']) ?></textarea>
@@ -61,7 +61,7 @@ ob_start();
 
                     <div class="mb-3">
                         <label for="deadline" class="form-label fw-semibold">
-                            <i class="fas fa-calendar-alt me-1 text-primary"></i> Date limite
+                            <i class="bi bi-calendar-event-fill me-1 text-primary"></i> Date limite
                         </label>
                         <?php
                         $deadline_val = $old_input['deadline'] ?? '';
@@ -76,7 +76,7 @@ ob_start();
 
                     <?php if (!empty($challenge['image'])): ?>
                     <div class="mb-3">
-                        <label class="form-label fw-semibold"><i class="fas fa-image me-1 text-primary"></i> Image actuelle</label>
+                        <label class="form-label fw-semibold"><i class="bi bi-card-image me-1 text-primary"></i> Image actuelle</label>
                         <div class="d-flex align-items-center gap-3 p-3 bg-light rounded-3">
                             <img src="public/<?= htmlspecialchars($challenge['image']) ?>" class="rounded-2" style="width:80px;height:60px;object-fit:cover;">
                             <small class="text-muted">Uploadez une nouvelle image pour la remplacer</small>
@@ -86,7 +86,7 @@ ob_start();
 
                     <div class="mb-4">
                         <label for="image" class="form-label fw-semibold">
-                            <i class="fas fa-upload me-1 text-primary"></i> <?= !empty($challenge['image']) ? 'Changer l\'image' : 'Image d\'illustration' ?>
+                            <i class="bi bi-upload me-1 text-primary"></i> <?= !empty($challenge['image']) ? 'Changer l\'image' : 'Image d\'illustration' ?>
                         </label>
                         <input type="file" class="form-control" id="image" name="image"
                                accept="image/jpeg,image/png,image/gif,image/webp"
@@ -95,17 +95,17 @@ ob_start();
                             <img id="preview-img" src="#" class="rounded-3 border" style="max-height:200px; max-width:100%;">
                             <br>
                             <button type="button" class="btn btn-sm btn-outline-danger mt-2" onclick="removeImage()">
-                                <i class="fas fa-times me-1"></i> Supprimer
+                                <i class="bi bi-x-circle-fill me-1"></i> Supprimer
                             </button>
                         </div>
                     </div>
 
                     <div class="d-flex justify-content-between gap-3">
                         <a href="index.php?action=showChallenge&id=<?= $challenge['id'] ?>" class="btn btn-outline-secondary rounded-pill px-4">
-                            <i class="fas fa-arrow-left me-1"></i> Annuler
+                            <i class="bi bi-arrow-left me-1"></i> Annuler
                         </a>
                         <button type="submit" class="btn btn-primary rounded-pill px-4 fw-semibold">
-                            <i class="fas fa-save me-2"></i> Enregistrer
+                            <i class="bi bi-floppy-fill me-2"></i> Enregistrer
                         </button>
                     </div>
                 </form>

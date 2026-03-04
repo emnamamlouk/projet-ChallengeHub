@@ -138,7 +138,7 @@ ob_start();
             <!-- Notice ex-aequo -->
             <?php if ($hasTie): ?>
                 <div class="ranking-notice">
-                    <i class="fas fa-info-circle"></i>
+                    <i class="bi bi-info-circle-fill"></i>
                     En cas d'égalité de votes, le défi publié en premier est classé devant.
                 </div>
             <?php endif; ?>
@@ -151,7 +151,7 @@ ob_start();
 
         <?php else: ?>
             <div class="ranking-empty">
-                <i class="fas fa-trophy"></i>
+                <i class="bi bi-trophy-fill"></i>
                 <h3>Aucun défi dans cette catégorie</h3>
                 <p>Soyez le premier à publier un défi.</p>
                 <a href="index.php?action=createChallengeForm" class="btn-create">Créer un défi</a>

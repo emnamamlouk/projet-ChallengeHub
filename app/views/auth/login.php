@@ -21,7 +21,7 @@ ob_start();
             <!-- Email -->
             <div class="form-group">
                 <label for="email">
-                    <i class="fas fa-envelope"></i>
+                    <i class="bi bi-envelope-fill"></i>
                     Adresse email
                 </label>
                 <input type="email" 
@@ -35,7 +35,7 @@ ob_start();
             <!-- Mot de passe -->
             <div class="form-group">
                 <label for="password">
-                    <i class="fas fa-lock"></i>
+                    <i class="bi bi-lock-fill"></i>
                     Mot de passe
                 </label>
                 <input type="password" 
@@ -47,7 +47,7 @@ ob_start();
 
             <!-- Bouton -->
             <button type="submit" class="btn-primary btn-block">
-                <i class="fas fa-sign-in-alt"></i>
+                <i class="bi bi-box-arrow-in-right"></i>
                 Se connecter
             </button>
         </form>
