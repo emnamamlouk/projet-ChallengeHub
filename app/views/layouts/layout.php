@@ -3,7 +3,6 @@ if(!class_exists('CSRF') && defined('ROOT_PATH')) {
     require_once ROOT_PATH . '/app/helpers/CSRF.php';
 }
 
-// Gestion du thème
 $currentTheme = 'day';
 if (defined('ROOT_PATH') && file_exists(ROOT_PATH . '/app/config/ThemeConfig.php')) {
     require_once ROOT_PATH . '/app/config/ThemeConfig.php';
@@ -11,9 +10,8 @@ if (defined('ROOT_PATH') && file_exists(ROOT_PATH . '/app/config/ThemeConfig.php
 }
 $isNight = ($currentTheme === 'night');
 
-// ── Chemin de base dynamique (fonctionne en sous-dossier WAMP/XAMPP) ──
-$scriptName = $_SERVER['SCRIPT_NAME']; // ex: /projet-ChallengeHub/index.php
-$basePath   = rtrim(dirname($scriptName), '/\\'); // ex: /projet-ChallengeHub
+$scriptName = $_SERVER['SCRIPT_NAME'];
+$basePath   = rtrim(dirname($scriptName), '/\\');
 if ($basePath === '/' || $basePath === '\\') $basePath = '';
 ?>
 <!DOCTYPE html>
@@ -22,14 +20,8 @@ if ($basePath === '/' || $basePath === '\\') $basePath = '';
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?= isset($title) ? htmlspecialchars($title) : 'ChallengeHub' ?></title>
-
-    <!-- Bootstrap CSS (depuis vendor/) -->
     <link rel="stylesheet" href="<?= $basePath ?>/vendor/twbs/bootstrap/dist/css/bootstrap.min.css">
-
-    <!-- Bootstrap Icons (depuis public/css/ avec fonts dans public/fonts/) -->
     <link rel="stylesheet" href="<?= $basePath ?>/public/css/bootstrap-icons.css">
-
-    <!-- CSS personnalisés -->
     <link rel="stylesheet" href="<?= $basePath ?>/public/css/style.css">
     <link rel="stylesheet" href="<?= $basePath ?>/public/css/challenges.css">
     <?php if ($isNight): ?>
@@ -96,6 +88,14 @@ if ($basePath === '/' || $basePath === '\\') $basePath = '';
                     <?php endif; ?>
                 </ul>
 
+                <!-- BOUTON ADMIN — visible uniquement si is_admin = 1 -->
+                <?php if(!empty($_SESSION['is_admin'])): ?>
+                <a href="<?= $basePath ?>/index.php?action=admin" class="btn-admin-navbar">
+                    <i class="bi bi-shield-fill-check"></i>
+                    <span>Dashboard</span>
+                </a>
+                <?php endif; ?>
+
                 <div class="theme-switcher">
                     <button class="theme-toggle" id="themeToggle">
                         <?php if ($isNight): ?>
@@ -155,7 +155,7 @@ if ($basePath === '/' || $basePath === '\\') $basePath = '';
             <div class="footer-content">
                 <div class="footer-section">
                     <h4><i class="bi bi-trophy-fill"></i> ChallengeHub</h4>
-                    <p>La plateforme collaborative de défis créatifs. Rejoignez notre communauté et relevez des défis passionnants.</p>
+                    <p>La plateforme collaborative de défis créatifs.</p>
                 </div>
                 <div class="footer-section">
                     <h4>Navigation</h4>
@@ -171,6 +171,9 @@ if ($basePath === '/' || $basePath === '\\') $basePath = '';
                         <?php if(isset($_SESSION['user_id'])): ?>
                             <li><a href="<?= $basePath ?>/index.php?action=profile"><i class="bi bi-person-vcard-fill"></i> Mon profil</a></li>
                             <li><a href="<?= $basePath ?>/index.php?action=createChallengeForm"><i class="bi bi-plus-lg"></i> Créer un défi</a></li>
+                            <?php if(!empty($_SESSION['is_admin'])): ?>
+                            <li><a href="<?= $basePath ?>/index.php?action=admin"><i class="bi bi-shield-fill-check"></i> Dashboard Admin</a></li>
+                            <?php endif; ?>
                             <li><a href="<?= $basePath ?>/index.php?action=logout"><i class="bi bi-box-arrow-right"></i> Déconnexion</a></li>
                         <?php else: ?>
                             <li><a href="<?= $basePath ?>/index.php?action=showLogin"><i class="bi bi-box-arrow-in-right"></i> Connexion</a></li>
@@ -185,11 +188,8 @@ if ($basePath === '/' || $basePath === '\\') $basePath = '';
         </div>
     </footer>
 
-    <!-- jQuery (depuis vendor/) -->
     <script src="<?= $basePath ?>/vendor/components/jquery/jquery.min.js"></script>
-    <!-- Bootstrap JS (depuis vendor/) -->
     <script src="<?= $basePath ?>/vendor/twbs/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-    <!-- Scripts personnalisés -->
     <script src="<?= $basePath ?>/public/js/main.js"></script>
     <script src="<?= $basePath ?>/public/js/challenges.js"></script>
     <script src="<?= $basePath ?>/public/js/theme-switcher.js"></script>
@@ -202,10 +202,10 @@ if ($basePath === '/' || $basePath === '\\') $basePath = '';
         .alert-danger  { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
         .alert-warning { background: #fff3cd; color: #856404; border: 1px solid #ffeeba; }
         .dropdown { position: relative; }
-        .dropdown-menu { display: none; position: absolute; top: 110%; right: 0; background: white; border: 1px solid #dee2e6; border-radius: 8px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); min-width: 180px; z-index: 200; list-style: none; padding: 8px 0; }
+        .dropdown-menu { display: none; position: absolute; top: 110%; right: 0; background: white; border: 1px solid #dee2e6; border-radius: 8px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); min-width: 200px; z-index: 200; list-style: none; padding: 8px 0; }
         .dropdown:hover .dropdown-menu { display: block; }
         .dropdown-menu li a { display: flex; align-items: center; gap: 10px; padding: 10px 16px; color: #495057; text-decoration: none; transition: background 0.2s; }
-        .dropdown-menu li a:hover { background: #f8f9fa; color: #00b4d8; }
+        .dropdown-menu li a:hover { background: #f8f9fa; color: #667eea; }
         .text-danger { color: #dc3545 !important; }
         .nav-toggle { display: none; flex-direction: column; gap: 5px; background: none; border: none; cursor: pointer; padding: 5px; }
         .nav-toggle span { display: block; width: 25px; height: 2px; background: #495057; border-radius: 2px; transition: all 0.3s; }
@@ -213,7 +213,30 @@ if ($basePath === '/' || $basePath === '\\') $basePath = '';
         .theme-toggle { display: flex; align-items: center; gap: 8px; padding: 8px 16px; border: 2px solid #667eea; border-radius: 30px; background: transparent; color: #667eea; font-size: 0.9rem; font-weight: 600; cursor: pointer; transition: all 0.3s ease; outline: none; }
         .theme-toggle i { font-size: 1.1rem; transition: transform 0.3s; }
         .theme-toggle:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(102,126,234,0.3); }
-        .theme-toggle:hover i { transform: rotate(15deg); }
+
+        /* ── BOUTON ADMIN NAVBAR ── */
+        .btn-admin-navbar {
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            padding: 8px 18px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white !important;
+            border-radius: 30px;
+            font-size: 0.88rem;
+            font-weight: 700;
+            text-decoration: none;
+            margin-right: 12px;
+            transition: all 0.3s;
+            box-shadow: 0 4px 14px rgba(102,126,234,0.4);
+        }
+        .btn-admin-navbar:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102,126,234,0.5);
+            color: white !important;
+        }
+        .btn-admin-navbar i { font-size: 1rem; }
+
         @media (max-width: 768px) {
             .nav-toggle { display: flex; }
             .nav-menu { display: none; position: absolute; top: 100%; left: 0; right: 0; background: white; flex-direction: column; padding: 20px; box-shadow: 0 10px 20px rgba(0,0,0,0.1); border-top: 1px solid #dee2e6; z-index: 100; }
@@ -221,6 +244,8 @@ if ($basePath === '/' || $basePath === '\\') $basePath = '';
             .dropdown-menu { position: static; box-shadow: none; border: none; padding-left: 20px; }
             .theme-toggle span { display: none; }
             .theme-toggle { padding: 8px 12px; }
+            .btn-admin-navbar span { display: none; }
+            .btn-admin-navbar { padding: 8px 12px; margin-right: 6px; }
         }
     </style>
 

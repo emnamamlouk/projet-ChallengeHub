@@ -2,18 +2,9 @@
 $title = "Mon profil - ChallengeHub";
 $active_page = "profile";
 
-require_once __DIR__ . '/../../models/Challenge.php';
-require_once __DIR__ . '/../../models/Submission.php';
-
-$challengeModel  = new Challenge();
-$submissionModel = new Submission();
-
-$userId          = $_SESSION['user_id'];
-$userChallenges  = $challengeModel->getChallengesByUser($userId);
-$userSubmissions = $submissionModel->getSubmissionsByUser($userId);
-
-$totalChallenges  = count($userChallenges);
-$totalSubmissions = count($userSubmissions);
+// Les variables $userChallenges, $userSubmissions, $totalChallenges,
+// $totalSubmissions, $submissionModel et $userInfo sont préparées
+// par AuthController::profile() — rien à faire ici.
 
 ob_start();
 ?>
@@ -57,19 +48,19 @@ ob_start();
             <!-- Boutons actions -->
             <div style="display:flex; gap:10px; margin-left:auto; flex-wrap:wrap;">
                 <a href="index.php?action=createChallengeForm" class="btn-edit-profile" style="background:rgba(255,255,255,0.25); border-color:rgba(255,255,255,0.7);">
-                    <i class="bi bi-plus-lg-circle"></i> Créer un défi
+                    <i class="bi bi-plus-circle-fill"></i> Créer un défi
                 </a>
                 <button class="btn-edit-profile" onclick="openEditModal()">
                     <i class="bi bi-pencil-square"></i> Modifier le profil
                 </button>
                 <button class="btn-delete-account" onclick="openDeleteAccountModal()">
-                    <i class="bi bi-trash-fill-alt"></i> Supprimer le compte
+                    <i class="bi bi-trash3-fill"></i> Supprimer le compte
                 </button>
             </div>
         </div>
     </div>
 
-    <!-- ===== STATS (seulement Défis + Participations) ===== -->
+    <!-- ===== STATS ===== -->
     <div class="stats-grid">
         <div class="stat-card">
             <div class="stat-icon purple"><i class="bi bi-list-check"></i></div>
@@ -81,7 +72,7 @@ ob_start();
         </div>
     </div>
 
-    <!-- ===== ONGLETS (sans Mes votes) ===== -->
+    <!-- ===== ONGLETS ===== -->
     <div class="profile-tabs">
         <button class="tab-btn active" onclick="switchTab('challenges', this)">
             <i class="bi bi-list-check"></i> Mes défis (<?= $totalChallenges ?>)
@@ -95,7 +86,7 @@ ob_start();
     <div id="tab-challenges" class="tab-pane active">
         <?php if(empty($userChallenges)): ?>
             <div class="empty-state">
-                <i class="bi bi-list-check fa-3x"></i>
+                <i class="bi bi-list-check" style="font-size:3rem;"></i>
                 <h3>Aucun défi créé</h3>
                 <p>Créez votre premier défi !</p>
                 <a href="index.php?action=createChallengeForm" class="btn-primary-sm">
@@ -121,7 +112,7 @@ ob_start();
                             <div class="mini-card-actions">
                                 <a href="index.php?action=showChallenge&id=<?= $ch['id'] ?>" class="btn-sm blue">Voir</a>
                                 <a href="index.php?action=editChallengeForm&id=<?= $ch['id'] ?>" class="btn-sm gray"><i class="bi bi-pencil-square"></i></a>
-                                <button onclick="deleteChallengeConfirm(<?= $ch['id'] ?>)" class="btn-sm red"><i class="bi bi-trash-fill"></i></button>
+                                <button onclick="deleteChallengeConfirm(<?= $ch['id'] ?>)" class="btn-sm red"><i class="bi bi-trash3-fill"></i></button>
                             </div>
                         </div>
                     </div>
@@ -134,7 +125,7 @@ ob_start();
     <div id="tab-submissions" class="tab-pane">
         <?php if(empty($userSubmissions)): ?>
             <div class="empty-state">
-                <i class="bi bi-send-fill fa-3x"></i>
+                <i class="bi bi-send-fill" style="font-size:3rem;"></i>
                 <h3>Aucune participation</h3>
                 <p>Participez à des défis !</p>
                 <a href="index.php?action=home" class="btn-primary-sm"><i class="bi bi-search"></i> Explorer</a>
@@ -158,7 +149,7 @@ ob_start();
                             <div class="mini-card-actions">
                                 <a href="index.php?action=showSubmission&id=<?= $sub['id'] ?>" class="btn-sm blue">Voir</a>
                                 <a href="index.php?action=editSubmissionForm&id=<?= $sub['id'] ?>" class="btn-sm gray"><i class="bi bi-pencil-square"></i></a>
-                                <button onclick="deleteSubmissionConfirm(<?= $sub['id'] ?>)" class="btn-sm red"><i class="bi bi-trash-fill"></i></button>
+                                <button onclick="deleteSubmissionConfirm(<?= $sub['id'] ?>)" class="btn-sm red"><i class="bi bi-trash3-fill"></i></button>
                             </div>
                         </div>
                     </div>
@@ -227,7 +218,7 @@ ob_start();
             <input type="hidden" name="challenge_id" id="deleteChallengeId">
             <div class="modal-footer">
                 <button type="button" onclick="document.getElementById('deleteChallengeModal').style.display='none'" class="btn-cancel-modal">Annuler</button>
-                <button type="submit" class="btn-danger-modal"><i class="bi bi-trash-fill"></i> Supprimer</button>
+                <button type="submit" class="btn-danger-modal"><i class="bi bi-trash3-fill"></i> Supprimer</button>
             </div>
         </form>
     </div>
@@ -245,7 +236,7 @@ ob_start();
             <input type="hidden" name="submission_id" id="deleteSubmissionId">
             <div class="modal-footer">
                 <button type="button" onclick="document.getElementById('deleteSubmissionModal').style.display='none'" class="btn-cancel-modal">Annuler</button>
-                <button type="submit" class="btn-danger-modal"><i class="bi bi-trash-fill"></i> Supprimer</button>
+                <button type="submit" class="btn-danger-modal"><i class="bi bi-trash3-fill"></i> Supprimer</button>
             </div>
         </form>
     </div>
@@ -273,7 +264,7 @@ ob_start();
             <div style="display:flex; gap:10px; justify-content:flex-end;">
                 <button type="button" onclick="document.getElementById('deleteAccountModal').style.display='none'" class="btn-cancel-modal">Annuler</button>
                 <button type="submit" style="padding:10px 20px;background:#dc2626;color:white;border:none;border-radius:8px;font-weight:700;cursor:pointer;">
-                    <i class="bi bi-trash-fill-alt"></i> Supprimer définitivement
+                    <i class="bi bi-trash3-fill"></i> Supprimer définitivement
                 </button>
             </div>
         </form>
@@ -283,7 +274,6 @@ ob_start();
 <style>
 .profile-modern { max-width: 1100px; margin: 0 auto; }
 
-/* BANNIERE */
 .profile-banner {
     background: linear-gradient(135deg, #667eea, #764ba2);
     border-radius: 20px; padding: 40px; margin-bottom: 28px;
@@ -309,7 +299,6 @@ ob_start();
 .btn-delete-account { padding:12px 22px; background:rgba(220,38,38,0.15); border:2px solid rgba(255,100,100,0.5); color:white; border-radius:10px; cursor:pointer; font-weight:700; font-size:0.95rem; transition:all 0.3s; white-space:nowrap; display:inline-flex; align-items:center; gap:8px; }
 .btn-delete-account:hover { background:#dc2626; border-color:#dc2626; }
 
-/* STATS — 2 colonnes seulement */
 .stats-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:16px; margin-bottom:28px; }
 .stat-card { background:white; border-radius:14px; padding:18px 20px; display:flex; align-items:center; gap:16px; box-shadow:0 4px 16px rgba(0,0,0,0.06); transition:all 0.3s; }
 .stat-card:hover { transform:translateY(-4px); box-shadow:0 10px 25px rgba(0,0,0,0.1); }
@@ -319,7 +308,6 @@ ob_start();
 .stat-val { display:block; font-size:1.8rem; font-weight:800; color:#222; line-height:1.1; }
 .stat-lbl { font-size:0.82rem; color:#888; }
 
-/* ONGLETS */
 .profile-tabs { display:flex; gap:8px; margin-bottom:20px; border-bottom:2px solid #e8e8e8; }
 .tab-btn { padding:12px 22px; background:none; border:none; border-bottom:3px solid transparent; margin-bottom:-2px; color:#777; font-size:0.95rem; font-weight:600; cursor:pointer; transition:all 0.2s; display:flex; align-items:center; gap:8px; border-radius:8px 8px 0 0; }
 .tab-btn:hover { color:#667eea; background:#f5f5ff; }
@@ -327,7 +315,6 @@ ob_start();
 .tab-pane { display:none; padding-top:20px; }
 .tab-pane.active { display:block; }
 
-/* CARDS */
 .cards-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(280px,1fr)); gap:20px; }
 .mini-card { background:white; border-radius:14px; overflow:hidden; box-shadow:0 4px 16px rgba(0,0,0,0.06); transition:all 0.3s; }
 .mini-card:hover { transform:translateY(-5px); box-shadow:0 10px 25px rgba(0,0,0,0.1); }
@@ -352,7 +339,6 @@ ob_start();
 .btn-sm.red { background:#fee2e2; color:#ef4444; }
 .btn-sm.red:hover { background:#fecaca; }
 
-/* EMPTY STATE */
 .empty-state { text-align:center; padding:50px 20px; background:#f9f9f9; border-radius:14px; border:2px dashed #e0e0e0; }
 .empty-state i { color:#ccc; margin-bottom:16px; display:block; }
 .empty-state h3 { color:#333; margin-bottom:8px; }
@@ -360,7 +346,6 @@ ob_start();
 .btn-primary-sm { display:inline-flex; align-items:center; gap:8px; padding:10px 22px; background:linear-gradient(135deg,#667eea,#764ba2); color:white; border-radius:10px; text-decoration:none; font-weight:700; font-size:0.9rem; transition:all 0.3s; }
 .btn-primary-sm:hover { transform:translateY(-2px); box-shadow:0 6px 16px rgba(102,126,234,0.4); }
 
-/* MODALES */
 .modal-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.5); z-index:1000; align-items:center; justify-content:center; }
 .modal-overlay.open { display:flex; }
 .modal-box { background:white; border-radius:18px; width:100%; max-width:500px; box-shadow:0 20px 60px rgba(0,0,0,0.2); overflow:hidden; }

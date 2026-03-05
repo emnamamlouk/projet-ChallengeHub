@@ -52,6 +52,12 @@ $routes = [
     'updateProfile'  => ['controller' => 'AuthController',      'method' => 'updateProfile'],
     'deleteAccount'  => ['controller' => 'AuthController',      'method' => 'deleteAccount'],
 
+    // ADMIN
+    'admin'                => ['controller' => 'AdminController', 'method' => 'dashboard'],
+    'adminDeleteUser'      => ['controller' => 'AdminController', 'method' => 'deleteUser'],
+    'adminDeleteChallenge' => ['controller' => 'AdminController', 'method' => 'deleteChallenge'],
+    'adminToggleAdmin'     => ['controller' => 'AdminController', 'method' => 'toggleAdmin'],
+
     // CHALLENGES
     'home'                  => ['controller' => 'ChallengeController', 'method' => 'home'],
     'showChallenge'         => ['controller' => 'ChallengeController', 'method' => 'show'],
