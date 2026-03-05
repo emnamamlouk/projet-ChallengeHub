@@ -1569,3 +1569,827 @@ body.night-mode .ranking-empty h3 {
 body.night-mode .ranking-empty p {
     color: var(--night-text-muted) !important;
 }
+
+/* ============================================================
+   OVERRIDES — DASHBOARD ADMIN
+   ============================================================ */
+
+/* Fond général */
+body.night-mode .admin-dashboard {
+    background: transparent !important;
+}
+
+/* Header admin */
+body.night-mode .admin-header {
+    background: var(--night-bg-card) !important;
+    border: 1px solid var(--night-border) !important;
+    box-shadow: var(--night-shadow) !important;
+}
+
+body.night-mode .admin-header h1,
+body.night-mode .admin-header p {
+    color: var(--night-text-primary) !important;
+}
+
+body.night-mode .admin-welcome {
+    background: var(--night-bg-card) !important;
+    border: 1px solid var(--night-border-light) !important;
+    color: var(--night-text-secondary) !important;
+}
+
+/* Bouton retour au site */
+body.night-mode .btn-back-site {
+    background: transparent !important;
+    border: 1px solid var(--night-border-light) !important;
+    color: var(--night-text-secondary) !important;
+}
+
+body.night-mode .btn-back-site:hover {
+    border-color: var(--night-green-neon) !important;
+    color: var(--night-green-neon) !important;
+}
+
+/* KPI Cards */
+body.night-mode .kpi-card {
+    border: 1px solid var(--night-border) !important;
+    box-shadow: var(--night-shadow) !important;
+    filter: brightness(0.85) saturate(1.2) !important;
+}
+
+body.night-mode .kpi-card:hover {
+    filter: brightness(0.95) saturate(1.3) !important;
+    box-shadow: var(--night-shadow-glow) !important;
+    transform: translateY(-4px) !important;
+}
+
+body.night-mode .kpi-value {
+    color: #ffffff !important;
+}
+
+body.night-mode .kpi-label {
+    color: rgba(255,255,255,0.85) !important;
+}
+
+body.night-mode .kpi-growth {
+    color: rgba(255,255,255,0.7) !important;
+}
+
+/* Graphiques */
+body.night-mode .chart-container,
+body.night-mode .chart-card {
+    background: var(--night-bg-card) !important;
+    border: 1px solid var(--night-border) !important;
+    box-shadow: var(--night-shadow) !important;
+}
+
+body.night-mode .chart-title {
+    color: var(--night-green-neon) !important;
+    font-family: 'Segoe UI', 'Arial Narrow', sans-serif !important;
+    font-weight: 700 !important;
+}
+
+/* Tabs */
+body.night-mode .admin-tabs {
+    background: var(--night-bg-card) !important;
+    border: 1px solid var(--night-border) !important;
+}
+
+body.night-mode .admin-tab-btn {
+    color: var(--night-text-muted) !important;
+    background: transparent !important;
+    border-bottom: 2px solid transparent !important;
+}
+
+body.night-mode .admin-tab-btn:hover {
+    color: var(--night-green-neon) !important;
+    background: rgba(0,255,136,0.04) !important;
+}
+
+body.night-mode .admin-tab-btn.active {
+    color: var(--night-green-neon) !important;
+    border-bottom-color: var(--night-green-neon) !important;
+    background: rgba(0,255,136,0.06) !important;
+}
+
+/* Tables admin */
+body.night-mode .admin-table-wrapper {
+    background: var(--night-bg-card) !important;
+    border: 1px solid var(--night-border) !important;
+    box-shadow: var(--night-shadow) !important;
+}
+
+body.night-mode .admin-table thead tr {
+    background: linear-gradient(135deg, #1a0a2e, #2d1b4e) !important;
+}
+
+body.night-mode .admin-table thead th {
+    color: #c8b8e8 !important;
+    border-bottom: 1px solid var(--night-border-light) !important;
+}
+
+body.night-mode .admin-table tbody tr {
+    background: var(--night-bg-card) !important;
+    border-bottom: 1px solid var(--night-border) !important;
+}
+
+body.night-mode .admin-table tbody tr:hover {
+    background: var(--night-bg-hover) !important;
+}
+
+body.night-mode .admin-table td {
+    color: var(--night-text-secondary) !important;
+}
+
+body.night-mode .admin-table .user-name,
+body.night-mode .admin-table .challenge-title {
+    color: var(--night-text-primary) !important;
+    font-weight: 600 !important;
+}
+
+body.night-mode .admin-table .user-email {
+    color: var(--night-text-muted) !important;
+}
+
+/* Badges rôles */
+body.night-mode .badge-admin {
+    background: rgba(118, 75, 162, 0.2) !important;
+    border: 1px solid #764ba2 !important;
+    color: #c8a0e8 !important;
+}
+
+body.night-mode .badge-member {
+    background: var(--night-bg-elevated) !important;
+    border: 1px solid var(--night-border-light) !important;
+    color: var(--night-text-muted) !important;
+}
+
+/* Boutons action table */
+body.night-mode .btn-toggle-admin {
+    background: transparent !important;
+    border: 1px solid #764ba2 !important;
+    color: #c8a0e8 !important;
+}
+
+body.night-mode .btn-toggle-admin:hover {
+    background: rgba(118,75,162,0.15) !important;
+    box-shadow: 0 0 10px rgba(118,75,162,0.3) !important;
+}
+
+body.night-mode .btn-delete-admin {
+    background: transparent !important;
+    border: 1px solid rgba(255,68,68,0.4) !important;
+    color: var(--night-danger) !important;
+}
+
+body.night-mode .btn-delete-admin:hover {
+    background: rgba(255,68,68,0.1) !important;
+    border-color: var(--night-danger) !important;
+    box-shadow: 0 0 10px rgba(255,68,68,0.2) !important;
+}
+
+/* Compteurs stats dans table */
+body.night-mode .stat-pill {
+    background: var(--night-bg-elevated) !important;
+    border: 1px solid var(--night-border-light) !important;
+    color: var(--night-green-mid) !important;
+}
+
+/* Avatar initiales admin */
+body.night-mode .admin-avatar {
+    background: linear-gradient(135deg, #1a0a2e, #2d1b4e) !important;
+    color: #c8a0e8 !important;
+    border: 1px solid #764ba2 !important;
+}
+
+/* Bouton admin navbar en night mode */
+body.night-mode .btn-admin-navbar {
+    background: linear-gradient(135deg, #3a1a6e, #5a2a8e) !important;
+    box-shadow: 0 4px 14px rgba(118,75,162,0.4) !important;
+    border: 1px solid #764ba2 !important;
+}
+
+body.night-mode .btn-admin-navbar:hover {
+    box-shadow: 0 6px 20px rgba(118,75,162,0.6), 0 0 20px rgba(118,75,162,0.3) !important;
+}
+
+/* ============================================================
+   OVERRIDES — CRÉER UN DÉFI (create.php — classes cr-*)
+   ============================================================ */
+
+body.night-mode .cr-main {
+    background: var(--night-bg-card) !important;
+    border-color: var(--night-border) !important;
+    box-shadow: var(--night-shadow) !important;
+}
+
+body.night-mode .cr-form {
+    background: var(--night-bg-card) !important;
+}
+
+body.night-mode .cr-label {
+    color: var(--night-text-primary) !important;
+}
+
+body.night-mode .cr-input,
+body.night-mode .cr-select,
+body.night-mode .cr-textarea {
+    background: var(--night-bg-elevated) !important;
+    border-color: var(--night-border-light) !important;
+    color: var(--night-text-primary) !important;
+}
+
+body.night-mode .cr-input:focus,
+body.night-mode .cr-select:focus,
+body.night-mode .cr-textarea:focus {
+    border-color: var(--night-green-neon) !important;
+    background: var(--night-bg-hover) !important;
+    box-shadow: 0 0 0 2px rgba(0,255,136,0.1) !important;
+}
+
+body.night-mode .cr-input::placeholder,
+body.night-mode .cr-textarea::placeholder {
+    color: var(--night-text-dim) !important;
+}
+
+body.night-mode .cr-hint,
+body.night-mode .cr-char-count {
+    color: var(--night-text-muted) !important;
+}
+
+body.night-mode .cr-badge-opt {
+    background: rgba(0,255,136,0.1) !important;
+    color: var(--night-green-neon) !important;
+}
+
+body.night-mode .cr-req {
+    color: var(--night-green-neon) !important;
+}
+
+/* Select arrow */
+body.night-mode .cr-select-arrow {
+    color: var(--night-text-muted) !important;
+}
+
+body.night-mode select.cr-select option {
+    background: var(--night-bg-card) !important;
+    color: var(--night-text-primary) !important;
+}
+
+/* Date */
+body.night-mode .cr-date-wrap {
+    background: var(--night-bg-elevated) !important;
+    border-color: var(--night-border-light) !important;
+}
+
+body.night-mode .cr-date-wrap:focus-within {
+    border-color: var(--night-green-neon) !important;
+    background: var(--night-bg-hover) !important;
+}
+
+body.night-mode .cr-date-icon {
+    color: var(--night-text-muted) !important;
+}
+
+body.night-mode .cr-date-input {
+    color: var(--night-text-primary) !important;
+    background: transparent !important;
+    color-scheme: dark !important;
+}
+
+body.night-mode .cr-status-open {
+    background: rgba(0,255,136,0.08) !important;
+    color: var(--night-green-neon) !important;
+}
+
+body.night-mode .cr-status-set {
+    background: rgba(255,170,0,0.08) !important;
+    color: var(--night-warning) !important;
+}
+
+/* Upload zone */
+body.night-mode .cr-upload {
+    background: var(--night-bg-elevated) !important;
+    border-color: var(--night-border-light) !important;
+}
+
+body.night-mode .cr-upload:hover,
+body.night-mode .cr-upload--over {
+    border-color: var(--night-green-neon) !important;
+    background: rgba(0,255,136,0.04) !important;
+}
+
+body.night-mode .cr-upload-label {
+    color: var(--night-text-secondary) !important;
+}
+
+body.night-mode .cr-upload-browse {
+    color: var(--night-green-neon) !important;
+}
+
+body.night-mode .cr-upload-types {
+    color: var(--night-text-muted) !important;
+}
+
+body.night-mode .cr-preview img {
+    border-color: var(--night-border-light) !important;
+}
+
+/* Actions */
+body.night-mode .cr-actions {
+    border-top-color: var(--night-border) !important;
+}
+
+body.night-mode .cr-btn-cancel {
+    border-color: var(--night-border-light) !important;
+    color: var(--night-text-secondary) !important;
+    background: transparent !important;
+}
+
+body.night-mode .cr-btn-cancel:hover {
+    border-color: var(--night-green-neon) !important;
+    color: var(--night-green-neon) !important;
+    background: rgba(0,255,136,0.05) !important;
+}
+
+/* Preview card */
+body.night-mode .cr-preview-card {
+    background: var(--night-bg-card) !important;
+    border-color: var(--night-border) !important;
+}
+
+body.night-mode .cr-pc-label {
+    background: var(--night-bg-secondary) !important;
+    color: var(--night-text-muted) !important;
+    border-bottom-color: var(--night-border) !important;
+}
+
+body.night-mode .cr-pc-img {
+    background: linear-gradient(135deg, #0a0f1a, #111827) !important;
+}
+
+body.night-mode .cr-pc-cat {
+    background: rgba(0,255,136,0.1) !important;
+    color: var(--night-green-neon) !important;
+}
+
+body.night-mode .cr-pc-title {
+    color: var(--night-text-primary) !important;
+}
+
+body.night-mode .cr-pc-author {
+    color: var(--night-text-muted) !important;
+}
+
+body.night-mode .cr-pc-date {
+    color: var(--night-text-dim) !important;
+}
+
+/* ============================================================
+   OVERRIDES — MODIFIER UN DÉFI (edit.php — classes Bootstrap)
+   ============================================================ */
+
+body.night-mode .card {
+    background: var(--night-bg-card) !important;
+    border-color: var(--night-border) !important;
+}
+
+body.night-mode .card-body {
+    background: var(--night-bg-card) !important;
+}
+
+body.night-mode .form-label {
+    color: var(--night-text-primary) !important;
+}
+
+body.night-mode .form-control,
+body.night-mode .form-select {
+    background: var(--night-bg-elevated) !important;
+    border-color: var(--night-border-light) !important;
+    color: var(--night-text-primary) !important;
+}
+
+body.night-mode .form-control:focus,
+body.night-mode .form-select:focus {
+    background: var(--night-bg-hover) !important;
+    border-color: var(--night-green-neon) !important;
+    box-shadow: 0 0 0 2px rgba(0,255,136,0.1) !important;
+    color: var(--night-text-primary) !important;
+}
+
+body.night-mode .form-control::placeholder {
+    color: var(--night-text-dim) !important;
+}
+
+body.night-mode .form-select option {
+    background: var(--night-bg-card) !important;
+    color: var(--night-text-primary) !important;
+}
+
+body.night-mode input[type="date"].form-control {
+    color-scheme: dark !important;
+    color: var(--night-text-primary) !important;
+}
+
+body.night-mode .bg-light {
+    background: var(--night-bg-elevated) !important;
+}
+
+body.night-mode .text-muted {
+    color: var(--night-text-muted) !important;
+}
+
+body.night-mode .btn-outline-secondary {
+    border-color: var(--night-border-light) !important;
+    color: var(--night-text-secondary) !important;
+}
+
+body.night-mode .btn-outline-secondary:hover {
+    background: var(--night-bg-elevated) !important;
+    color: var(--night-text-primary) !important;
+    border-color: var(--night-green-neon) !important;
+}
+
+body.night-mode .btn-primary {
+    background: linear-gradient(135deg, #667eea, #764ba2) !important;
+    border: none !important;
+    color: white !important;
+}
+
+body.night-mode .btn-primary:hover {
+    opacity: 0.9 !important;
+    transform: translateY(-1px) !important;
+    box-shadow: 0 6px 20px rgba(102,126,234,0.4) !important;
+}
+
+body.night-mode .btn-outline-danger {
+    border-color: var(--night-danger) !important;
+    color: var(--night-danger) !important;
+}
+
+body.night-mode .btn-outline-danger:hover {
+    background: rgba(255,68,68,0.1) !important;
+}
+
+body.night-mode .text-primary {
+    color: var(--night-green-neon) !important;
+}
+
+body.night-mode .h4,
+body.night-mode h1.h4 {
+    color: var(--night-text-primary) !important;
+}
+
+/* ============================================================
+   FIX — Variables CSS locales create.php écrasées en night mode
+   ============================================================ */
+body.night-mode .cr-wrap {
+    --cr-white:  #111811 !important;
+    --cr-bg:     #0f1a0f !important;
+    --cr-ink:    #e8ffe8 !important;
+    --cr-sub:    #b0d4b0 !important;
+    --cr-faint:  #5a8a5a !important;
+    --cr-line:   #1a2e1a !important;
+}
+
+/* Fix show challenge page — cards stats blanches */
+body.night-mode .card,
+body.night-mode [class*="card"] {
+    background: var(--night-bg-card) !important;
+    border-color: var(--night-border) !important;
+    color: var(--night-text-secondary) !important;
+}
+
+body.night-mode .card p,
+body.night-mode .card span,
+body.night-mode .card small {
+    color: var(--night-text-secondary) !important;
+}
+
+body.night-mode .card h1,
+body.night-mode .card h2,
+body.night-mode .card h3,
+body.night-mode .card h4,
+body.night-mode .card h5 {
+    color: var(--night-text-primary) !important;
+}
+/* ============================================================
+   FIX CRITIQUE — create.php & edit.php : variables :root
+   écrasent .cr-wrap. On force directement les éléments.
+   ============================================================ */
+
+/* Fond principal du formulaire */
+body.night-mode .cr-main,
+body.night-mode .cr-aside,
+body.night-mode .cr-tips,
+body.night-mode .cr-preview-card,
+body.night-mode .cr-pc-label {
+    background: var(--night-bg-card) !important;
+    border-color: var(--night-border-light) !important;
+    color: var(--night-text-secondary) !important;
+}
+
+/* Header du formulaire — garder le dégradé violet */
+body.night-mode .cr-head {
+    background: linear-gradient(135deg, #2d1b69, #1a0a40) !important;
+}
+
+/* Inputs, selects, textareas */
+body.night-mode .cr-input,
+body.night-mode .cr-select,
+body.night-mode .cr-textarea,
+body.night-mode .cr-date-input {
+    background: var(--night-bg-elevated) !important;
+    border-color: var(--night-border-light) !important;
+    color: var(--night-text-primary) !important;
+}
+
+body.night-mode .cr-input:focus,
+body.night-mode .cr-select:focus,
+body.night-mode .cr-textarea:focus,
+body.night-mode .cr-date-wrap:focus-within {
+    background: var(--night-bg-hover) !important;
+    border-color: var(--night-green-neon) !important;
+    box-shadow: 0 0 0 3px rgba(0,255,136,0.1) !important;
+}
+
+body.night-mode .cr-input::placeholder,
+body.night-mode .cr-textarea::placeholder {
+    color: var(--night-text-dim) !important;
+}
+
+/* Labels et textes */
+body.night-mode .cr-label {
+    color: var(--night-text-primary) !important;
+}
+
+body.night-mode .cr-hint,
+body.night-mode .cr-char-count,
+body.night-mode .cr-upload-label,
+body.night-mode .cr-upload-types {
+    color: var(--night-text-muted) !important;
+}
+
+/* Select wrap & arrow */
+body.night-mode .cr-select-wrap {
+    background: var(--night-bg-elevated) !important;
+}
+
+body.night-mode .cr-select-arrow,
+body.night-mode .cr-date-icon {
+    color: var(--night-text-muted) !important;
+}
+
+/* Options du select */
+body.night-mode .cr-select option {
+    background: var(--night-bg-card) !important;
+    color: var(--night-text-primary) !important;
+}
+
+/* Zone de date */
+body.night-mode .cr-date-wrap {
+    background: var(--night-bg-elevated) !important;
+    border-color: var(--night-border-light) !important;
+}
+
+body.night-mode .cr-date-input {
+    background: transparent !important;
+    color: var(--night-text-primary) !important;
+    color-scheme: dark !important;
+}
+
+/* Zone upload */
+body.night-mode .cr-upload {
+    background: var(--night-bg-elevated) !important;
+    border-color: var(--night-border-light) !important;
+}
+
+body.night-mode .cr-upload:hover,
+body.night-mode .cr-upload--over {
+    border-color: var(--night-green-neon) !important;
+    background: rgba(0, 255, 136, 0.04) !important;
+}
+
+/* Badge optionnel */
+body.night-mode .cr-badge-opt {
+    background: rgba(0, 255, 136, 0.12) !important;
+    color: var(--night-green-neon) !important;
+}
+
+/* Section actions (boutons bas) */
+body.night-mode .cr-actions {
+    border-top-color: var(--night-border) !important;
+    background: var(--night-bg-card) !important;
+}
+
+body.night-mode .cr-btn-cancel {
+    background: transparent !important;
+    border-color: var(--night-border-light) !important;
+    color: var(--night-text-secondary) !important;
+}
+
+body.night-mode .cr-btn-cancel:hover {
+    border-color: var(--night-green-neon) !important;
+    color: var(--night-green-neon) !important;
+    background: rgba(0, 255, 136, 0.05) !important;
+}
+
+/* Aside / conseils */
+body.night-mode .cr-tips-title {
+    color: var(--night-text-primary) !important;
+}
+
+body.night-mode .cr-tip-num {
+    background: rgba(0, 255, 136, 0.15) !important;
+    color: var(--night-green-neon) !important;
+}
+
+body.night-mode .cr-tip-title {
+    color: var(--night-text-primary) !important;
+}
+
+body.night-mode .cr-tip-body {
+    color: var(--night-text-secondary) !important;
+}
+
+/* Preview card */
+body.night-mode .cr-pc-img {
+    background: linear-gradient(135deg, #0a0f1a, #111827) !important;
+}
+
+body.night-mode .cr-pc-cat {
+    background: rgba(0, 255, 136, 0.12) !important;
+    color: var(--night-green-neon) !important;
+}
+
+body.night-mode .cr-pc-title {
+    color: var(--night-text-primary) !important;
+}
+
+body.night-mode .cr-pc-author,
+body.night-mode .cr-pc-date {
+    color: var(--night-text-muted) !important;
+}
+
+/* Ligne séparatrice */
+body.night-mode .cr-field {
+    border-color: var(--night-border) !important;
+}
+
+body.night-mode .cr-form {
+    background: var(--night-bg-card) !important;
+}
+
+/* Req star */
+body.night-mode .cr-req {
+    color: var(--night-green-neon) !important;
+}
+
+/* ============================================================
+   FIX CRITIQUE — show.php : tous les fonds blancs codés dur
+   ============================================================ */
+
+/* Description du défi */
+body.night-mode .challenge-description-card {
+    background: var(--night-bg-card) !important;
+    border-color: var(--night-border-light) !important;
+    color: var(--night-text-secondary) !important;
+}
+
+body.night-mode .challenge-description-card h2 {
+    color: var(--night-green-neon) !important;
+}
+
+body.night-mode .challenge-description-card p,
+body.night-mode .challenge-description-card .challenge-description-text {
+    color: var(--night-text-secondary) !important;
+}
+
+/* Stats cards (Date limite, Participations, Votes) */
+body.night-mode .info-item {
+    background: var(--night-bg-elevated) !important;
+    border-color: var(--night-border-light) !important;
+}
+
+body.night-mode .info-label {
+    color: var(--night-text-muted) !important;
+}
+
+body.night-mode .info-value {
+    color: var(--night-text-primary) !important;
+}
+
+/* Section participations */
+body.night-mode .participations-section {
+    background: var(--night-bg-card) !important;
+    border-color: var(--night-border-light) !important;
+}
+
+body.night-mode .sort-link {
+    background: var(--night-bg-elevated) !important;
+    color: var(--night-text-muted) !important;
+    border-color: var(--night-border) !important;
+}
+
+body.night-mode .sort-link:hover,
+body.night-mode .sort-link.active {
+    background: rgba(0,255,136,0.1) !important;
+    color: var(--night-green-neon) !important;
+}
+
+/* Cards participation */
+body.night-mode .participation-card {
+    background: var(--night-bg-card) !important;
+    border-color: var(--night-border-light) !important;
+}
+
+body.night-mode .participation-header {
+    background: var(--night-bg-elevated) !important;
+    border-color: var(--night-border) !important;
+}
+
+body.night-mode .participation-footer {
+    background: var(--night-bg-elevated) !important;
+    border-color: var(--night-border) !important;
+}
+
+/* Boutons vote */
+body.night-mode .vote-action-btn {
+    background: var(--night-bg-elevated) !important;
+    border-color: var(--night-border-light) !important;
+    color: var(--night-text-secondary) !important;
+}
+
+body.night-mode .vote-action-btn:hover {
+    background: rgba(0,255,136,0.08) !important;
+    border-color: var(--night-green-dim) !important;
+    color: var(--night-green-neon) !important;
+}
+
+/* Commentaires */
+body.night-mode .comments-section {
+    background: var(--night-bg-secondary) !important;
+    border-color: var(--night-border) !important;
+}
+
+body.night-mode .comment-bubble {
+    background: var(--night-bg-elevated) !important;
+    border-color: var(--night-border) !important;
+    color: var(--night-text-secondary) !important;
+}
+
+body.night-mode .comment-form {
+    background: var(--night-bg-secondary) !important;
+    border-color: var(--night-border-light) !important;
+}
+
+body.night-mode .challenge-comments-section {
+    background: var(--night-bg-card) !important;
+    border-color: var(--night-border-light) !important;
+}
+
+body.night-mode .challenge-comment-bubble {
+    background: var(--night-bg-elevated) !important;
+    border-color: var(--night-border) !important;
+    color: var(--night-text-secondary) !important;
+}
+
+/* Texte vide */
+body.night-mode .empty-participations {
+    background: var(--night-bg-elevated) !important;
+    color: var(--night-text-muted) !important;
+}
+
+/* Modal suppression */
+body.night-mode .modal-box {
+    background: var(--night-bg-card) !important;
+    border-color: var(--night-border-light) !important;
+    color: var(--night-text-primary) !important;
+}
+
+body.night-mode .modal-box h3,
+body.night-mode .modal-box p {
+    color: var(--night-text-primary) !important;
+}
+
+/* Textes généraux dans show.php */
+body.night-mode .participation-username,
+body.night-mode .participation-date,
+body.night-mode .comment-author,
+body.night-mode .comment-date,
+body.night-mode .comment-text {
+    color: var(--night-text-secondary) !important;
+}
+
+/* Inputs commentaire */
+body.night-mode .comment-input,
+body.night-mode .comment-form textarea,
+body.night-mode .comment-form input {
+    background: var(--night-bg-elevated) !important;
+    border-color: var(--night-border-light) !important;
+    color: var(--night-text-primary) !important;
+}
+
+body.night-mode .comment-input::placeholder,
+body.night-mode .comment-form textarea::placeholder {
+    color: var(--night-text-dim) !important;
+}

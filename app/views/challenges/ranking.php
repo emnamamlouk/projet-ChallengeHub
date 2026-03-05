@@ -139,7 +139,7 @@ ob_start();
             <?php if ($hasTie): ?>
                 <div class="ranking-notice">
                     <i class="bi bi-info-circle-fill"></i>
-                    En cas d'égalité de votes, le défi publié en premier est classé devant.
+                    En cas d'égalité de votes, le défi publié en dernier est classé devant.
                 </div>
             <?php endif; ?>
 

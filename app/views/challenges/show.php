@@ -1257,6 +1257,191 @@ ob_start();
         align-self: flex-start;
     }
 }
+
+/* ============================================================
+   NIGHT MODE — overrides locaux (priorité sur external CSS)
+   ============================================================ */
+body.night-mode .challenge-title {
+    color: #e8ffe8 !important;
+}
+body.night-mode .author-name {
+    color: #b0d4b0 !important;
+}
+body.night-mode .publication-date {
+    color: #5a8a5a !important;
+}
+body.night-mode .challenge-description-card {
+    background: #111811 !important;
+    border-color: #2a4a2a !important;
+    color: #b0d4b0 !important;
+}
+body.night-mode .challenge-description-card h2 {
+    color: #00ff88 !important;
+}
+body.night-mode .description-content {
+    color: #b0d4b0 !important;
+}
+body.night-mode .info-item {
+    background: #162016 !important;
+    border-color: #2a4a2a !important;
+}
+body.night-mode .info-label {
+    color: #5a8a5a !important;
+}
+body.night-mode .info-value {
+    color: #e8ffe8 !important;
+}
+body.night-mode .challenge-status.open {
+    background: rgba(0,255,136,0.12) !important;
+    color: #00ff88 !important;
+    border-color: rgba(0,255,136,0.3) !important;
+}
+body.night-mode .challenge-status.closed {
+    background: rgba(255,68,68,0.12) !important;
+    color: #ff4444 !important;
+}
+body.night-mode .participations-section {
+    background: #111811 !important;
+    border-color: #2a4a2a !important;
+}
+body.night-mode .section-header h2 {
+    color: #e8ffe8 !important;
+}
+body.night-mode .sort-participations label {
+    color: #5a8a5a !important;
+}
+body.night-mode .sort-link {
+    background: #162016 !important;
+    color: #b0d4b0 !important;
+    border-color: #1a2e1a !important;
+}
+body.night-mode .sort-link:hover,
+body.night-mode .sort-link.active {
+    background: rgba(0,255,136,0.1) !important;
+    color: #00ff88 !important;
+    border-color: rgba(0,255,136,0.3) !important;
+}
+body.night-mode .participation-card {
+    background: #111811 !important;
+    border-color: #1a2e1a !important;
+}
+body.night-mode .participation-card:hover {
+    border-color: #2a4a2a !important;
+    box-shadow: 0 0 20px rgba(0,255,136,0.08) !important;
+}
+body.night-mode .participation-header {
+    background: #162016 !important;
+    border-color: #1a2e1a !important;
+}
+body.night-mode .participant-name {
+    color: #e8ffe8 !important;
+}
+body.night-mode .participation-date {
+    color: #5a8a5a !important;
+}
+body.night-mode .participation-description {
+    color: #b0d4b0 !important;
+}
+body.night-mode .btn-view-participation {
+    background: rgba(0,255,136,0.1) !important;
+    color: #00ff88 !important;
+    border-color: rgba(0,255,136,0.2) !important;
+}
+body.night-mode .btn-view-participation:hover {
+    background: rgba(0,255,136,0.18) !important;
+}
+body.night-mode .participation-footer {
+    background: #162016 !important;
+    border-color: #1a2e1a !important;
+}
+body.night-mode .vote-action-btn {
+    background: #162016 !important;
+    border-color: #2a4a2a !important;
+    color: #b0d4b0 !important;
+}
+body.night-mode .vote-action-btn:hover {
+    background: rgba(0,255,136,0.08) !important;
+    border-color: #005c30 !important;
+    color: #00ff88 !important;
+}
+body.night-mode .vote-action-btn.voted {
+    background: rgba(255,68,68,0.1) !important;
+    color: #ff4444 !important;
+    border-color: rgba(255,68,68,0.2) !important;
+}
+body.night-mode .comment-toggle-btn {
+    color: #5a8a5a !important;
+}
+body.night-mode .comments-section {
+    background: #0f1a0f !important;
+    border-color: #1a2e1a !important;
+}
+body.night-mode .comment-bubble {
+    background: #162016 !important;
+    border-color: #1a2e1a !important;
+}
+body.night-mode .comment-author {
+    color: #e8ffe8 !important;
+}
+body.night-mode .comment-text {
+    color: #b0d4b0 !important;
+}
+body.night-mode .comment-form {
+    background: #0f1a0f !important;
+    border-color: #1a2e1a !important;
+}
+body.night-mode .comment-form textarea,
+body.night-mode .comment-form input[type="text"] {
+    background: #162016 !important;
+    border-color: #2a4a2a !important;
+    color: #e8ffe8 !important;
+}
+body.night-mode .comment-form textarea::placeholder,
+body.night-mode .comment-form input::placeholder {
+    color: #3a5a3a !important;
+}
+body.night-mode .challenge-comments-section {
+    background: #111811 !important;
+    border-color: #2a4a2a !important;
+}
+body.night-mode .challenge-comment-bubble {
+    background: #162016 !important;
+    border-color: #1a2e1a !important;
+}
+body.night-mode .challenge-comment-author {
+    color: #e8ffe8 !important;
+}
+body.night-mode .challenge-comment-date {
+    color: #5a8a5a !important;
+}
+body.night-mode .challenge-comment-content {
+    color: #b0d4b0 !important;
+}
+body.night-mode .empty-participations {
+    background: #162016 !important;
+    border-color: #1a2e1a !important;
+}
+body.night-mode .empty-participations h3 {
+    color: #b0d4b0 !important;
+}
+body.night-mode .empty-participations p {
+    color: #5a8a5a !important;
+}
+body.night-mode .modal-box {
+    background: #111811 !important;
+    border-color: #2a4a2a !important;
+}
+body.night-mode .modal-box h3 {
+    color: #e8ffe8 !important;
+}
+body.night-mode .modal-box p {
+    color: #b0d4b0 !important;
+}
+body.night-mode .btn-cancel {
+    background: #162016 !important;
+    border-color: #2a4a2a !important;
+    color: #b0d4b0 !important;
+}
 </style>
 
 <script>

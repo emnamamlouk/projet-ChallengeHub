@@ -109,7 +109,16 @@ ALTER TABLE `comments` ADD FOREIGN KEY (`parent_id`) REFERENCES `comments`(`id`)
 -- Ajouter parent_id pour les réponses aux commentaires sur défis
 ALTER TABLE `challenge_comments` ADD COLUMN `parent_id` INT NULL DEFAULT NULL AFTER `content`;
 ALTER TABLE `challenge_comments` ADD FOREIGN KEY (`parent_id`) REFERENCES `challenge_comments`(`id`) ON DELETE CASCADE;
+ALTER TABLE `users` ADD COLUMN `is_admin` TINYINT(1) NOT NULL DEFAULT 0;
 
+UPDATE `users` SET `is_admin` = 1 
+WHERE `email` IN (
+    'hassyeouiahmed@gmail.com',
+    'sellamiabderrahmen2@gmail.com',
+    'salmalabidi719@gmail.com',
+    'ynes.manai@gmail.com',
+    'emnamamlouk11@gmail.com'
+);
 -- ============================================================
 -- FIN DU SCRIPT
 -- ============================================================
