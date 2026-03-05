@@ -4,16 +4,30 @@ $active_page = "profile";
 
 require_once __DIR__ . '/../../models/Challenge.php';
 require_once __DIR__ . '/../../models/Submission.php';
+require_once __DIR__ . '/../../models/Badge.php';
 
 $challengeModel  = new Challenge();
 $submissionModel = new Submission();
+$badgeModel      = new Badge();
 
 $userId          = $_SESSION['user_id'];
-$userChallenges  = $challengeModel->getChallengesByUser($userId);
+$allChallenges   = $challengeModel->getChallengesByUser($userId);
 $userSubmissions = $submissionModel->getSubmissionsByUser($userId);
 
-$totalChallenges  = count($userChallenges);
+$totalChallenges  = count($allChallenges);
 $totalSubmissions = count($userSubmissions);
+
+// ── Pagination des défis ──
+$challengesPerPage = 6;
+$currentPage       = isset($_GET['page']) ? max(1, (int)$_GET['page']) : 1;
+$totalPages        = max(1, (int)ceil($totalChallenges / $challengesPerPage));
+$currentPage       = min($currentPage, $totalPages);
+$offset            = ($currentPage - 1) * $challengesPerPage;
+$userChallenges    = array_slice($allChallenges, $offset, $challengesPerPage);
+
+// ── BONUS : vérifier nouveaux badges + les charger ──
+$badgeModel->checkAndAward((int)$userId);
+$userBadges = $badgeModel->getUserBadges((int)$userId);
 
 ob_start();
 ?>
@@ -89,6 +103,65 @@ ob_start();
         <button class="tab-btn" onclick="switchTab('submissions', this)">
             <i class="bi bi-send-fill"></i> Mes participations (<?= $totalSubmissions ?>)
         </button>
+        <button class="tab-btn" onclick="switchTab('badges', this)">
+            <i class="bi bi-award-fill"></i> Mes badges (<?= count($userBadges) ?>)
+        </button>
+    </div>
+
+    <!-- ── BONUS : TAB Badges ── -->
+    <div id="tab-badges" class="tab-pane" style="display:none;">
+        <div style="background:#fff; border-radius:16px; padding:28px; box-shadow:0 4px 16px rgba(0,0,0,.06);">
+            <h3 style="margin-bottom:20px; font-size:1.2rem; font-weight:700;">
+                <i class="bi bi-award-fill" style="color:#f59e0b;"></i> Badges obtenus
+            </h3>
+            <?php if(empty($userBadges)): ?>
+                <div style="text-align:center; padding:40px; color:#6c757d;">
+                    <i class="bi bi-award" style="font-size:3rem; opacity:.3;"></i>
+                    <p style="margin-top:12px;">Aucun badge pour le moment.<br>
+                    Créez des défis, participez et commentez pour en obtenir !</p>
+                </div>
+            <?php else: ?>
+                <div style="display:flex; flex-wrap:wrap; gap:20px;">
+                    <?php foreach($userBadges as $badge): ?>
+                    <div style="background:linear-gradient(135deg,#fef3c7,#fde68a); border-radius:14px; padding:20px 22px;
+                                text-align:center; min-width:130px; box-shadow:0 4px 12px rgba(245,158,11,.2);
+                                transition:transform .2s;" onmouseover="this.style.transform='translateY(-4px)'" onmouseout="this.style.transform=''">
+                        <i class="bi <?= htmlspecialchars($badge['icon']) ?>" style="font-size:2.2rem; color:#d97706;"></i>
+                        <div style="font-weight:700; font-size:.9rem; margin-top:8px; color:#92400e;">
+                            <?= htmlspecialchars($badge['label']) ?>
+                        </div>
+                        <div style="font-size:.72rem; color:#b45309; margin-top:4px;">
+                            <?= date('d/m/Y', strtotime($badge['obtained_at'])) ?>
+                        </div>
+                        <div style="font-size:.7rem; color:#78350f; margin-top:6px; line-height:1.3;">
+                            <?= htmlspecialchars($badge['description']) ?>
+                        </div>
+                    </div>
+                    <?php endforeach; ?>
+                </div>
+            <?php endif; ?>
+
+            <!-- Badges non encore obtenus -->
+            <?php
+            $allDefs    = Badge::getAllDefinitions();
+            $ownedKeys  = array_column($userBadges, 'key');
+            $notOwned   = array_filter($allDefs, fn($k) => !in_array($k, $ownedKeys), ARRAY_FILTER_USE_KEY);
+            if (!empty($notOwned)): ?>
+            <h4 style="margin-top:28px; margin-bottom:14px; font-size:1rem; color:#6c757d;">
+                Badges à débloquer
+            </h4>
+            <div style="display:flex; flex-wrap:wrap; gap:16px;">
+                <?php foreach($notOwned as $key => $def): ?>
+                <div style="background:#f3f4f6; border-radius:14px; padding:18px 20px; text-align:center;
+                            min-width:120px; opacity:.6; filter:grayscale(1);">
+                    <i class="bi <?= htmlspecialchars($def['icon']) ?>" style="font-size:2rem; color:#9ca3af;"></i>
+                    <div style="font-weight:600; font-size:.85rem; margin-top:6px; color:#6b7280;"><?= htmlspecialchars($def['label']) ?></div>
+                    <div style="font-size:.7rem; color:#9ca3af; margin-top:4px;"><?= htmlspecialchars($def['description']) ?></div>
+                </div>
+                <?php endforeach; ?>
+            </div>
+            <?php endif; ?>
+        </div>
     </div>
 
     <!-- TAB : Défis -->
@@ -128,6 +201,57 @@ ob_start();
                 <?php endforeach; ?>
             </div>
         <?php endif; ?>
+
+        <!-- ── Pagination défis ── -->
+        <?php if($totalPages > 1): ?>
+        <nav style="margin-top:28px; text-align:center;">
+            <ul style="display:inline-flex; gap:6px; list-style:none; padding:0; margin:0; flex-wrap:wrap; justify-content:center;">
+
+                <!-- Précédent -->
+                <li>
+                    <?php if($currentPage > 1): ?>
+                        <a href="index.php?action=profile&page=<?= $currentPage - 1 ?>#tab-challenges"
+                           style="display:inline-flex;align-items:center;justify-content:center;width:38px;height:38px;border-radius:10px;background:#f0eeff;color:#667eea;text-decoration:none;font-weight:700;transition:all .2s;"
+                           onmouseover="this.style.background='#667eea';this.style.color='white'"
+                           onmouseout="this.style.background='#f0eeff';this.style.color='#667eea'">‹</a>
+                    <?php else: ?>
+                        <span style="display:inline-flex;align-items:center;justify-content:center;width:38px;height:38px;border-radius:10px;background:#f5f5f5;color:#ccc;cursor:default;">‹</span>
+                    <?php endif; ?>
+                </li>
+
+                <!-- Pages -->
+                <?php for($p = 1; $p <= $totalPages; $p++): ?>
+                <li>
+                    <?php if($p === $currentPage): ?>
+                        <span style="display:inline-flex;align-items:center;justify-content:center;width:38px;height:38px;border-radius:10px;background:linear-gradient(135deg,#667eea,#764ba2);color:white;font-weight:700;"><?= $p ?></span>
+                    <?php else: ?>
+                        <a href="index.php?action=profile&page=<?= $p ?>#tab-challenges"
+                           style="display:inline-flex;align-items:center;justify-content:center;width:38px;height:38px;border-radius:10px;background:#f0eeff;color:#667eea;text-decoration:none;font-weight:600;transition:all .2s;"
+                           onmouseover="this.style.background='#667eea';this.style.color='white'"
+                           onmouseout="this.style.background='#f0eeff';this.style.color='#667eea'"><?= $p ?></a>
+                    <?php endif; ?>
+                </li>
+                <?php endfor; ?>
+
+                <!-- Suivant -->
+                <li>
+                    <?php if($currentPage < $totalPages): ?>
+                        <a href="index.php?action=profile&page=<?= $currentPage + 1 ?>#tab-challenges"
+                           style="display:inline-flex;align-items:center;justify-content:center;width:38px;height:38px;border-radius:10px;background:#f0eeff;color:#667eea;text-decoration:none;font-weight:700;transition:all .2s;"
+                           onmouseover="this.style.background='#667eea';this.style.color='white'"
+                           onmouseout="this.style.background='#f0eeff';this.style.color='#667eea'">›</a>
+                    <?php else: ?>
+                        <span style="display:inline-flex;align-items:center;justify-content:center;width:38px;height:38px;border-radius:10px;background:#f5f5f5;color:#ccc;cursor:default;">›</span>
+                    <?php endif; ?>
+                </li>
+
+            </ul>
+            <p style="color:#aaa;font-size:.82rem;margin-top:10px;">
+                Page <?= $currentPage ?> sur <?= $totalPages ?> — <?= $totalChallenges ?> défi<?= $totalChallenges > 1 ? 's' : '' ?>
+            </p>
+        </nav>
+        <?php endif; ?>
+
     </div>
 
     <!-- TAB : Participations -->
@@ -404,11 +528,24 @@ ob_start();
 
 <script>
 function switchTab(name, btn) {
-    document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.tab-pane').forEach(p => {
+        p.classList.remove('active');
+        p.style.display = 'none';
+    });
     document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-    document.getElementById('tab-' + name).classList.add('active');
+    const pane = document.getElementById('tab-' + name);
+    if (pane) { pane.classList.add('active'); pane.style.display = 'block'; }
     btn.classList.add('active');
 }
+
+// Ouvrir l'onglet défis si paramètre page présent dans l'URL
+(function() {
+    const params = new URLSearchParams(window.location.search);
+    if (params.has('page')) {
+        const btn = document.querySelector('.tab-btn[onclick*="challenges"]');
+        if (btn) switchTab('challenges', btn);
+    }
+})();
 function openDeleteAccountModal() { document.getElementById('deleteAccountModal').style.display = 'flex'; }
 function openEditModal() { document.getElementById('editModal').classList.add('open'); }
 function closeEditModal() { document.getElementById('editModal').classList.remove('open'); }

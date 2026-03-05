@@ -184,6 +184,11 @@ class ChallengeController {
                 );
                 
                 if($challenge_id) {
+                    // ── BONUS : Vérifier et attribuer les badges ──
+                    require_once APP_PATH . '/models/Badge.php';
+                    $badgeModel = new Badge();
+                    $badgeModel->checkAndAward((int)$_SESSION['user_id']);
+
                     $_SESSION['success'] = "Défi créé avec succès !";
                     header('Location: index.php?action=showChallenge&id=' . $challenge_id);
                     exit();
@@ -378,7 +383,27 @@ class ChallengeController {
 
             $submission_id = $_POST['submission_id'] ?? 0;
             $result = $this->voteModel->toggleVote($_SESSION['user_id'], $submission_id);
-            
+
+            // ── BONUS : badges + notification au propriétaire de la participation ──
+            if (!empty($result['success'])) {
+                require_once APP_PATH . '/models/Badge.php';
+                require_once APP_PATH . '/models/Notification.php';
+                $badgeModel = new Badge();
+                $badgeModel->checkAndAward((int)$_SESSION['user_id']);
+
+                // Récupérer le propriétaire de la participation
+                $sub = $this->submissionModel->getSubmissionById($submission_id);
+                if ($sub && (int)$sub['user_id'] !== (int)$_SESSION['user_id']) {
+                    $notifModel = new Notification();
+                    $notifModel->create(
+                        (int)$sub['user_id'],
+                        'new_vote',
+                        htmlspecialchars($_SESSION['username']) . ' a voté pour votre participation.',
+                        (int)$submission_id
+                    );
+                }
+            }
+
             echo json_encode($result);
             exit();
         }
@@ -478,6 +503,19 @@ class ChallengeController {
         }
         $comments = $this->challengeModel->getChallengeComments($challenge_id);
         echo json_encode(['success' => true, 'comments' => $comments]);
+        exit();
+    }
+
+    public function deleteChallengeComment() {
+        header('Content-Type: application/json');
+        if(!isset($_SESSION['user_id'])) {
+            echo json_encode(['success' => false, 'message' => 'Non connecté']);
+            exit();
+        }
+        $comment_id   = intval($_POST['comment_id']   ?? 0);
+        $challenge_id = intval($_POST['challenge_id'] ?? 0);
+        $result = $this->challengeModel->deleteChallengeComment($comment_id, $_SESSION['user_id']);
+        echo json_encode(['success' => (bool)$result]);
         exit();
     }
 

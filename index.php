@@ -24,7 +24,8 @@ CSRF::generateToken();
 spl_autoload_register(function ($class_name) {
     $directories = [
         APP_PATH . '/controllers/',
-        APP_PATH . '/models/'
+        APP_PATH . '/models/',
+        APP_PATH . '/helpers/',
     ];
     foreach ($directories as $directory) {
         $file = $directory . $class_name . '.php';
@@ -87,6 +88,18 @@ $routes = [
 
     // THEME
     'switchTheme' => ['controller' => 'ThemeController', 'method' => 'switch'],
+
+    // ── BONUS : NOTIFICATIONS AJAX ──────────────────────────────
+    'getNotifications'  => ['controller' => 'NotificationController', 'method' => 'getNotifications'],
+    'markNotifRead'     => ['controller' => 'NotificationController', 'method' => 'markRead'],
+    'markAllNotifsRead' => ['controller' => 'NotificationController', 'method' => 'markAllRead'],
+
+    // ── BONUS : API REST INTERNE ─────────────────────────────────
+    'api_challenges'   => ['controller' => 'ApiController', 'method' => 'challenges'],
+    'api_challenge'    => ['controller' => 'ApiController', 'method' => 'challenge'],
+    'api_submissions'  => ['controller' => 'ApiController', 'method' => 'submissions'],
+    'api_leaderboard'  => ['controller' => 'ApiController', 'method' => 'leaderboard'],
+    'api_user'         => ['controller' => 'ApiController', 'method' => 'user'],
 ];
 
 // ============================================

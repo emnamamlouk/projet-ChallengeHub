@@ -134,8 +134,8 @@ class User {
     public function getUserById($id) {
 
         try {
-            $query = "SELECT id, username, email, bio, avatar, created_at 
-                      FROM users WHERE id = :id";
+    $query = "SELECT id, username, email, bio, avatar, role, created_at 
+              FROM users WHERE id = :id";
             $stmt = $this->conn->prepare($query);
             $stmt->bindParam(':id', $id);
             $stmt->execute();

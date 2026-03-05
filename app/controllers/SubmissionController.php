@@ -212,6 +212,23 @@ class SubmissionController {
                 );
                 
                 if($submission_id) {
+                    // ── BONUS : badges + notification au créateur du défi ──
+                    require_once APP_PATH . '/models/Badge.php';
+                    require_once APP_PATH . '/models/Notification.php';
+                    $badgeModel = new Badge();
+                    $badgeModel->checkAndAward((int)$_SESSION['user_id']);
+
+                    $challenge = $this->challengeModel->getChallengeById($challenge_id);
+                    if ($challenge && (int)$challenge['user_id'] !== (int)$_SESSION['user_id']) {
+                        $notifModel = new Notification();
+                        $notifModel->create(
+                            (int)$challenge['user_id'],
+                            'new_submission',
+                            htmlspecialchars($_SESSION['username']) . ' a participé à votre défi « ' . htmlspecialchars($challenge['title']) . ' ».',
+                            (int)$submission_id
+                        );
+                    }
+
                     $_SESSION['success'] = "Votre participation a été envoyée avec succès !";
                     header('Location: index.php?action=showChallenge&id=' . $challenge_id);
                     exit();

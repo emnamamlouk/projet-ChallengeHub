@@ -163,6 +163,10 @@ class AuthController {
                     $_SESSION['email'] = $this->userModel->getEmail();
                     $_SESSION['avatar'] = $this->userModel->getAvatar();
                     $_SESSION['bio'] = $this->userModel->getBio();
+
+                    // ── BONUS : stocker le rôle en session (admin/user) ──
+                    $fullUser = $this->userModel->getUserById($this->userModel->getId());
+                    $_SESSION['role'] = $fullUser['role'] ?? 'user';
                     
                     $_SESSION['success'] = "Bienvenue " . $_SESSION['username'] . " !";
                     

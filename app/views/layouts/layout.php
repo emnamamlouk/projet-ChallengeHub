@@ -69,6 +69,33 @@ if ($basePath === '/' || $basePath === '\\') $basePath = '';
                     <?php endif; ?>
 
                     <?php if(isset($_SESSION['user_id'])): ?>
+
+                        <!-- ── BONUS : Cloche de notifications AJAX ── -->
+                        <li class="notif-nav-item" style="position:relative; list-style:none; display:flex; align-items:center;">
+                            <div style="position:relative; cursor:pointer;" id="notifToggle" onclick="document.getElementById('notifDropdown').classList.toggle('notif-open')">
+                                <i class="bi bi-bell-fill" style="font-size:1.3rem; color:#495057;"></i>
+                                <span id="notif-count"
+                                      style="display:none; position:absolute; top:-6px; right:-8px;
+                                             background:#dc3545; color:#fff; border-radius:50%;
+                                             font-size:.6rem; min-width:16px; height:16px;
+                                             text-align:center; line-height:16px; font-weight:700;">
+                                </span>
+                            </div>
+                            <!-- Dropdown notifications -->
+                            <div id="notifDropdown" style="display:none; position:absolute; top:130%; right:0; width:320px; max-height:380px; overflow-y:auto;
+                                                           background:#fff; border:1px solid #dee2e6; border-radius:10px; box-shadow:0 10px 30px rgba(0,0,0,.12); z-index:9999;">
+                                <div style="padding:10px 14px; border-bottom:1px solid #eee; display:flex; justify-content:space-between; align-items:center;">
+                                    <strong style="font-size:.9rem;">Notifications</strong>
+                                    <a href="#" id="notif-mark-all" style="font-size:.75rem; color:#6c757d; text-decoration:none;">Tout marquer lu</a>
+                                </div>
+                                <ul id="notif-list" style="list-style:none; margin:0; padding:0;">
+                                    <li style="padding:12px 14px; color:#6c757d; font-size:.85rem;">Chargement…</li>
+                                </ul>
+                            </div>
+                        </li>
+
+
+
                         <li class="dropdown">
                             <a href="#" class="dropdown-toggle">
                                 <i class="bi bi-person-fill"></i>
@@ -78,6 +105,7 @@ if ($basePath === '/' || $basePath === '\\') $basePath = '';
                             <ul class="dropdown-menu">
                                 <li><a href="<?= $basePath ?>/index.php?action=profile"><i class="bi bi-person-vcard-fill"></i> Mon profil</a></li>
                                 <li><a href="<?= $basePath ?>/index.php?action=createChallengeForm"><i class="bi bi-plus-circle-fill"></i> Créer un défi</a></li>
+
                                 <li><hr></li>
                                 <li><a href="<?= $basePath ?>/index.php?action=logout" class="text-danger"><i class="bi bi-box-arrow-right"></i> Déconnexion</a></li>
                             </ul>
@@ -193,6 +221,36 @@ if ($basePath === '/' || $basePath === '\\') $basePath = '';
     <script src="<?= $basePath ?>/public/js/main.js"></script>
     <script src="<?= $basePath ?>/public/js/challenges.js"></script>
     <script src="<?= $basePath ?>/public/js/theme-switcher.js"></script>
+
+    <!-- ── BONUS : Notifications AJAX (uniquement si connecté) ── -->
+    <?php if(isset($_SESSION['user_id'])): ?>
+    <script>
+        window.APP_BASE_URL = '<?= $basePath ?>/';
+    </script>
+    <script src="<?= $basePath ?>/public/js/notifications.js"></script>
+    <script>
+    // Fermer le dropdown notifs en cliquant ailleurs
+    document.addEventListener('click', function(e) {
+        const toggle   = document.getElementById('notifToggle');
+        const dropdown = document.getElementById('notifDropdown');
+        if (dropdown && toggle && !toggle.contains(e.target) && !dropdown.contains(e.target)) {
+            dropdown.classList.remove('notif-open');
+            dropdown.style.display = 'none';
+        }
+    });
+    // Gérer l'ouverture/fermeture du dropdown par CSS class
+    const obs = new MutationObserver(function(mutations) {
+        mutations.forEach(function(m) {
+            const d = document.getElementById('notifDropdown');
+            if (d) d.style.display = d.classList.contains('notif-open') ? 'block' : 'none';
+        });
+    });
+    const nd = document.getElementById('notifDropdown');
+    if (nd) obs.observe(nd, { attributes: true, attributeFilter: ['class'] });
+    </script>
+    <!-- Toast container pour les nouvelles notifications -->
+    <div id="toast-container" class="position-fixed bottom-0 end-0 p-3" style="z-index:9999;"></div>
+    <?php endif; ?>
 
     <style>
         .container { max-width: 1200px; margin: 0 auto; padding: 0 20px; }

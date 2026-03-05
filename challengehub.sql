@@ -113,3 +113,55 @@ ALTER TABLE `challenge_comments` ADD FOREIGN KEY (`parent_id`) REFERENCES `chall
 -- ============================================================
 -- FIN DU SCRIPT
 -- ============================================================
+-- ============================================================
+-- SCRIPT SQL — Fonctionnalités Bonus ChallengeHub
+-- À ajouter à la fin du fichier challengehub.sql existant
+-- ============================================================
+
+-- ============================================================
+-- 1. SYSTÈME DE BADGES
+-- ============================================================
+
+-- Colonne role pour distinguer admin / user
+ALTER TABLE `users`
+  ADD COLUMN `role` ENUM('user','admin') NOT NULL DEFAULT 'user'
+  AFTER `bio`;
+
+-- Table de liaison utilisateur ↔ badge
+CREATE TABLE IF NOT EXISTS `user_badges` (
+  `id`          INT AUTO_INCREMENT PRIMARY KEY,
+  `user_id`     INT          NOT NULL,
+  `badge_key`   VARCHAR(50)  NOT NULL,
+  `obtained_at` TIMESTAMP    DEFAULT CURRENT_TIMESTAMP,
+  UNIQUE KEY `unique_user_badge` (`user_id`, `badge_key`),
+  FOREIGN KEY (`user_id`) REFERENCES `users`(`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- ============================================================
+-- 2. NOTIFICATIONS AJAX
+-- ============================================================
+
+CREATE TABLE IF NOT EXISTS `notifications` (
+  `id`           INT AUTO_INCREMENT PRIMARY KEY,
+  `recipient_id` INT          NOT NULL,
+  `type`         VARCHAR(50)  NOT NULL,           -- new_vote, new_comment, new_submission, badge_earned
+  `message`      TEXT         NOT NULL,
+  `link_id`      INT          DEFAULT NULL,       -- ID de la ressource liée (submission, challenge…)
+  `is_read`      TINYINT(1)   NOT NULL DEFAULT 0,
+  `created_at`   TIMESTAMP    DEFAULT CURRENT_TIMESTAMP,
+  INDEX idx_recipient_unread (`recipient_id`, `is_read`),
+  FOREIGN KEY (`recipient_id`) REFERENCES `users`(`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- ============================================================
+-- NOTES D'UTILISATION
+-- ============================================================
+-- • La pagination n'a pas de table dédiée ; elle repose sur LIMIT/OFFSET
+--   dans les requêtes existantes via le helper Pagination.php.
+--
+-- • L'API REST n'a pas de table dédiée ; elle utilise les tables existantes.
+--
+-- • Pour activer un compte admin :
+--     UPDATE users SET role = 'admin' WHERE id = 1;
+--
+-- ============================================================
