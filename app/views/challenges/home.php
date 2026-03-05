@@ -154,7 +154,7 @@ ob_start();
                         <span><?= $challenge['user_liked'] ? "Voter" : "Voter" ?></span>
                     </button>
 
-                    <button class="action-btn comment-btn" onclick="toggleComments(<?= $challenge['id'] ?>)">
+                    <button class="action-btn comment-btn" onclick="toggleComments(<?= $challenge['id'] ?>, <?= $challenge['user_id'] ?>)">
                         <i class="bi bi-chat-fill"></i>
                         <span>Commenter</span>
                     </button>
@@ -178,7 +178,7 @@ ob_start();
                 </div>
 
                 <!-- Section commentaires -->
-                <div class="post-comments" id="comments-<?= $challenge['id'] ?>" style="display:none;">
+                <div class="post-comments" id="comments-<?= $challenge['id'] ?>" style="display:none;" data-owner="<?= $challenge['user_id'] ?>">
                     <div class="comments-list" id="comments-list-<?= $challenge['id'] ?>">
                         <?php if(!empty($challenge['comments'])): ?>
                             <?php foreach(isset($challenge['comments']) ? $challenge['comments'] : [] as $comment): ?>
@@ -622,6 +622,30 @@ ob_start();
 .comment-bubble strong { display: block; font-size: 0.82rem; color: #333; margin-bottom: 2px; }
 .comment-bubble p { color: #444; margin: 0 0 3px; line-height: 1.4; }
 .comment-bubble small { color: #bbb; font-size: 0.74rem; }
+.cmt-header { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; margin-bottom: 3px; }
+.cmt-header strong { font-size: 0.82rem; color: #333; }
+.cmt-header small { color: #bbb; font-size: 0.74rem; }
+.comment-owner-actions { margin-left: auto; display: flex; gap: 3px; }
+.btn-edit-cmt, .btn-delete-cmt { background: none; border: none; cursor: pointer; font-size: 0.7rem; color: #ccc; padding: 2px 4px; border-radius: 4px; transition: color 0.2s; }
+.btn-edit-cmt:hover { color: #667eea; }
+.btn-delete-cmt:hover { color: #ef4444; }
+.cmt-edit-form { margin-top: 5px; }
+.cmt-edit-wrap { display: flex; align-items: center; gap: 5px; background: white; border: 1.5px solid #667eea; border-radius: 20px; padding: 3px 8px; }
+.cmt-edit-input { flex: 1; border: none; outline: none; font-size: 0.85rem; padding: 4px 0; background: transparent; }
+.btn-save-cmt { background: #667eea; color: white; border: none; border-radius: 50%; width: 26px; height: 26px; cursor: pointer; font-size: 0.75rem; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.btn-cancel-cmt { background: #eee; color: #666; border: none; border-radius: 50%; width: 26px; height: 26px; cursor: pointer; font-size: 0.75rem; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+
+/* Modal suppression commentaire */
+#delete-cmt-modal { display: none; position: fixed; inset: 0; z-index: 9999; }
+.dcm-overlay { width: 100%; height: 100%; background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; }
+.dcm-box { background: white; border-radius: 20px; padding: 30px; max-width: 380px; width: 90%; text-align: center; box-shadow: 0 20px 60px rgba(0,0,0,0.3); }
+.dcm-icon { font-size: 2.5rem; color: #f59e0b; margin-bottom: 12px; }
+.dcm-box h3 { font-size: 1.1rem; color: #333; margin-bottom: 8px; }
+.dcm-box p { color: #888; font-size: 0.9rem; margin-bottom: 20px; }
+.dcm-actions { display: flex; gap: 10px; justify-content: center; }
+.dcm-cancel { padding: 10px 24px; background: #f0f0f0; border: none; border-radius: 8px; font-weight: 600; color: #666; cursor: pointer; font-size: 0.9rem; }
+.dcm-confirm { padding: 10px 24px; background: #ef4444; color: white; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; font-size: 0.9rem; }
+.dcm-confirm:hover { background: #dc2626; }
 
 .no-comments { text-align: center; color: #bbb; font-size: 0.85rem; padding: 10px; }
 
@@ -867,6 +891,10 @@ function toggleLike(challengeId) {
     .catch(e => console.error(e));
 }
 
+// Variables session utilisateur
+const LOGGED_IN = <?= isset($_SESSION['user_id']) ? 'true' : 'false' ?>;
+const CURRENT_USER_ID = <?= isset($_SESSION['user_id']) ? intval($_SESSION['user_id']) : 0 ?>;
+
 // Charger les commentaires depuis le serveur
 function loadChallengeComments(challengeId) {
     fetch('index.php?action=getChallengeComments&challenge_id=' + challengeId)
@@ -874,30 +902,134 @@ function loadChallengeComments(challengeId) {
     .then(data => {
         if(!data.success) return;
         const list = document.getElementById('comments-list-' + challengeId);
+        const section = document.getElementById('comments-' + challengeId);
+        const challengeOwnerId = section ? parseInt(section.getAttribute('data-owner')) : 0;
         list.innerHTML = '';
         if(data.comments.length === 0) {
             list.innerHTML = '<p class="no-comments">Aucun commentaire</p>';
             return;
         }
-        data.comments.forEach(c => {
+        data.comments.forEach(function(c) {
             const initial = c.username ? c.username.charAt(0).toUpperCase() : '?';
-            list.innerHTML += `
-                <div class="comment-item">
-                    <div class="comment-avatar">
-                        <div class="avatar-initials xs">${initial}</div>
-                    </div>
-                    <div class="comment-bubble">
-                        <strong>${c.username}</strong>
-                        <p>${c.content}</p>
-                        <small>${new Date(c.created_at).toLocaleDateString('fr-FR')}</small>
-                    </div>
-                </div>`;
+            const isCommentOwner = LOGGED_IN && parseInt(c.user_id) === CURRENT_USER_ID;
+            const isChallengeOwner = LOGGED_IN && CURRENT_USER_ID === challengeOwnerId;
+            const cid = c.id;
+            const chid = challengeId;
+            let ownerBtns = '';
+            if (isCommentOwner || isChallengeOwner) {
+                const editBtn = isCommentOwner
+                    ? '<button class="btn-edit-cmt" onclick="startEditChallengeComment(' + cid + ', ' + chid + ')" title="Modifier"><i class="bi bi-pencil-fill"></i></button>'
+                    : '';
+                ownerBtns = '<span class="comment-owner-actions">'
+                    + editBtn
+                    + '<button class="btn-delete-cmt" onclick="showDeleteModal(' + cid + ', ' + chid + ')" title="Supprimer"><i class="bi bi-trash-fill"></i></button>'
+                    + '</span>';
+            }
+            const date = new Date(c.created_at).toLocaleDateString('fr-FR');
+            const contentEscaped = c.content.replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+            list.innerHTML += '<div class="comment-item" id="cmt-' + cid + '">'
+                + '<div class="comment-avatar"><div class="avatar-initials xs">' + initial + '</div></div>'
+                + '<div class="comment-bubble">'
+                + '<div class="cmt-header">'
+                + '<strong>' + c.username + '</strong>'
+                + '<small>' + date + '</small>'
+                + ownerBtns
+                + '</div>'
+                + '<p class="cmt-text" id="cmt-text-' + cid + '">' + c.content + '</p>'
+                + '<div class="cmt-edit-form" id="cmt-edit-' + cid + '" style="display:none;">'
+                + '<div class="cmt-edit-wrap">'
+                + '<input type="text" class="cmt-edit-input" id="cmt-edit-input-' + cid + '" value="' + contentEscaped + '">'
+                + '<button onclick="saveEditChallengeComment(' + cid + ', ' + chid + ')" class="btn-save-cmt"><i class="bi bi-check-lg"></i></button>'
+                + '<button onclick="cancelEditChallengeComment(' + cid + ')" class="btn-cancel-cmt"><i class="bi bi-x-lg"></i></button>'
+                + '</div></div>'
+                + '</div></div>';
         });
         // Mettre à jour le compteur
         const counter = document.getElementById('comment-count-' + challengeId);
         if(counter) counter.textContent = data.comments.length;
     })
     .catch(e => console.error(e));
+}
+
+// Modifier un commentaire de défi
+function startEditChallengeComment(commentId, challengeId) {
+    document.getElementById('cmt-text-' + commentId).style.display = 'none';
+    document.getElementById('cmt-edit-' + commentId).style.display = 'block';
+    document.getElementById('cmt-edit-input-' + commentId).focus();
+}
+
+function cancelEditChallengeComment(commentId) {
+    document.getElementById('cmt-text-' + commentId).style.display = 'block';
+    document.getElementById('cmt-edit-' + commentId).style.display = 'none';
+}
+
+function saveEditChallengeComment(commentId, challengeId) {
+    const input = document.getElementById('cmt-edit-input-' + commentId);
+    const content = input.value.trim();
+    if (!content) return;
+
+    fetch('index.php?action=updateChallengeComment', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+        body: 'comment_id=' + commentId + '&content=' + encodeURIComponent(content)
+    })
+    .then(r => r.json())
+    .then(data => {
+        if (data.success) {
+            document.getElementById('cmt-text-' + commentId).textContent = data.content;
+            cancelEditChallengeComment(commentId);
+        } else {
+            alert(data.message || 'Erreur lors de la modification');
+        }
+    });
+}
+
+// Modal suppression
+function showDeleteModal(commentId, challengeId) {
+    let modal = document.getElementById('delete-cmt-modal');
+    if (!modal) {
+        modal = document.createElement('div');
+        modal.id = 'delete-cmt-modal';
+        modal.innerHTML = '<div class="dcm-overlay" onclick="closeDeleteModal()">'
+            + '<div class="dcm-box" onclick="event.stopPropagation()">'
+            + '<div class="dcm-icon"><i class="bi bi-exclamation-triangle-fill"></i></div>'
+            + '<h3>Supprimer ce commentaire ?</h3>'
+            + '<p>Cette action est irréversible.</p>'
+            + '<div class="dcm-actions">'
+            + '<button onclick="closeDeleteModal()" class="dcm-cancel">Annuler</button>'
+            + '<button onclick="confirmDeleteComment()" class="dcm-confirm">Supprimer</button>'
+            + '</div></div></div>';
+        document.body.appendChild(modal);
+    }
+    modal._commentId = commentId;
+    modal._challengeId = challengeId;
+    modal.style.display = 'block';
+}
+
+function closeDeleteModal() {
+    const modal = document.getElementById('delete-cmt-modal');
+    if (modal) modal.style.display = 'none';
+}
+
+function confirmDeleteComment() {
+    const modal = document.getElementById('delete-cmt-modal');
+    const commentId = modal._commentId;
+    const challengeId = modal._challengeId;
+    closeDeleteModal();
+
+    fetch('index.php?action=deleteChallengeComment', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+        body: 'comment_id=' + commentId + '&challenge_id=' + challengeId
+    })
+    .then(r => r.json())
+    .then(data => {
+        if (data.success) {
+            loadChallengeComments(challengeId);
+        } else {
+            alert(data.message || 'Erreur');
+        }
+    });
 }
 
 // Afficher/masquer les commentaires

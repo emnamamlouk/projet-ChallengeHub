@@ -481,5 +481,42 @@ class ChallengeController {
         exit();
     }
 
+    public function updateChallengeComment() {
+        header('Content-Type: application/json');
+        if (!isset($_SESSION['user_id'])) {
+            echo json_encode(['success' => false, 'message' => 'Non connecté']);
+            exit();
+        }
+        $comment_id = intval($_POST['comment_id'] ?? 0);
+        $content    = trim($_POST['content'] ?? '');
+        if (empty($content)) {
+            echo json_encode(['success' => false, 'message' => 'Commentaire vide']);
+            exit();
+        }
+        $result = $this->challengeModel->updateChallengeComment($comment_id, $_SESSION['user_id'], $content);
+        if ($result) {
+            echo json_encode(['success' => true, 'content' => htmlspecialchars($content)]);
+        } else {
+            echo json_encode(['success' => false, 'message' => 'Erreur ou non autorisé']);
+        }
+        exit();
+    }
+
+    public function deleteChallengeComment() {
+        header('Content-Type: application/json');
+        if (!isset($_SESSION['user_id'])) {
+            echo json_encode(['success' => false, 'message' => 'Non connecté']);
+            exit();
+        }
+        $comment_id   = intval($_POST['comment_id'] ?? 0);
+        $challenge_id = intval($_POST['challenge_id'] ?? 0);
+        $result = $this->challengeModel->deleteChallengeComment($comment_id, $_SESSION['user_id']);
+        if ($result) {
+            echo json_encode(['success' => true]);
+        } else {
+            echo json_encode(['success' => false, 'message' => 'Erreur ou non autorisé']);
+        }
+        exit();
+    }
+
 }
-?>

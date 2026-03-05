@@ -224,7 +224,8 @@ class Challenge {
     public function getChallengeComments($challenge_id) {
         try {
             $stmt = $this->conn->prepare(
-                "SELECT cc.*, u.username, u.avatar 
+                "SELECT cc.*, u.username, u.avatar,
+                        (SELECT user_id FROM challenges WHERE id = cc.challenge_id) as challenge_owner_id
                  FROM challenge_comments cc 
                  JOIN users u ON cc.user_id = u.id 
                  WHERE cc.challenge_id = :cid 
@@ -264,6 +265,36 @@ class Challenge {
         } catch(PDOException $e) { 
             return false; 
         }
+    }
+
+    public function updateChallengeComment($comment_id, $user_id, $content) {
+        try {
+            if (empty(trim($content))) return false;
+            if (strlen($content) > 500) return false;
+            $stmt = $this->conn->prepare(
+                "UPDATE challenge_comments SET content = :content WHERE id = :id AND user_id = :user_id"
+            );
+            $stmt->bindParam(':content', $content);
+            $stmt->bindParam(':id', $comment_id);
+            $stmt->bindParam(':user_id', $user_id);
+            return $stmt->execute() && $stmt->rowCount() > 0;
+        } catch(PDOException $e) { return false; }
+    }
+
+    public function deleteChallengeComment($comment_id, $user_id) {
+        try {
+            // Autoriser si auteur du commentaire OU propriétaire du défi
+            $stmt = $this->conn->prepare(
+                "DELETE FROM challenge_comments 
+                 WHERE id = :id 
+                 AND (user_id = :user_id 
+                      OR (SELECT user_id FROM challenges WHERE id = challenge_id) = :user_id2)"
+            );
+            $stmt->bindParam(':id', $comment_id);
+            $stmt->bindParam(':user_id', $user_id);
+            $stmt->bindParam(':user_id2', $user_id);
+            return $stmt->execute() && $stmt->rowCount() > 0;
+        } catch(PDOException $e) { return false; }
     }
 
     /**

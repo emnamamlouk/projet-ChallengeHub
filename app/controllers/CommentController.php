@@ -70,6 +70,43 @@ class CommentController {
         exit();
     }
 
+    // Modifier un commentaire (AJAX - retourne JSON)
+    public function update() {
+        header('Content-Type: application/json');
+
+        if (!isset($_SESSION['user_id'])) {
+            echo json_encode(['success' => false, 'message' => 'Non connecté']);
+            exit();
+        }
+
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            echo json_encode(['success' => false, 'message' => 'Méthode invalide']);
+            exit();
+        }
+
+        $comment_id = intval($_POST['comment_id'] ?? 0);
+        $content    = trim($_POST['content'] ?? '');
+
+        if (empty($content)) {
+            echo json_encode(['success' => false, 'message' => 'Commentaire vide']);
+            exit();
+        }
+
+        if (strlen($content) > 500) {
+            echo json_encode(['success' => false, 'message' => 'Trop long (max 500 caractères)']);
+            exit();
+        }
+
+        $result = $this->commentModel->updateComment($comment_id, $_SESSION['user_id'], $content);
+
+        if ($result) {
+            echo json_encode(['success' => true, 'content' => htmlspecialchars($content)]);
+        } else {
+            echo json_encode(['success' => false, 'message' => 'Erreur ou non autorisé']);
+        }
+        exit();
+    }
+
     // Supprimer un commentaire (AJAX - retourne JSON)
     public function delete() {
         header('Content-Type: application/json');

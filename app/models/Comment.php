@@ -24,6 +24,20 @@ class Comment {
         } catch(PDOException $e) { return false; }
     }
 
+    public function updateComment($comment_id, $user_id, $content) {
+        try {
+            if(empty(trim($content))) return false;
+            if(strlen($content) > 500) return false;
+            if(!$this->isOwner($comment_id, $user_id)) return false;
+            $query = "UPDATE comments SET content = :content WHERE id = :id AND user_id = :user_id";
+            $stmt = $this->conn->prepare($query);
+            $stmt->bindParam(':content', $content);
+            $stmt->bindParam(':id', $comment_id);
+            $stmt->bindParam(':user_id', $user_id);
+            return $stmt->execute();
+        } catch(PDOException $e) { return false; }
+    }
+
     public function getCommentsBySubmission($submission_id) {
         try {
             $query = "SELECT c.*, u.username, u.avatar

@@ -946,6 +946,71 @@ ob_start();
     color: #ef4444;
 }
 
+.edit-comment-btn {
+    background: none;
+    border: none;
+    color: #ddd;
+    cursor: pointer;
+    font-size: 0.7rem;
+    margin-left: 4px;
+}
+
+.edit-comment-btn:hover {
+    color: #667eea;
+}
+
+.comment-actions {
+    margin-left: auto;
+    display: flex;
+    align-items: center;
+    gap: 2px;
+}
+
+.comment-edit-form {
+    margin-top: 8px;
+}
+
+.comment-edit-input {
+    width: 100%;
+    padding: 6px 10px;
+    border: 2px solid #667eea;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    outline: none;
+    font-family: inherit;
+}
+
+.comment-edit-actions {
+    display: flex;
+    gap: 8px;
+    margin-top: 6px;
+}
+
+.btn-save-edit {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 5px 12px;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.btn-cancel-edit {
+    padding: 5px 12px;
+    background: #f0f0f0;
+    color: #666;
+    border: none;
+    border-radius: 6px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    cursor: pointer;
+}
+
 .comment-form-container {
     display: flex;
     align-items: center;
@@ -1323,6 +1388,11 @@ function loadSubmissionComments(submissionId) {
             }
             
             data.comments.forEach(comment => {
+                const isOwner = LOGGED_IN && comment.user_id == <?= $_SESSION['user_id'] ?? 0 ?>;
+                const ownerActions = isOwner ? `
+                    <button class="edit-comment-btn" onclick="startEditComment(${comment.id}, this)" title="Modifier"><i class="bi bi-pencil-fill"></i></button>
+                    <button class="delete-comment-btn" onclick="deleteComment(${comment.id}, ${submissionId})" title="Supprimer"><i class="bi bi-x-circle-fill"></i></button>
+                ` : '';
                 const commentHtml = `
                     <div class="comment-item" id="comment-${comment.id}">
                         <div class="comment-avatar-small">${comment.username.charAt(0).toUpperCase()}</div>
@@ -1330,10 +1400,16 @@ function loadSubmissionComments(submissionId) {
                             <div class="comment-meta">
                                 <span class="comment-author">${comment.username}</span>
                                 <span class="comment-date">${new Date(comment.created_at).toLocaleDateString('fr-FR')}</span>
-                                ${LOGGED_IN && comment.user_id == <?= $_SESSION['user_id'] ?? 0 ?> ? 
-                                    '<button class="delete-comment-btn" onclick="deleteComment(' + comment.id + ', ' + submissionId + ')"><i class="bi bi-x-circle-fill"></i></button>' : ''}
+                                <span class="comment-actions">${ownerActions}</span>
                             </div>
-                            <p class="comment-text">${comment.content}</p>
+                            <p class="comment-text" id="comment-text-${comment.id}">${comment.content}</p>
+                            <div class="comment-edit-form" id="comment-edit-form-${comment.id}" style="display:none;">
+                                <input type="text" class="comment-edit-input" id="comment-edit-input-${comment.id}" value="${comment.content}">
+                                <div class="comment-edit-actions">
+                                    <button onclick="saveEditComment(${comment.id}, ${submissionId})" class="btn-save-edit"><i class="bi bi-check-lg"></i> Enregistrer</button>
+                                    <button onclick="cancelEditComment(${comment.id})" class="btn-cancel-edit">Annuler</button>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 `;
@@ -1412,6 +1488,38 @@ function loadChallengeComments() {
                 `;
                 commentsList.insertAdjacentHTML('beforeend', commentHtml);
             });
+        }
+    });
+}
+
+function startEditComment(commentId, btn) {
+    document.getElementById('comment-text-' + commentId).style.display = 'none';
+    document.getElementById('comment-edit-form-' + commentId).style.display = 'block';
+    document.getElementById('comment-edit-input-' + commentId).focus();
+}
+
+function cancelEditComment(commentId) {
+    document.getElementById('comment-text-' + commentId).style.display = 'block';
+    document.getElementById('comment-edit-form-' + commentId).style.display = 'none';
+}
+
+function saveEditComment(commentId, submissionId) {
+    const input = document.getElementById('comment-edit-input-' + commentId);
+    const content = input.value.trim();
+    if (!content) return;
+
+    fetch('index.php?action=updateComment', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+        body: 'comment_id=' + commentId + '&content=' + encodeURIComponent(content)
+    })
+    .then(r => r.json())
+    .then(data => {
+        if (data.success) {
+            document.getElementById('comment-text-' + commentId).textContent = data.content;
+            cancelEditComment(commentId);
+        } else {
+            alert(data.message || 'Erreur lors de la modification');
         }
     });
 }

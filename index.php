@@ -63,9 +63,10 @@ $routes = [
     'vote'                  => ['controller' => 'ChallengeController', 'method' => 'vote'],
     'ranking'               => ['controller' => 'ChallengeController', 'method' => 'ranking'],
     'toggleChallengeLike'   => ['controller' => 'ChallengeController', 'method' => 'toggleLike'],
-    'addChallengeComment'   => ['controller' => 'ChallengeController', 'method' => 'addChallengeComment'],
-    'getChallengeComments'  => ['controller' => 'ChallengeController', 'method' => 'getChallengeComments'],
-    'deleteChallengeComment'=> ['controller' => 'ChallengeController', 'method' => 'deleteChallengeComment'],
+    'addChallengeComment'      => ['controller' => 'ChallengeController', 'method' => 'addChallengeComment'],
+    'getChallengeComments'     => ['controller' => 'ChallengeController', 'method' => 'getChallengeComments'],
+    'updateChallengeComment'   => ['controller' => 'ChallengeController', 'method' => 'updateChallengeComment'],
+    'deleteChallengeComment'   => ['controller' => 'ChallengeController', 'method' => 'deleteChallengeComment'],
 
     // SUBMISSIONS
     'showSubmission'        => ['controller' => 'SubmissionController', 'method' => 'show'],
@@ -78,6 +79,7 @@ $routes = [
     // COMMENTS
     'addComment'    => ['controller' => 'CommentController', 'method' => 'add'],
     'deleteComment' => ['controller' => 'CommentController', 'method' => 'delete'],
+    'updateComment' => ['controller' => 'CommentController', 'method' => 'update'],
     'getComments'   => ['controller' => 'CommentController', 'method' => 'getComments'],
     'countComments' => ['controller' => 'CommentController', 'method' => 'countComments'],
 
