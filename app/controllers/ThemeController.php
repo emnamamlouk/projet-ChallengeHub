@@ -34,3 +34,4 @@ class ThemeController {
         exit();
     }
 }
+?> 

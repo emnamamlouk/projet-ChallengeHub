@@ -64,7 +64,7 @@ if ($basePath === '/' || $basePath === '\\') $basePath = '';
 
                         <!-- ── BONUS : Cloche de notifications AJAX ── -->
                         <li class="notif-nav-item" style="position:relative; list-style:none; display:flex; align-items:center;">
-                            <div style="position:relative; cursor:pointer;" id="notifToggle" onclick="document.getElementById('notifDropdown').classList.toggle('notif-open')">
+                            <div style="position:relative; cursor:pointer;" id="notifToggle">
                                 <i class="bi bi-bell-fill" style="font-size:1.3rem; color:#495057;"></i>
                                 <span id="notif-count"
                                       style="display:none; position:absolute; top:-6px; right:-8px;
@@ -229,24 +229,20 @@ if ($basePath === '/' || $basePath === '\\') $basePath = '';
     </script>
     <script src="<?= $basePath ?>/public/js/notifications.js"></script>
     <script>
-    // Fermer le dropdown notifs en cliquant ailleurs
+    // Ouvrir/fermer le dropdown au clic sur la cloche
+    document.getElementById('notifToggle').addEventListener('click', function(e) {
+        e.stopPropagation();
+        const d = document.getElementById('notifDropdown');
+        d.style.display = (d.style.display === 'block') ? 'none' : 'block';
+    });
+    // Fermer en cliquant ailleurs
     document.addEventListener('click', function(e) {
-        const toggle   = document.getElementById('notifToggle');
-        const dropdown = document.getElementById('notifDropdown');
-        if (dropdown && toggle && !toggle.contains(e.target) && !dropdown.contains(e.target)) {
-            dropdown.classList.remove('notif-open');
-            dropdown.style.display = 'none';
+        const d = document.getElementById('notifDropdown');
+        const t = document.getElementById('notifToggle');
+        if (d && t && !t.contains(e.target) && !d.contains(e.target)) {
+            d.style.display = 'none';
         }
     });
-    // Gérer l'ouverture/fermeture du dropdown par CSS class
-    const obs = new MutationObserver(function(mutations) {
-        mutations.forEach(function(m) {
-            const d = document.getElementById('notifDropdown');
-            if (d) d.style.display = d.classList.contains('notif-open') ? 'block' : 'none';
-        });
-    });
-    const nd = document.getElementById('notifDropdown');
-    if (nd) obs.observe(nd, { attributes: true, attributeFilter: ['class'] });
     </script>
     <!-- Toast container pour les nouvelles notifications -->
     <div id="toast-container" class="position-fixed bottom-0 end-0 p-3" style="z-index:9999;"></div>

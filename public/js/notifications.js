@@ -19,8 +19,9 @@
 (function () {
   'use strict';
 
-  const POLL_INTERVAL = 30000; // 30 secondes
-  let   lastCount     = 0;
+  const POLL_INTERVAL = 10000; // 10 secondes
+  let   lastCount     = -1;
+  const BASE = (window.APP_BASE_URL || '') + 'index.php';
 
   // ──────────────────────────────────────────────
   // Éléments DOM
@@ -35,7 +36,7 @@
   // Polling : appel toutes les POLL_INTERVAL ms
   // ──────────────────────────────────────────────
   function fetchNotifications() {
-    fetch('index.php?action=getNotifications', { credentials: 'same-origin' })
+    fetch(BASE + '?action=getNotifications', { credentials: 'same-origin' })
       .then(res => res.json())
       .then(data => {
         if (!data.success) return;
@@ -47,7 +48,7 @@
         badge.style.display = unread > 0 ? 'inline-block' : 'none';
 
         // Afficher un toast si de nouvelles notifications sont arrivées
-        if (unread > lastCount && lastCount !== 0) {
+        if (unread > lastCount && lastCount >= 0) {
           showToast('Nouvelle notification', `Vous avez ${unread} notification(s) non lue(s).`, 'info');
         }
         lastCount = unread;
@@ -104,7 +105,7 @@
     e.preventDefault();
 
     const id = item.dataset.id;
-    fetch('index.php?action=markNotifRead', {
+    fetch(BASE + '?action=markNotifRead', {
       method: 'POST',
       credentials: 'same-origin',
       headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
@@ -118,7 +119,7 @@
   if (markAll) {
     markAll.addEventListener('click', function (e) {
       e.preventDefault();
-      fetch('index.php?action=markAllNotifsRead', {
+      fetch(BASE + '?action=markAllNotifsRead', {
         method: 'POST',
         credentials: 'same-origin',
       }).then(() => fetchNotifications());

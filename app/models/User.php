@@ -134,7 +134,7 @@ class User {
     public function getUserById($id) {
 
         try {
-    $query = "SELECT id, username, email, bio, avatar, role, created_at 
+    $query = "SELECT id, username, email, bio, avatar, role, is_admin, created_at 
               FROM users WHERE id = :id";
             $stmt = $this->conn->prepare($query);
             $stmt->bindParam(':id', $id);
@@ -168,3 +168,4 @@ public function searchUsers($search) {
     public function getBio() { return $this->bio; }
     public function getAvatar() { return $this->avatar; }
 }
+?>

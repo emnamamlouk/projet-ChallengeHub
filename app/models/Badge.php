@@ -229,3 +229,4 @@ class Badge {
         return (int)$s->fetchColumn() >= 10;
     }
 }
+?> 

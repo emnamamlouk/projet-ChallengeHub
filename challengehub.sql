@@ -173,4 +173,9 @@ CREATE TABLE IF NOT EXISTS `notifications` (
 -- • Pour activer un compte admin :
 --     UPDATE users SET role = 'admin' WHERE id = 1;
 --
--- ============================================================
+-- ========================================================
+
+
+
+
+--UPDATE users SET role = 'admin', is_admin = 1 WHERE id IN (9, 10, 11, 12, 13);

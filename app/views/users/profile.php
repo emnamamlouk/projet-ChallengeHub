@@ -1,5 +1,5 @@
 <?php
-$title = "Mon profil - ChallengeHub";
+$title       = "Mon profil - ChallengeHub";
 $active_page = "profile";
 
 require_once __DIR__ . '/../../models/Challenge.php';
@@ -11,8 +11,8 @@ $submissionModel = new Submission();
 $badgeModel      = new Badge();
 
 $userId          = $_SESSION['user_id'];
-$allChallenges   = $challengeModel->getChallengesByUser($userId);
-$userSubmissions = $submissionModel->getSubmissionsByUser($userId);
+$allChallenges   = $challengeModel->getChallengesByUser($userId)   ?? [];
+$userSubmissions = $submissionModel->getSubmissionsByUser($userId)  ?? [];
 
 $totalChallenges  = count($allChallenges);
 $totalSubmissions = count($userSubmissions);
@@ -25,9 +25,17 @@ $currentPage       = min($currentPage, $totalPages);
 $offset            = ($currentPage - 1) * $challengesPerPage;
 $userChallenges    = array_slice($allChallenges, $offset, $challengesPerPage);
 
-// ── BONUS : vérifier nouveaux badges + les charger ──
+// ── Badges ──
 $badgeModel->checkAndAward((int)$userId);
-$userBadges = $badgeModel->getUserBadges((int)$userId);
+$userBadges = $badgeModel->getUserBadges((int)$userId) ?? [];
+
+// ── Sécurisation des données utilisateur (évite les erreurs si null) ──
+$uUsername  = htmlspecialchars($userInfo['username']   ?? 'Utilisateur');
+$uEmail     = htmlspecialchars($userInfo['email']      ?? '');
+$uBio       = htmlspecialchars($userInfo['bio']        ?? '');
+$uAvatar    = htmlspecialchars($userInfo['avatar']     ?? '');
+$uInitial   = strtoupper(substr($userInfo['username']  ?? 'U', 0, 1));
+$uCreatedAt = !empty($userInfo['created_at']) ? date('d/m/Y', strtotime($userInfo['created_at'])) : date('d/m/Y');
 
 ob_start();
 ?>
@@ -40,13 +48,10 @@ ob_start();
 
             <!-- Avatar -->
             <div class="profile-avatar-wrap">
-                <?php if(!empty($userInfo['avatar'])): ?>
-                    <img src="public/<?= htmlspecialchars($userInfo['avatar']) ?>"
-                         alt="avatar" class="profile-avatar-img">
+                <?php if(!empty($uAvatar)): ?>
+                    <img src="public/<?= $uAvatar ?>" alt="avatar" class="profile-avatar-img">
                 <?php else: ?>
-                    <div class="profile-avatar-default">
-                        <?= strtoupper(substr($userInfo['username'], 0, 1)) ?>
-                    </div>
+                    <div class="profile-avatar-default"><?= $uInitial ?></div>
                 <?php endif; ?>
                 <button class="avatar-camera-btn" onclick="openAvatarModal()" title="Changer la photo">
                     <i class="bi bi-camera-fill"></i>
@@ -55,35 +60,35 @@ ob_start();
 
             <!-- Infos -->
             <div class="profile-info">
-                <h1><?= htmlspecialchars($userInfo['username']) ?></h1>
-                <p class="profile-email"><i class="bi bi-envelope-fill"></i> <?= htmlspecialchars($userInfo['email']) ?></p>
-                <?php if(!empty($userInfo['bio'])): ?>
-                    <p class="profile-bio"><?= htmlspecialchars($userInfo['bio']) ?></p>
+                <h1><?= $uUsername ?></h1>
+                <p class="profile-email"><i class="bi bi-envelope-fill"></i> <?= $uEmail ?></p>
+                <?php if(!empty($uBio)): ?>
+                    <p class="profile-bio"><?= $uBio ?></p>
                 <?php else: ?>
                     <p class="profile-bio empty-bio">Aucune bio — cliquez sur Modifier pour en ajouter une</p>
                 <?php endif; ?>
                 <p class="profile-since">
                     <i class="bi bi-calendar-event-fill"></i>
-                    Membre depuis <?= date('d/m/Y', strtotime($userInfo['created_at'])) ?>
+                    Membre depuis <?= $uCreatedAt ?>
                 </p>
             </div>
 
             <!-- Boutons actions -->
             <div style="display:flex; gap:10px; margin-left:auto; flex-wrap:wrap;">
                 <a href="index.php?action=createChallengeForm" class="btn-edit-profile" style="background:rgba(255,255,255,0.25); border-color:rgba(255,255,255,0.7);">
-                    <i class="bi bi-plus-lg-circle"></i> Créer un défi
+                    <i class="bi bi-plus-lg"></i> Créer un défi
                 </a>
                 <button class="btn-edit-profile" onclick="openEditModal()">
                     <i class="bi bi-pencil-square"></i> Modifier le profil
                 </button>
                 <button class="btn-delete-account" onclick="openDeleteAccountModal()">
-                    <i class="bi bi-trash-fill-alt"></i> Supprimer le compte
+                    <i class="bi bi-trash-fill"></i> Supprimer le compte
                 </button>
             </div>
         </div>
     </div>
 
-    <!-- ===== STATS (seulement Défis + Participations) ===== -->
+    <!-- ===== STATS ===== -->
     <div class="stats-grid">
         <div class="stat-card">
             <div class="stat-icon purple"><i class="bi bi-list-check"></i></div>
@@ -95,7 +100,7 @@ ob_start();
         </div>
     </div>
 
-    <!-- ===== ONGLETS (sans Mes votes) ===== -->
+    <!-- ===== ONGLETS ===== -->
     <div class="profile-tabs">
         <button class="tab-btn active" onclick="switchTab('challenges', this)">
             <i class="bi bi-list-check"></i> Mes défis (<?= $totalChallenges ?>)
@@ -108,7 +113,7 @@ ob_start();
         </button>
     </div>
 
-    <!-- ── BONUS : TAB Badges ── -->
+    <!-- TAB : Badges -->
     <div id="tab-badges" class="tab-pane" style="display:none;">
         <div style="background:#fff; border-radius:16px; padding:28px; box-shadow:0 4px 16px rgba(0,0,0,.06);">
             <h3 style="margin-bottom:20px; font-size:1.2rem; font-weight:700;">
@@ -126,15 +131,15 @@ ob_start();
                     <div style="background:linear-gradient(135deg,#fef3c7,#fde68a); border-radius:14px; padding:20px 22px;
                                 text-align:center; min-width:130px; box-shadow:0 4px 12px rgba(245,158,11,.2);
                                 transition:transform .2s;" onmouseover="this.style.transform='translateY(-4px)'" onmouseout="this.style.transform=''">
-                        <i class="bi <?= htmlspecialchars($badge['icon']) ?>" style="font-size:2.2rem; color:#d97706;"></i>
+                        <i class="bi <?= htmlspecialchars($badge['icon'] ?? '') ?>" style="font-size:2.2rem; color:#d97706;"></i>
                         <div style="font-weight:700; font-size:.9rem; margin-top:8px; color:#92400e;">
-                            <?= htmlspecialchars($badge['label']) ?>
+                            <?= htmlspecialchars($badge['label'] ?? '') ?>
                         </div>
                         <div style="font-size:.72rem; color:#b45309; margin-top:4px;">
-                            <?= date('d/m/Y', strtotime($badge['obtained_at'])) ?>
+                            <?= !empty($badge['obtained_at']) ? date('d/m/Y', strtotime($badge['obtained_at'])) : '' ?>
                         </div>
                         <div style="font-size:.7rem; color:#78350f; margin-top:6px; line-height:1.3;">
-                            <?= htmlspecialchars($badge['description']) ?>
+                            <?= htmlspecialchars($badge['description'] ?? '') ?>
                         </div>
                     </div>
                     <?php endforeach; ?>
@@ -143,9 +148,9 @@ ob_start();
 
             <!-- Badges non encore obtenus -->
             <?php
-            $allDefs    = Badge::getAllDefinitions();
-            $ownedKeys  = array_column($userBadges, 'key');
-            $notOwned   = array_filter($allDefs, fn($k) => !in_array($k, $ownedKeys), ARRAY_FILTER_USE_KEY);
+            $allDefs   = Badge::getAllDefinitions();
+            $ownedKeys = array_column($userBadges, 'key');
+            $notOwned  = array_filter($allDefs, fn($k) => !in_array($k, $ownedKeys), ARRAY_FILTER_USE_KEY);
             if (!empty($notOwned)): ?>
             <h4 style="margin-top:28px; margin-bottom:14px; font-size:1rem; color:#6c757d;">
                 Badges à débloquer
@@ -154,9 +159,9 @@ ob_start();
                 <?php foreach($notOwned as $key => $def): ?>
                 <div style="background:#f3f4f6; border-radius:14px; padding:18px 20px; text-align:center;
                             min-width:120px; opacity:.6; filter:grayscale(1);">
-                    <i class="bi <?= htmlspecialchars($def['icon']) ?>" style="font-size:2rem; color:#9ca3af;"></i>
-                    <div style="font-weight:600; font-size:.85rem; margin-top:6px; color:#6b7280;"><?= htmlspecialchars($def['label']) ?></div>
-                    <div style="font-size:.7rem; color:#9ca3af; margin-top:4px;"><?= htmlspecialchars($def['description']) ?></div>
+                    <i class="bi <?= htmlspecialchars($def['icon'] ?? '') ?>" style="font-size:2rem; color:#9ca3af;"></i>
+                    <div style="font-weight:600; font-size:.85rem; margin-top:6px; color:#6b7280;"><?= htmlspecialchars($def['label'] ?? '') ?></div>
+                    <div style="font-size:.7rem; color:#9ca3af; margin-top:4px;"><?= htmlspecialchars($def['description'] ?? '') ?></div>
                 </div>
                 <?php endforeach; ?>
             </div>
@@ -185,12 +190,12 @@ ob_start();
                             <?php else: ?>
                                 <div class="mini-no-img"><i class="bi bi-card-image"></i></div>
                             <?php endif; ?>
-                            <span class="mini-badge"><?= htmlspecialchars($ch['category']) ?></span>
+                            <span class="mini-badge"><?= htmlspecialchars($ch['category'] ?? '') ?></span>
                         </div>
                         <div class="mini-card-body">
-                            <h4><a href="index.php?action=showChallenge&id=<?= $ch['id'] ?>"><?= htmlspecialchars($ch['title']) ?></a></h4>
-                            <p><?= htmlspecialchars(substr($ch['description'], 0, 80)) ?>...</p>
-                            <div class="mini-card-date"><i class="bi bi-calendar-fill"></i> <?= date('d/m/Y', strtotime($ch['created_at'])) ?></div>
+                            <h4><a href="index.php?action=showChallenge&id=<?= $ch['id'] ?>"><?= htmlspecialchars($ch['title'] ?? '') ?></a></h4>
+                            <p><?= htmlspecialchars(substr($ch['description'] ?? '', 0, 80)) ?>...</p>
+                            <div class="mini-card-date"><i class="bi bi-calendar-fill"></i> <?= !empty($ch['created_at']) ? date('d/m/Y', strtotime($ch['created_at'])) : '' ?></div>
                             <div class="mini-card-actions">
                                 <a href="index.php?action=showChallenge&id=<?= $ch['id'] ?>" class="btn-sm blue">Voir</a>
                                 <a href="index.php?action=editChallengeForm&id=<?= $ch['id'] ?>" class="btn-sm gray"><i class="bi bi-pencil-square"></i></a>
@@ -202,12 +207,10 @@ ob_start();
             </div>
         <?php endif; ?>
 
-        <!-- ── Pagination défis ── -->
+        <!-- Pagination défis -->
         <?php if($totalPages > 1): ?>
         <nav style="margin-top:28px; text-align:center;">
             <ul style="display:inline-flex; gap:6px; list-style:none; padding:0; margin:0; flex-wrap:wrap; justify-content:center;">
-
-                <!-- Précédent -->
                 <li>
                     <?php if($currentPage > 1): ?>
                         <a href="index.php?action=profile&page=<?= $currentPage - 1 ?>#tab-challenges"
@@ -218,8 +221,6 @@ ob_start();
                         <span style="display:inline-flex;align-items:center;justify-content:center;width:38px;height:38px;border-radius:10px;background:#f5f5f5;color:#ccc;cursor:default;">‹</span>
                     <?php endif; ?>
                 </li>
-
-                <!-- Pages -->
                 <?php for($p = 1; $p <= $totalPages; $p++): ?>
                 <li>
                     <?php if($p === $currentPage): ?>
@@ -232,8 +233,6 @@ ob_start();
                     <?php endif; ?>
                 </li>
                 <?php endfor; ?>
-
-                <!-- Suivant -->
                 <li>
                     <?php if($currentPage < $totalPages): ?>
                         <a href="index.php?action=profile&page=<?= $currentPage + 1 ?>#tab-challenges"
@@ -244,14 +243,12 @@ ob_start();
                         <span style="display:inline-flex;align-items:center;justify-content:center;width:38px;height:38px;border-radius:10px;background:#f5f5f5;color:#ccc;cursor:default;">›</span>
                     <?php endif; ?>
                 </li>
-
             </ul>
             <p style="color:#aaa;font-size:.82rem;margin-top:10px;">
                 Page <?= $currentPage ?> sur <?= $totalPages ?> — <?= $totalChallenges ?> défi<?= $totalChallenges > 1 ? 's' : '' ?>
             </p>
         </nav>
         <?php endif; ?>
-
     </div>
 
     <!-- TAB : Participations -->
@@ -277,8 +274,8 @@ ob_start();
                         </div>
                         <div class="mini-card-body">
                             <h4><a href="index.php?action=showChallenge&id=<?= $sub['challenge_id'] ?>"><?= htmlspecialchars($sub['challenge_title'] ?? 'Défi') ?></a></h4>
-                            <p><?= htmlspecialchars(substr($sub['description'], 0, 80)) ?>...</p>
-                            <div class="mini-card-date"><i class="bi bi-clock-fill"></i> <?= date('d/m/Y', strtotime($sub['created_at'])) ?></div>
+                            <p><?= htmlspecialchars(substr($sub['description'] ?? '', 0, 80)) ?>...</p>
+                            <div class="mini-card-date"><i class="bi bi-clock-fill"></i> <?= !empty($sub['created_at']) ? date('d/m/Y', strtotime($sub['created_at'])) : '' ?></div>
                             <div class="mini-card-actions">
                                 <a href="index.php?action=showSubmission&id=<?= $sub['id'] ?>" class="btn-sm blue">Voir</a>
                                 <a href="index.php?action=editSubmissionForm&id=<?= $sub['id'] ?>" class="btn-sm gray"><i class="bi bi-pencil-square"></i></a>
@@ -304,21 +301,19 @@ ob_start();
             <?= CSRF::field() ?>
             <div class="form-group">
                 <label><i class="bi bi-person-fill"></i> Nom d'utilisateur</label>
-                <input type="text" name="username" value="<?= htmlspecialchars($userInfo['username']) ?>" required minlength="3">
+                <input type="text" name="username" value="<?= $uUsername ?>" required minlength="3">
             </div>
             <div class="form-group">
                 <label><i class="bi bi-quote"></i> Bio</label>
-                <textarea name="bio" rows="3" placeholder="Parlez-nous de vous..."><?= htmlspecialchars($userInfo['bio'] ?? '') ?></textarea>
+                <textarea name="bio" rows="3" placeholder="Parlez-nous de vous..."><?= $uBio ?></textarea>
             </div>
             <div class="form-group">
                 <label><i class="bi bi-camera-fill"></i> Photo de profil</label>
                 <div class="avatar-preview-row">
-                    <?php if(!empty($userInfo['avatar'])): ?>
-                        <img src="public/<?= htmlspecialchars($userInfo['avatar']) ?>" class="current-avatar-preview" id="avatarPreview" alt="">
+                    <?php if(!empty($uAvatar)): ?>
+                        <img src="public/<?= $uAvatar ?>" class="current-avatar-preview" id="avatarPreview" alt="">
                     <?php else: ?>
-                        <div class="current-avatar-placeholder" id="avatarPreview">
-                            <?= strtoupper(substr($userInfo['username'], 0, 1)) ?>
-                        </div>
+                        <div class="current-avatar-placeholder" id="avatarPreview"><?= $uInitial ?></div>
                     <?php endif; ?>
                     <div class="upload-zone" onclick="document.getElementById('avatarInput').click()">
                         <i class="bi bi-cloud-upload-fill"></i>
@@ -397,7 +392,7 @@ ob_start();
             <div style="display:flex; gap:10px; justify-content:flex-end;">
                 <button type="button" onclick="document.getElementById('deleteAccountModal').style.display='none'" class="btn-cancel-modal">Annuler</button>
                 <button type="submit" style="padding:10px 20px;background:#dc2626;color:white;border:none;border-radius:8px;font-weight:700;cursor:pointer;">
-                    <i class="bi bi-trash-fill-alt"></i> Supprimer définitivement
+                    <i class="bi bi-trash-fill"></i> Supprimer définitivement
                 </button>
             </div>
         </form>
@@ -407,7 +402,6 @@ ob_start();
 <style>
 .profile-modern { max-width: 1100px; margin: 0 auto; }
 
-/* BANNIERE */
 .profile-banner {
     background: linear-gradient(135deg, #667eea, #764ba2);
     border-radius: 20px; padding: 40px; margin-bottom: 28px;
@@ -433,7 +427,6 @@ ob_start();
 .btn-delete-account { padding:12px 22px; background:rgba(220,38,38,0.15); border:2px solid rgba(255,100,100,0.5); color:white; border-radius:10px; cursor:pointer; font-weight:700; font-size:0.95rem; transition:all 0.3s; white-space:nowrap; display:inline-flex; align-items:center; gap:8px; }
 .btn-delete-account:hover { background:#dc2626; border-color:#dc2626; }
 
-/* STATS — 2 colonnes seulement */
 .stats-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:16px; margin-bottom:28px; }
 .stat-card { background:white; border-radius:14px; padding:18px 20px; display:flex; align-items:center; gap:16px; box-shadow:0 4px 16px rgba(0,0,0,0.06); transition:all 0.3s; }
 .stat-card:hover { transform:translateY(-4px); box-shadow:0 10px 25px rgba(0,0,0,0.1); }
@@ -443,7 +436,6 @@ ob_start();
 .stat-val { display:block; font-size:1.8rem; font-weight:800; color:#222; line-height:1.1; }
 .stat-lbl { font-size:0.82rem; color:#888; }
 
-/* ONGLETS */
 .profile-tabs { display:flex; gap:8px; margin-bottom:20px; border-bottom:2px solid #e8e8e8; }
 .tab-btn { padding:12px 22px; background:none; border:none; border-bottom:3px solid transparent; margin-bottom:-2px; color:#777; font-size:0.95rem; font-weight:600; cursor:pointer; transition:all 0.2s; display:flex; align-items:center; gap:8px; border-radius:8px 8px 0 0; }
 .tab-btn:hover { color:#667eea; background:#f5f5ff; }
@@ -451,7 +443,6 @@ ob_start();
 .tab-pane { display:none; padding-top:20px; }
 .tab-pane.active { display:block; }
 
-/* CARDS */
 .cards-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(280px,1fr)); gap:20px; }
 .mini-card { background:white; border-radius:14px; overflow:hidden; box-shadow:0 4px 16px rgba(0,0,0,0.06); transition:all 0.3s; }
 .mini-card:hover { transform:translateY(-5px); box-shadow:0 10px 25px rgba(0,0,0,0.1); }
@@ -476,7 +467,6 @@ ob_start();
 .btn-sm.red { background:#fee2e2; color:#ef4444; }
 .btn-sm.red:hover { background:#fecaca; }
 
-/* EMPTY STATE */
 .empty-state { text-align:center; padding:50px 20px; background:#f9f9f9; border-radius:14px; border:2px dashed #e0e0e0; }
 .empty-state i { color:#ccc; margin-bottom:16px; display:block; }
 .empty-state h3 { color:#333; margin-bottom:8px; }
@@ -484,7 +474,6 @@ ob_start();
 .btn-primary-sm { display:inline-flex; align-items:center; gap:8px; padding:10px 22px; background:linear-gradient(135deg,#667eea,#764ba2); color:white; border-radius:10px; text-decoration:none; font-weight:700; font-size:0.9rem; transition:all 0.3s; }
 .btn-primary-sm:hover { transform:translateY(-2px); box-shadow:0 6px 16px rgba(102,126,234,0.4); }
 
-/* MODALES */
 .modal-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.5); z-index:1000; align-items:center; justify-content:center; }
 .modal-overlay.open { display:flex; }
 .modal-box { background:white; border-radius:18px; width:100%; max-width:500px; box-shadow:0 20px 60px rgba(0,0,0,0.2); overflow:hidden; }
@@ -538,7 +527,6 @@ function switchTab(name, btn) {
     btn.classList.add('active');
 }
 
-// Ouvrir l'onglet défis si paramètre page présent dans l'URL
 (function() {
     const params = new URLSearchParams(window.location.search);
     if (params.has('page')) {
@@ -546,9 +534,10 @@ function switchTab(name, btn) {
         if (btn) switchTab('challenges', btn);
     }
 })();
+
 function openDeleteAccountModal() { document.getElementById('deleteAccountModal').style.display = 'flex'; }
-function openEditModal() { document.getElementById('editModal').classList.add('open'); }
-function closeEditModal() { document.getElementById('editModal').classList.remove('open'); }
+function openEditModal()   { document.getElementById('editModal').classList.add('open'); }
+function closeEditModal()  { document.getElementById('editModal').classList.remove('open'); }
 function openAvatarModal() {
     openEditModal();
     setTimeout(() => { document.getElementById('avatarInput').click(); }, 300);

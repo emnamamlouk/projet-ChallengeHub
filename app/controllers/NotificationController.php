@@ -82,3 +82,4 @@ class NotificationController {
         exit();
     }
 }
+?> 

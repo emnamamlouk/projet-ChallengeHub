@@ -198,3 +198,4 @@ class ApiController {
         $this->json(['success' => true, 'user' => $user]);
     }
 }
+?> 

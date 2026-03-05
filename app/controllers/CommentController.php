@@ -171,3 +171,4 @@ class CommentController {
         exit();
     }
 }
+?> 
