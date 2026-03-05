@@ -2,9 +2,32 @@
 $title = "Mon profil - ChallengeHub";
 $active_page = "profile";
 
-// Les variables $userChallenges, $userSubmissions, $totalChallenges,
-// $totalSubmissions, $submissionModel et $userInfo sont préparées
-// par AuthController::profile() — rien à faire ici.
+require_once __DIR__ . '/../../models/Challenge.php';
+require_once __DIR__ . '/../../models/Submission.php';
+require_once __DIR__ . '/../../models/Badge.php';
+
+$challengeModel  = new Challenge();
+$submissionModel = new Submission();
+$badgeModel      = new Badge();
+
+$userId          = $_SESSION['user_id'];
+$allChallenges   = $challengeModel->getChallengesByUser($userId);
+$userSubmissions = $submissionModel->getSubmissionsByUser($userId);
+
+$totalChallenges  = count($allChallenges);
+$totalSubmissions = count($userSubmissions);
+
+// ── Pagination des défis ──
+$challengesPerPage = 6;
+$currentPage       = isset($_GET['page']) ? max(1, (int)$_GET['page']) : 1;
+$totalPages        = max(1, (int)ceil($totalChallenges / $challengesPerPage));
+$currentPage       = min($currentPage, $totalPages);
+$offset            = ($currentPage - 1) * $challengesPerPage;
+$userChallenges    = array_slice($allChallenges, $offset, $challengesPerPage);
+
+// ── BONUS : vérifier nouveaux badges + les charger ──
+$badgeModel->checkAndAward((int)$userId);
+$userBadges = $badgeModel->getUserBadges((int)$userId);
 
 ob_start();
 ?>
@@ -48,19 +71,19 @@ ob_start();
             <!-- Boutons actions -->
             <div style="display:flex; gap:10px; margin-left:auto; flex-wrap:wrap;">
                 <a href="index.php?action=createChallengeForm" class="btn-edit-profile" style="background:rgba(255,255,255,0.25); border-color:rgba(255,255,255,0.7);">
-                    <i class="bi bi-plus-circle-fill"></i> Créer un défi
+                    <i class="bi bi-plus-lg-circle"></i> Créer un défi
                 </a>
                 <button class="btn-edit-profile" onclick="openEditModal()">
                     <i class="bi bi-pencil-square"></i> Modifier le profil
                 </button>
                 <button class="btn-delete-account" onclick="openDeleteAccountModal()">
-                    <i class="bi bi-trash3-fill"></i> Supprimer le compte
+                    <i class="bi bi-trash-fill-alt"></i> Supprimer le compte
                 </button>
             </div>
         </div>
     </div>
 
-    <!-- ===== STATS ===== -->
+    <!-- ===== STATS (seulement Défis + Participations) ===== -->
     <div class="stats-grid">
         <div class="stat-card">
             <div class="stat-icon purple"><i class="bi bi-list-check"></i></div>
@@ -72,7 +95,7 @@ ob_start();
         </div>
     </div>
 
-    <!-- ===== ONGLETS ===== -->
+    <!-- ===== ONGLETS (sans Mes votes) ===== -->
     <div class="profile-tabs">
         <button class="tab-btn active" onclick="switchTab('challenges', this)">
             <i class="bi bi-list-check"></i> Mes défis (<?= $totalChallenges ?>)
@@ -80,13 +103,72 @@ ob_start();
         <button class="tab-btn" onclick="switchTab('submissions', this)">
             <i class="bi bi-send-fill"></i> Mes participations (<?= $totalSubmissions ?>)
         </button>
+        <button class="tab-btn" onclick="switchTab('badges', this)">
+            <i class="bi bi-award-fill"></i> Mes badges (<?= count($userBadges) ?>)
+        </button>
+    </div>
+
+    <!-- ── BONUS : TAB Badges ── -->
+    <div id="tab-badges" class="tab-pane" style="display:none;">
+        <div style="background:#fff; border-radius:16px; padding:28px; box-shadow:0 4px 16px rgba(0,0,0,.06);">
+            <h3 style="margin-bottom:20px; font-size:1.2rem; font-weight:700;">
+                <i class="bi bi-award-fill" style="color:#f59e0b;"></i> Badges obtenus
+            </h3>
+            <?php if(empty($userBadges)): ?>
+                <div style="text-align:center; padding:40px; color:#6c757d;">
+                    <i class="bi bi-award" style="font-size:3rem; opacity:.3;"></i>
+                    <p style="margin-top:12px;">Aucun badge pour le moment.<br>
+                    Créez des défis, participez et commentez pour en obtenir !</p>
+                </div>
+            <?php else: ?>
+                <div style="display:flex; flex-wrap:wrap; gap:20px;">
+                    <?php foreach($userBadges as $badge): ?>
+                    <div style="background:linear-gradient(135deg,#fef3c7,#fde68a); border-radius:14px; padding:20px 22px;
+                                text-align:center; min-width:130px; box-shadow:0 4px 12px rgba(245,158,11,.2);
+                                transition:transform .2s;" onmouseover="this.style.transform='translateY(-4px)'" onmouseout="this.style.transform=''">
+                        <i class="bi <?= htmlspecialchars($badge['icon']) ?>" style="font-size:2.2rem; color:#d97706;"></i>
+                        <div style="font-weight:700; font-size:.9rem; margin-top:8px; color:#92400e;">
+                            <?= htmlspecialchars($badge['label']) ?>
+                        </div>
+                        <div style="font-size:.72rem; color:#b45309; margin-top:4px;">
+                            <?= date('d/m/Y', strtotime($badge['obtained_at'])) ?>
+                        </div>
+                        <div style="font-size:.7rem; color:#78350f; margin-top:6px; line-height:1.3;">
+                            <?= htmlspecialchars($badge['description']) ?>
+                        </div>
+                    </div>
+                    <?php endforeach; ?>
+                </div>
+            <?php endif; ?>
+
+            <!-- Badges non encore obtenus -->
+            <?php
+            $allDefs    = Badge::getAllDefinitions();
+            $ownedKeys  = array_column($userBadges, 'key');
+            $notOwned   = array_filter($allDefs, fn($k) => !in_array($k, $ownedKeys), ARRAY_FILTER_USE_KEY);
+            if (!empty($notOwned)): ?>
+            <h4 style="margin-top:28px; margin-bottom:14px; font-size:1rem; color:#6c757d;">
+                Badges à débloquer
+            </h4>
+            <div style="display:flex; flex-wrap:wrap; gap:16px;">
+                <?php foreach($notOwned as $key => $def): ?>
+                <div style="background:#f3f4f6; border-radius:14px; padding:18px 20px; text-align:center;
+                            min-width:120px; opacity:.6; filter:grayscale(1);">
+                    <i class="bi <?= htmlspecialchars($def['icon']) ?>" style="font-size:2rem; color:#9ca3af;"></i>
+                    <div style="font-weight:600; font-size:.85rem; margin-top:6px; color:#6b7280;"><?= htmlspecialchars($def['label']) ?></div>
+                    <div style="font-size:.7rem; color:#9ca3af; margin-top:4px;"><?= htmlspecialchars($def['description']) ?></div>
+                </div>
+                <?php endforeach; ?>
+            </div>
+            <?php endif; ?>
+        </div>
     </div>
 
     <!-- TAB : Défis -->
     <div id="tab-challenges" class="tab-pane active">
         <?php if(empty($userChallenges)): ?>
             <div class="empty-state">
-                <i class="bi bi-list-check" style="font-size:3rem;"></i>
+                <i class="bi bi-list-check fa-3x"></i>
                 <h3>Aucun défi créé</h3>
                 <p>Créez votre premier défi !</p>
                 <a href="index.php?action=createChallengeForm" class="btn-primary-sm">
@@ -112,20 +194,71 @@ ob_start();
                             <div class="mini-card-actions">
                                 <a href="index.php?action=showChallenge&id=<?= $ch['id'] ?>" class="btn-sm blue">Voir</a>
                                 <a href="index.php?action=editChallengeForm&id=<?= $ch['id'] ?>" class="btn-sm gray"><i class="bi bi-pencil-square"></i></a>
-                                <button onclick="deleteChallengeConfirm(<?= $ch['id'] ?>)" class="btn-sm red"><i class="bi bi-trash3-fill"></i></button>
+                                <button onclick="deleteChallengeConfirm(<?= $ch['id'] ?>)" class="btn-sm red"><i class="bi bi-trash-fill"></i></button>
                             </div>
                         </div>
                     </div>
                 <?php endforeach; ?>
             </div>
         <?php endif; ?>
+
+        <!-- ── Pagination défis ── -->
+        <?php if($totalPages > 1): ?>
+        <nav style="margin-top:28px; text-align:center;">
+            <ul style="display:inline-flex; gap:6px; list-style:none; padding:0; margin:0; flex-wrap:wrap; justify-content:center;">
+
+                <!-- Précédent -->
+                <li>
+                    <?php if($currentPage > 1): ?>
+                        <a href="index.php?action=profile&page=<?= $currentPage - 1 ?>#tab-challenges"
+                           style="display:inline-flex;align-items:center;justify-content:center;width:38px;height:38px;border-radius:10px;background:#f0eeff;color:#667eea;text-decoration:none;font-weight:700;transition:all .2s;"
+                           onmouseover="this.style.background='#667eea';this.style.color='white'"
+                           onmouseout="this.style.background='#f0eeff';this.style.color='#667eea'">‹</a>
+                    <?php else: ?>
+                        <span style="display:inline-flex;align-items:center;justify-content:center;width:38px;height:38px;border-radius:10px;background:#f5f5f5;color:#ccc;cursor:default;">‹</span>
+                    <?php endif; ?>
+                </li>
+
+                <!-- Pages -->
+                <?php for($p = 1; $p <= $totalPages; $p++): ?>
+                <li>
+                    <?php if($p === $currentPage): ?>
+                        <span style="display:inline-flex;align-items:center;justify-content:center;width:38px;height:38px;border-radius:10px;background:linear-gradient(135deg,#667eea,#764ba2);color:white;font-weight:700;"><?= $p ?></span>
+                    <?php else: ?>
+                        <a href="index.php?action=profile&page=<?= $p ?>#tab-challenges"
+                           style="display:inline-flex;align-items:center;justify-content:center;width:38px;height:38px;border-radius:10px;background:#f0eeff;color:#667eea;text-decoration:none;font-weight:600;transition:all .2s;"
+                           onmouseover="this.style.background='#667eea';this.style.color='white'"
+                           onmouseout="this.style.background='#f0eeff';this.style.color='#667eea'"><?= $p ?></a>
+                    <?php endif; ?>
+                </li>
+                <?php endfor; ?>
+
+                <!-- Suivant -->
+                <li>
+                    <?php if($currentPage < $totalPages): ?>
+                        <a href="index.php?action=profile&page=<?= $currentPage + 1 ?>#tab-challenges"
+                           style="display:inline-flex;align-items:center;justify-content:center;width:38px;height:38px;border-radius:10px;background:#f0eeff;color:#667eea;text-decoration:none;font-weight:700;transition:all .2s;"
+                           onmouseover="this.style.background='#667eea';this.style.color='white'"
+                           onmouseout="this.style.background='#f0eeff';this.style.color='#667eea'">›</a>
+                    <?php else: ?>
+                        <span style="display:inline-flex;align-items:center;justify-content:center;width:38px;height:38px;border-radius:10px;background:#f5f5f5;color:#ccc;cursor:default;">›</span>
+                    <?php endif; ?>
+                </li>
+
+            </ul>
+            <p style="color:#aaa;font-size:.82rem;margin-top:10px;">
+                Page <?= $currentPage ?> sur <?= $totalPages ?> — <?= $totalChallenges ?> défi<?= $totalChallenges > 1 ? 's' : '' ?>
+            </p>
+        </nav>
+        <?php endif; ?>
+
     </div>
 
     <!-- TAB : Participations -->
     <div id="tab-submissions" class="tab-pane">
         <?php if(empty($userSubmissions)): ?>
             <div class="empty-state">
-                <i class="bi bi-send-fill" style="font-size:3rem;"></i>
+                <i class="bi bi-send-fill fa-3x"></i>
                 <h3>Aucune participation</h3>
                 <p>Participez à des défis !</p>
                 <a href="index.php?action=home" class="btn-primary-sm"><i class="bi bi-search"></i> Explorer</a>
@@ -149,7 +282,7 @@ ob_start();
                             <div class="mini-card-actions">
                                 <a href="index.php?action=showSubmission&id=<?= $sub['id'] ?>" class="btn-sm blue">Voir</a>
                                 <a href="index.php?action=editSubmissionForm&id=<?= $sub['id'] ?>" class="btn-sm gray"><i class="bi bi-pencil-square"></i></a>
-                                <button onclick="deleteSubmissionConfirm(<?= $sub['id'] ?>)" class="btn-sm red"><i class="bi bi-trash3-fill"></i></button>
+                                <button onclick="deleteSubmissionConfirm(<?= $sub['id'] ?>)" class="btn-sm red"><i class="bi bi-trash-fill"></i></button>
                             </div>
                         </div>
                     </div>
@@ -218,7 +351,7 @@ ob_start();
             <input type="hidden" name="challenge_id" id="deleteChallengeId">
             <div class="modal-footer">
                 <button type="button" onclick="document.getElementById('deleteChallengeModal').style.display='none'" class="btn-cancel-modal">Annuler</button>
-                <button type="submit" class="btn-danger-modal"><i class="bi bi-trash3-fill"></i> Supprimer</button>
+                <button type="submit" class="btn-danger-modal"><i class="bi bi-trash-fill"></i> Supprimer</button>
             </div>
         </form>
     </div>
@@ -236,7 +369,7 @@ ob_start();
             <input type="hidden" name="submission_id" id="deleteSubmissionId">
             <div class="modal-footer">
                 <button type="button" onclick="document.getElementById('deleteSubmissionModal').style.display='none'" class="btn-cancel-modal">Annuler</button>
-                <button type="submit" class="btn-danger-modal"><i class="bi bi-trash3-fill"></i> Supprimer</button>
+                <button type="submit" class="btn-danger-modal"><i class="bi bi-trash-fill"></i> Supprimer</button>
             </div>
         </form>
     </div>
@@ -264,7 +397,7 @@ ob_start();
             <div style="display:flex; gap:10px; justify-content:flex-end;">
                 <button type="button" onclick="document.getElementById('deleteAccountModal').style.display='none'" class="btn-cancel-modal">Annuler</button>
                 <button type="submit" style="padding:10px 20px;background:#dc2626;color:white;border:none;border-radius:8px;font-weight:700;cursor:pointer;">
-                    <i class="bi bi-trash3-fill"></i> Supprimer définitivement
+                    <i class="bi bi-trash-fill-alt"></i> Supprimer définitivement
                 </button>
             </div>
         </form>
@@ -274,6 +407,7 @@ ob_start();
 <style>
 .profile-modern { max-width: 1100px; margin: 0 auto; }
 
+/* BANNIERE */
 .profile-banner {
     background: linear-gradient(135deg, #667eea, #764ba2);
     border-radius: 20px; padding: 40px; margin-bottom: 28px;
@@ -299,6 +433,7 @@ ob_start();
 .btn-delete-account { padding:12px 22px; background:rgba(220,38,38,0.15); border:2px solid rgba(255,100,100,0.5); color:white; border-radius:10px; cursor:pointer; font-weight:700; font-size:0.95rem; transition:all 0.3s; white-space:nowrap; display:inline-flex; align-items:center; gap:8px; }
 .btn-delete-account:hover { background:#dc2626; border-color:#dc2626; }
 
+/* STATS — 2 colonnes seulement */
 .stats-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:16px; margin-bottom:28px; }
 .stat-card { background:white; border-radius:14px; padding:18px 20px; display:flex; align-items:center; gap:16px; box-shadow:0 4px 16px rgba(0,0,0,0.06); transition:all 0.3s; }
 .stat-card:hover { transform:translateY(-4px); box-shadow:0 10px 25px rgba(0,0,0,0.1); }
@@ -308,6 +443,7 @@ ob_start();
 .stat-val { display:block; font-size:1.8rem; font-weight:800; color:#222; line-height:1.1; }
 .stat-lbl { font-size:0.82rem; color:#888; }
 
+/* ONGLETS */
 .profile-tabs { display:flex; gap:8px; margin-bottom:20px; border-bottom:2px solid #e8e8e8; }
 .tab-btn { padding:12px 22px; background:none; border:none; border-bottom:3px solid transparent; margin-bottom:-2px; color:#777; font-size:0.95rem; font-weight:600; cursor:pointer; transition:all 0.2s; display:flex; align-items:center; gap:8px; border-radius:8px 8px 0 0; }
 .tab-btn:hover { color:#667eea; background:#f5f5ff; }
@@ -315,6 +451,7 @@ ob_start();
 .tab-pane { display:none; padding-top:20px; }
 .tab-pane.active { display:block; }
 
+/* CARDS */
 .cards-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(280px,1fr)); gap:20px; }
 .mini-card { background:white; border-radius:14px; overflow:hidden; box-shadow:0 4px 16px rgba(0,0,0,0.06); transition:all 0.3s; }
 .mini-card:hover { transform:translateY(-5px); box-shadow:0 10px 25px rgba(0,0,0,0.1); }
@@ -339,6 +476,7 @@ ob_start();
 .btn-sm.red { background:#fee2e2; color:#ef4444; }
 .btn-sm.red:hover { background:#fecaca; }
 
+/* EMPTY STATE */
 .empty-state { text-align:center; padding:50px 20px; background:#f9f9f9; border-radius:14px; border:2px dashed #e0e0e0; }
 .empty-state i { color:#ccc; margin-bottom:16px; display:block; }
 .empty-state h3 { color:#333; margin-bottom:8px; }
@@ -346,6 +484,7 @@ ob_start();
 .btn-primary-sm { display:inline-flex; align-items:center; gap:8px; padding:10px 22px; background:linear-gradient(135deg,#667eea,#764ba2); color:white; border-radius:10px; text-decoration:none; font-weight:700; font-size:0.9rem; transition:all 0.3s; }
 .btn-primary-sm:hover { transform:translateY(-2px); box-shadow:0 6px 16px rgba(102,126,234,0.4); }
 
+/* MODALES */
 .modal-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.5); z-index:1000; align-items:center; justify-content:center; }
 .modal-overlay.open { display:flex; }
 .modal-box { background:white; border-radius:18px; width:100%; max-width:500px; box-shadow:0 20px 60px rgba(0,0,0,0.2); overflow:hidden; }
@@ -389,11 +528,24 @@ ob_start();
 
 <script>
 function switchTab(name, btn) {
-    document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.tab-pane').forEach(p => {
+        p.classList.remove('active');
+        p.style.display = 'none';
+    });
     document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-    document.getElementById('tab-' + name).classList.add('active');
+    const pane = document.getElementById('tab-' + name);
+    if (pane) { pane.classList.add('active'); pane.style.display = 'block'; }
     btn.classList.add('active');
 }
+
+// Ouvrir l'onglet défis si paramètre page présent dans l'URL
+(function() {
+    const params = new URLSearchParams(window.location.search);
+    if (params.has('page')) {
+        const btn = document.querySelector('.tab-btn[onclick*="challenges"]');
+        if (btn) switchTab('challenges', btn);
+    }
+})();
 function openDeleteAccountModal() { document.getElementById('deleteAccountModal').style.display = 'flex'; }
 function openEditModal() { document.getElementById('editModal').classList.add('open'); }
 function closeEditModal() { document.getElementById('editModal').classList.remove('open'); }

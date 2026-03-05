@@ -54,6 +54,25 @@ class CommentController {
         );
 
         if ($comment_id) {
+            // ── BONUS : badges commentateur actif + notification propriétaire ──
+            require_once APP_PATH . '/models/Badge.php';
+            require_once APP_PATH . '/models/Notification.php';
+            require_once APP_PATH . '/models/Submission.php';
+            $badgeModel = new Badge();
+            $badgeModel->checkAndAward((int)$_SESSION['user_id']);
+
+            $submissionModel = new Submission();
+            $sub = $submissionModel->getSubmissionById($submission_id);
+            if ($sub && (int)$sub['user_id'] !== (int)$_SESSION['user_id']) {
+                $notifModel = new Notification();
+                $notifModel->create(
+                    (int)$sub['user_id'],
+                    'new_comment',
+                    htmlspecialchars($_SESSION['username']) . ' a commenté votre participation.',
+                    (int)$submission_id
+                );
+            }
+
             $total = $this->commentModel->countComments($submission_id);
             echo json_encode([
                 'success'      => true,

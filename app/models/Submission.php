@@ -173,5 +173,27 @@ public function getSubmissionsByUser($user_id) {
             return [];
         }
     }
+
+    // ── BONUS : top N participations toutes catégories (utilisé par ApiController) ──
+    public function getTopSubmissions(int $limit = 10): array {
+        try {
+            $query = "SELECT s.id, s.description, s.image, s.link, s.created_at,
+                             u.username, u.avatar,
+                             c.title AS challenge_title, c.id AS challenge_id, c.category
+                      FROM submissions s
+                      JOIN users u ON s.user_id = u.id
+                      JOIN challenges c ON s.challenge_id = c.id
+                      LEFT JOIN votes v ON s.id = v.submission_id
+                      GROUP BY s.id
+                      ORDER BY COUNT(v.id) DESC, s.created_at DESC
+                      LIMIT :lim";
+            $stmt = $this->conn->prepare($query);
+            $stmt->bindParam(':lim', $limit, PDO::PARAM_INT);
+            $stmt->execute();
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        } catch (PDOException $e) {
+            return [];
         }
+    }
+}
 ?>
